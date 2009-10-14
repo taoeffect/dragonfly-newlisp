@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>dragonfly.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>dragonfly.lsp</h1></center>
+<p><a href="index.html">Module index</a></p> Copyright (c) 2009 Marc Hildmann
+<br/><br/>
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+<br/><br/>
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+<a href="dragonfly.lsp.src.html">source</a><br/><br/><h2>Module:&nbsp;Dragonfly</h2><b>Author: </b>Marc Hildmann <marc.hildmann@gmail.com><br/>
+<b>Version: </b>0.12<br/>
+<b>Location: </b><a href="http://code.google.com/p/dragonfly-newlisp/">http://code.google.com/p/dragonfly-newlisp/</a><br/>
+<p>A newLISP web framework for rapid web development</p>
+<br/><br/>
+<br/><br/>
+ set constants for Dragonfly
+
+ init symbols for Dragonfly listener
+
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_listener"></a><h3><font color=#CC0000>Dragonfly:listener</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:listener</font>)</b><br/>
+ <p>The Dragonfly listener parses the QUERY STRING
+ for the specified template and action.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_benchmark-start"></a><h3><font color=#CC0000>Dragonfly:benchmark-start</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:benchmark-start</font>)</b><br/>
+ <p>Sets the start point for benchmarking.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_benchmark-end"></a><h3><font color=#CC0000>Dragonfly:benchmark-end</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:benchmark-end</font>)</b><br/>
+ <p>Sets the end point for benchmarking and calculates the result in milliseconds plus
+ some information about memory usage.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_debugging"></a><h3><font color=#CC0000>Dragonfly:debugging</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:debugging</font>)</b><br/>
+ <p>Writes some debug information to the screen. Requires Web.lsp module for POST and GET information.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_template"></a><h3><font color=#CC0000>Dragonfly:template</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:template</font> <em>template</em>)</b><br/>
+<b>parameter: </b><em>template</em> - name of template<br/>
+ <p>Evaluates the template and returns it.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_partial"></a><h3><font color=#CC0000>Dragonfly:partial</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:partial</font> <em>template</em>)</b><br/>
+<b>parameter: </b><em>template</em> - name of partial template<br/>
+ <p>Evaluates the partial template and returns it.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_css"></a><h3><font color=#CC0000>Dragonfly:css</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:css</font> <em>css-media</em> <em>css-location</em>)</b><br/>
+<b>parameter: </b><em>css-media</em> - a string containing screen or print<br/>
+<b>parameter: </b><em>css-location</em> - the location of your stylesheet<br/>
+ <p>Writes a standard stylesheet HTML tag.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_meta"></a><h3><font color=#CC0000>Dragonfly:meta</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:meta</font> <em>meta-name</em> <em>meta-content</em>)</b><br/>
+<b>parameter: </b><em>meta-name</em> - a string containing the meta-name<br/>
+<b>parameter: </b><em>meta-content</em> - a string containing the meta content<br/>
+ <p>Writes a standard meta HTML tag.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_rss"></a><h3><font color=#CC0000>Dragonfly:rss</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:rss</font> <em>rss-title</em> <em>rss-location</em>)</b><br/>
+<b>parameter: </b><em>rss-title</em> - a string containing the rss title<br/>
+<b>parameter: </b><em>rss-location</em> - a string containing the rss location<br/>
+ <p>Writes a standard RSS HTML tag.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_script"></a><h3><font color=#CC0000>Dragonfly:script</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:script</font> <em>script-location</em>)</b><br/>
+<b>parameter: </b><em>script-location</em> - a string containing the script location<br/>
+ <p>Writes a standard script HTML tag.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_meta-iphone"></a><h3><font color=#CC0000>Dragonfly:meta-iphone</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:meta-iphone</font>)</b><br/>
+ <p>Detects the iPhone and writes an apropiate META tag.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_compare-lists"></a><h3><font color=#CC0000>Dragonfly:compare-lists</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:compare-lists</font> <em>list1</em> <em>list2</em>)</b><br/>
+<b>parameter: </b><em>list1</em> - list number 1<br/>
+<b>parameter: </b><em>list2</em> - list number 2<br/>
+ <p>Compares two lists and return the score of same and same position. This is a function by cormullion.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_google-analytics"></a><h3><font color=#CC0000>Dragonfly:google-analytics</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:google-analytics</font> <em>analytics-id</em>)</b><br/>
+<b>parameter: </b><em>analytics-id</em> - enter the specified id provided by Google Analytics, e.g. UA-123456-7<br/>
+ <p>Writes the Google Analytics tracking code.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_todays-date-german"></a><h3><font color=#CC0000>Dragonfly:todays-date-german</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:todays-date-german</font> including actual time)</b><br/>
+ <p>Writes todays date including time in german localization</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_time-now"></a><h3><font color=#CC0000>Dragonfly:time-now</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:time-now</font>)</b><br/>
+ <p>Writes the actual time</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_image"></a><h3><font color=#CC0000>Dragonfly:image</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:image</font> <em>image_name</em> <em>image_url</em>, <em>options</em>)</b><br/>
+<b>parameter: </b><em>image_name</em> - a string containing the image alternative title<br/>
+<b>parameter: </b><em>image_url</em> - a string containing the url<br/>
+<b>parameter: </b><em>options</em> - optional settings like class, rel, width, height ...<br/>
+ <p>Writes a standard HTML image.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_link_to"></a><h3><font color=#CC0000>Dragonfly:link_to</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:link_to</font> <em>link_name</em> <em>link_url</em>)</b><br/>
+<b>parameter: </b><em>link_name</em> - a string containing the link's name<br/>
+<b>parameter: </b><em>link_url</em> - a string containing the url<br/>
+ <p>Writes a standard HTML link</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_link_mailto"></a><h3><font color=#CC0000>Dragonfly:link_mailto</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:link_mailto</font> <em>link_name</em> <em>options</em>)</b><br/>
+<b>parameter: </b><em>name</em> - a string containing the link's name<br/>
+<b>parameter: </b><em>options</em> - a string containing the url<br/>
+ <p>Writes a standard HTML mailto link</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_open"></a><h3><font color=#CC0000>Dragonfly:form_open</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_open</font> <em>form_action</em> <form_method)</b><br/>
+<b>parameter: </b><em>name</em> - a string containing the form action<br/>
+<b>parameter: </b><em>name</em> - a string containing the form submit method POST/GET<br/>
+ <p>Writes a standard form open element</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_textfield"></a><h3><font color=#CC0000>Dragonfly:form_textfield</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_textfield</font> <em>form_name</em>)</b><br/>
+<b>parameter: </b><em>name</em> - a string containing the text field name<br/>
+ <p>Writes a standard form field with size <tt>30</tt></p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_submit"></a><h3><font color=#CC0000>Dragonfly:form_submit</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_submit</font> <em>form_value</em>)</b><br/>
+<b>parameter: </b><em>value</em> - a string containing the value for the submit button<br/>
+ <p>Writes a standard form submit button.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_hidden"></a><h3><font color=#CC0000>Dragonfly:form_hidden</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_hidden</font> <em>form_name</em> <em>form_value</em>)</b><br/>
+<b>parameter: </b><em>form_name</em> - a string containing the name for the hidden field<br/>
+<b>parameter: </b><em>form_value</em> - a string containing the value for the hidden field<br/>
+ <p>Writes a standard form hidden field.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_close"></a><h3><font color=#CC0000>Dragonfly:form_close</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_close</font>)</b><br/>
+ <p>Writes a form close tag</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_form_generate-from-columns"></a><h3><font color=#CC0000>Dragonfly:form_generate-from-columns</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:form_generate-from-columns</font> <em>tablename</em>)</b><br/>
+ <p>Generates a form including input field from the given table.
+ The form uses POST Method and refers to itself. It includes one hidden
+ field called dragonfly_form, to detect form submit.
+ </p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_table_open"></a><h3><font color=#CC0000>Dragonfly:table_open</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:table_open</font> <em>head_elements</em>)</b><br/>
+<b>parameter: </b><em>head_elements</em> - a list containing the table head<br/>
+ <p>Writes a standard table open element including a head, generated from a list.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_table_data"></a><h3><font color=#CC0000>Dragonfly:table_data</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:table_data</font> <em>table_elements</em>)</b><br/>
+<b>parameter: </b><em>table_elements</em> - a list containing all table elements (row by row, from left to right), including empty cells<br/>
+ <p>Writes the table data generated from a list.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_table_footer"></a><h3><font color=#CC0000>Dragonfly:table_footer</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:table_footer</font> <em>table_footer_text</em>)</b><br/>
+<b>parameter: </b><em>table_footer_text</em> - a string containing the table footer text<br/>
+ <p>Writes a standard table footer with number of colspan generated from the last table-head.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_table_close"></a><h3><font color=#CC0000>Dragonfly:table_close</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:table_close</font>)</b><br/>
+ <p>Writes a standard table close element.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_show-database"></a><h3><font color=#CC0000>Dragonfly:show-database</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:show-database</font>)</b><br/>
+ <p>Writes some information about the currently used nldb</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_sqlite-open"></a><h3><font color=#CC0000>Dragonfly:sqlite-open</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:sqlite-open</font> <em>databasename</em>)</b><br/>
+<b>parameter: </b><em>databasename</em> - string containing the database name<br/>
+ <p>Open the SQLite database or creates it, if it does not exist.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_sqlite-tables"></a><h3><font color=#CC0000>Dragonfly:sqlite-tables</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:sqlite-tables</font>)</b><br/>
+ <p>Shows the existing tables in the current database.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_sqlite-columns"></a><h3><font color=#CC0000>Dragonfly:sqlite-columns</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:sqlite-columns</font>)</b><br/>
+ <p>Shows the existing columns in a given table.</p>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_twitter-search"></a><h3><font color=#CC0000>Dragonfly:twitter-search</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:twitter-search</font> <em>keyword</em>)</b><br/>
+<b>parameter: </b><em>keyword</em> - string containing the keyword for search<br/>
+ <p>Writes the results of the search in nice speech bubbles.</p>
+<br/><br/>
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

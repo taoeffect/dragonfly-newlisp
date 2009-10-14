@@ -1,0 +1,33 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "Dragonfly web framework") %><p>
+		</div>
+		
+		<% (Dragonfly:debugging) %>
+
+		<div class="line-dotted"></div>
+
+		<% (Dragonfly:benchmark-result) %>
+
+		<div class="line-dotted"></div>
+		
+						
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>
+
+
+

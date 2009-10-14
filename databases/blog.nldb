@@ -1,0 +1,12 @@
+(set 'nldb:tables '(entries))
+
+(set 'entries '(
+  	(ID Headline Date Text Author) 
+
+  	("1" "Hello World - Do You remember me?" "Donnerstag/Thursday &mdash; 30.07.2009 &mdash; 20:20" "After some experiments and a lot of time I finally decided to blog again. About newLISP and fun with programming, my own framework Dragonfly and some photographs I like.<br/><br/>" "Marc Hildmann") 
+  	("2" "Eingew&ouml;hnen - Future home" "Freitag/Friday &mdash; 31.07.2009 &mdash; 20:57" "Erste Gehversuche mit NearlyFreeSpeech.net. Schlichte, aber sehr durchdachte Oberfl&auml;che. Das wird wohl das neue Zuhause.</p><br/><p>First steps with NearlyFreeSpeech.net. I like their simple, but effective user interface. Seems to be the new home, so I just ordered marchildmann.com" "Marc Hildmann") 
+	("3" "Ein Umzug - A blog's procession" "Sonntag/Sunday &mdash; 02.08.2009 &mdash; 21:55" "Diese Webseite wird nun bei NearlyFreeSpeech.net gelagert und durch mein Dragonfly framework betrieben.</p><br/><p>This website is hosted by NearlyFreeSpeech.net and powered by my Dragonfly framework." "Marc Hildmann") 
+	("4" "Nominiert! - Nominated on Fotopedia" "Montag/Munday &mdash; 03.08.2009 &mdash; 20:32" "Eines meiner Fotos wurde auf www.fotopedia.com nominiert und ist nun Bestandteil des Hannover Albums. Gebt mir Eure Stimme - Danke! (http://www.fotopedia.com/albums/fotopedia-en-Hanover)</p><br/><p>One of my photos was nominated for Hanover. Vote for me on www.fotopedia.com - Thanks! Check out the other photos in the 'Hanover album'" "Marc Hildmann")
+	
+))
+

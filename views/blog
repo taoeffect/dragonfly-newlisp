@@ -1,0 +1,39 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "| marchildmann.com") %><p>
+		</div>
+
+		<% (Dragonfly:load-database "blog.nldb") %>
+		<% (set 'data (nldb:select-rows 'entries true true 'ID > )) %>
+		<%	
+
+		(dolist (element data)
+			(print "<h3>"(element 1)"</h3>")
+			(print "<p class='author'>"(element 2)" | "(element 4)"</p>")
+			(print "<p>"(element 3)"</p>")
+		)
+		%>		
+		
+		<div class="line-dotted"></div>
+
+		<% (Dragonfly:benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>

@@ -1,0 +1,49 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Dragonfly SEO functions</h1>
+		
+		<p class="extract">A form of online marketing, search engine optimization (or search engine marketing) is the process of making a site and its content highly relevant for both search engines and searchers. Successful search marketing helps a site gain top positioning for relevant words and phrases.
+		</p>
+				
+		<h2>Check description length Results</h2>
+		<% (Dragonfly:check-meta-description) %><br/><br/>
+
+		<h2>Check number of meta-keywords</h2>
+		<% (Dragonfly:check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) %><br/><br/>
+
+
+		<h2>SEO Results</h2>
+		<% (Dragonfly:table_open (list "Website" "Google Pagerank&trade;" "Estimated Result Count" "No. keywords" "Description")) %>
+		<% (Dragonfly:table_footer "Dragonfly SEO Experiments") %>
+		<% (Dragonfly:table_data (list "www.newlisp.org" "4" (Dragonfly:google-results-domain "www.newlisp.org") (Dragonfly:check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) "") ) %>
+		<% (Dragonfly:table_close) %>
+
+
+		
+		<div class="line-dotted"></div>
+
+		<% (Dragonfly:benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>
+

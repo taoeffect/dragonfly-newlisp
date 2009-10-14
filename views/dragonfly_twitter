@@ -1,0 +1,34 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Twitter search</h1>
+		<p class="extract">Twitter is a free social networking and micro-blogging service that enables its users to send and read messages known as tweets. Tweets are text-based posts of up to 140 characters displayed on the author's profile page and delivered to the author's subscribers who are known as followers. Senders can restrict delivery to those in their circle of friends or, by default, allow open access. (source: wikipedia.org)
+		</p>
+
+		<% (Dragonfly:twitter-search "newlisp" "10") %>
+		
+		<div class="line-dotted"></div>
+
+		<% (Dragonfly:benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>

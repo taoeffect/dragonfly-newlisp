@@ -1,0 +1,648 @@
+<!DOCTYPE HTML PUBLIC "4.01 Transitional"><html><title>Dragonfly</title><body><pre>
+<font color='#555555'>;; Copyright (c) 2009 Marc Hildmann</font>
+<font color='#555555'>;;</font>
+<font color='#555555'>;; Permission is hereby granted, free of charge, to any person obtaining</font>
+<font color='#555555'>;; a copy of this software and associated documentation files (the</font>
+<font color='#555555'>;; "Software"), to deal in the Software without restriction, including</font>
+<font color='#555555'>;; without limitation the rights to use, copy, modify, merge, publish,</font>
+<font color='#555555'>;; distribute, sublicense, and/or sell copies of the Software, and to</font>
+<font color='#555555'>;; permit persons to whom the Software is furnished to do so, subject to</font>
+<font color='#555555'>;; the following conditions:</font>
+<font color='#555555'>;;</font>
+<font color='#555555'>;; The above copyright notice and this permission notice shall be</font>
+<font color='#555555'>;; included in all copies or substantial portions of the Software.</font>
+
+<font color='#555555'>;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,</font>
+<font color='#555555'>;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</font>
+<font color='#555555'>;; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</font>
+<font color='#555555'>;; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</font>
+<font color='#555555'>;; LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</font>
+<font color='#555555'>;; OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</font>
+<font color='#555555'>;; WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</font>
+
+<font color='#555555'>#!/usr/bin/newlisp</font>
+
+<font color='#555555'>;; <font color='#308080'>@module</font> Dragonfly</font>
+<font color='#555555'>;; <font color='#308080'>@author</font> Marc Hildmann &lt;marc.hildmann@gmail.com&gt;</font>
+<font color='#555555'>;; <font color='#308080'>@version</font> 0.12</font>
+<font color='#555555'>;; <font color='#308080'>@location</font> http://code.google.com/p/dragonfly-newlisp/</font>
+<font color='#555555'>;; <font color='#308080'>@description</font> A newLISP web framework for rapid web development</font>
+<font color='#555555'>;; </font>
+<font color='#555555'>;;</font>
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Loading used modules and defining new context</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>load</font> <font color='#008800'>"./modules/sqlite3.lsp"</font><font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>context</font> 'Dragonfly<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; set constants for Dragonfly</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'documentroot <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"DOCUMENT_ROOT"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'host <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"HTTP_HOST"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'useragent <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"HTTP_USER_AGENT"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'server <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"SERVER_SOFTWARE"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'programfiles <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"PROGRAMFILES"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'proxy <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"HTTP_PROXY"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+<font color='#555555'>;; init symbols for Dragonfly listener</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'templatename <font color='#008800'>""</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'action <font color='#008800'>""</font><font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Base Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:listener)</font>
+<font color='#555555'>;; &lt;p&gt;The Dragonfly listener parses the QUERY STRING</font>
+<font color='#555555'>;; for the specified template and action.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>listener<font color='#AA0000'>)</font>	
+
+		<font color='#555555'>;; output HTML header</font>
+		<font color='#AA0000'>(</font>Web:header <font color='#008800'>"Content-Type"</font> <font color='#008800'>"text/html"</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font>Web:send-headers<font color='#AA0000'>)</font>
+		
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>empty?</font> <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"QUERY_STRING"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+			<font color='#555555'>;; if there is no query show default template		</font>
+			<font color='#AA0000'>(</font>Dragonfly:template <font color='#008800'>"welcome"</font><font color='#AA0000'>)</font>				
+		<font color='#AA0000'>)</font> 
+			
+		<font color='#555555'>;; else there must be a string which we'll parse	</font>
+		<font color='#555555'>;; Regex for parsing templatename and action</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>constant</font> 'regex-querystring <font color='#008800'>"(.*)/(.*)"</font><font color='#AA0000'>)</font>			
+		<font color='#AA0000'>(</font><font color='#0000AA'>regex</font> regex-querystring <font color='#AA0000'>(</font><font color='#0000AA'>env</font> <font color='#008800'>"QUERY_STRING"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'templatename $1<font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'action $2<font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font>Dragonfly:template templatename<font color='#AA0000'>)</font>										
+			
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:benchmark-start)</font>
+<font color='#555555'>;; &lt;p&gt;Sets the start point for benchmarking.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>benchmark-start<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'microtime-start <font color='#AA0000'>(</font><font color='#0000AA'>time-of-day</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:benchmark-end)</font>
+<font color='#555555'>;; &lt;p&gt;Sets the end point for benchmarking and calculates the result in milliseconds plus</font>
+<font color='#555555'>;; some information about memory usage.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>benchmark-result<font color='#AA0000'>)</font>
+
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>0</font><font color='#AA0000'>)</font> <font color='#665500'>16</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>1</font><font color='#AA0000'>)</font> <font color='#665500'>16</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells-constant_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_megabytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells-constant_kilobytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_symbols_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>2</font><font color='#AA0000'>)</font> <font color='#665500'>32</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_symbols_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_symbols_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+    <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_total_usage <font color='#AA0000'>(</font><font color='#0000AA'>+</font> mem_cells_kilobytes mem_symbols_kilobytes<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'microtime-end <font color='#AA0000'>(</font><font color='#0000AA'>time-of-day</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'execution-time-milliseconds <font color='#AA0000'>(</font><font color='#0000AA'>-</font> microtime-end microtime-start<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'execution-time-seconds <font color='#AA0000'>(</font><font color='#0000AA'>div</font> execution-time-milliseconds <font color='#665500'>1000</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;div id='dragonfly_benchmark'>Rendered in "</font>execution-time-milliseconds<font color='#008800'>" milliseconds. Used "</font>mem_total_usage<font color='#008800'>" KB.&lt;br/&gt;&lt;div id='dragonfly_logo'>&lt;a href='http://code.google.com/p/dragonfly-newlisp/'>&amp;mdash&#059;()o Dragonfly &lt;span class='dragonfly_uppercase'>web framework&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:debugging)</font>
+<font color='#555555'>;; &lt;p&gt;Writes some debug information to the screen. Requires Web.lsp module for POST and GET information.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>debugging<font color='#AA0000'>)</font>
+
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>0</font><font color='#AA0000'>)</font> <font color='#665500'>16</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>1</font><font color='#AA0000'>)</font> <font color='#665500'>16</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells-constant_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_cells-constant_megabytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_cells-constant_kilobytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_symbols_bytes <font color='#AA0000'>(</font><font color='#0000AA'>*</font> <font color='#AA0000'>(</font><font color='#0000AA'>sys-info</font> <font color='#665500'>2</font><font color='#AA0000'>)</font> <font color='#665500'>32</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_symbols_kilobytes <font color='#AA0000'>(</font><font color='#0000AA'>/</font> mem_symbols_bytes <font color='#665500'>1024</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'mem_total_usage <font color='#AA0000'>(</font><font color='#0000AA'>+</font> mem_cells_kilobytes mem_symbols_kilobytes<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+
+
+
+  <font color='#AA0000'>(</font><font color='#0000AA'>println</font> "
+	&lt;div id='dragonfly_debug' style='border:1px dotted #00aeef<font color='#555555'>; width:700px; padding:8px; margin-top:20px;' ></font>
+	&lt;h2&gt;Dragonfly DEBUG information&lt;/h2&gt;
+	&lt;h3&gt;HOST&lt;/h3&gt;<font color='#008800'>"host"</font>
+	&lt;h3&gt;DOCUMENT ROOT&lt;/h3&gt;<font color='#008800'>"documentroot"</font>
+	&lt;h3&gt;Windows Programfiles&lt;/h3&gt;<font color='#008800'>"programfiles"</font>
+	&lt;h3&gt;QUERY&lt;/h3&gt;<font color='#008800'>"(env "</font>QUERY_STRING<font color='#008800'>")"</font>
+	&lt;h3&gt;TEMPLATENAME&lt;/h3&gt;<font color='#008800'>"templatename"</font>
+	&lt;h3&gt;ACTION&lt;/h3&gt;<font color='#008800'>"action"</font>
+	&lt;h3&gt;USER-AGENT&lt;/h3&gt;<font color='#008800'>"useragent"</font>
+	&lt;h3&gt;Proxy&lt;/h3&gt;<font color='#008800'>"proxy"</font>
+	&lt;h3&gt;SERVER&lt;/h3&gt;<font color='#008800'>"server"</font>
+	&lt;h3&gt;POST&lt;/h3&gt;<font color='#008800'>"Web:POST"</font>
+	&lt;h3&gt;GET&lt;/h3&gt;<font color='#008800'>"Web:GET"</font>
+	&lt;h3&gt;System information&lt;/h3&gt;
+	&lt;ul&gt;
+		&lt;li&gt;Total memory usage: <font color='#008800'>"mem_total_usage"</font> KB&lt;/li&gt;	
+		&lt;li&gt;Number of Lisp Cells <font color='#AA0000'>(</font><font color='#665500'>16</font> bytes per cell<font color='#AA0000'>)</font><font color='#0000AA'>:</font> <font color='#008800'>"(sys-info 0)"</font>&lt;/li&gt;
+		&lt;li&gt;Memory used by Lisp Cells: <font color='#008800'>"mem_cells_kilobytes"</font> KB&lt;/li&gt;
+		&lt;li&gt;Maximum number of Lisp cells constant: <font color='#008800'>"(sys-info 1)"</font>&lt;/li&gt;
+		&lt;li&gt;Maximum memory used by Lisp cells constant: <font color='#008800'>"mem_cells-constant_megabytes"</font> MB&lt;/li&gt;
+		&lt;li&gt;Number of <font color='#0000AA'>symbols</font> <font color='#AA0000'>(</font><font color='#665500'>32</font> bytes per symbol<font color='#AA0000'>)</font><font color='#0000AA'>:</font> <font color='#008800'>"(sys-info 2)"</font>&lt;/li&gt;
+		&lt;li&gt;Memory used by symbols: <font color='#008800'>"mem_symbols_kilobytes"</font> KB&lt;/li&gt;
+		&lt;li&gt;Evaluation/recursion level: <font color='#008800'>"(sys-info 3)"</font>&lt;/li&gt;
+		&lt;li&gt;Environment stack level: <font color='#008800'>"(sys-info 4)"</font>&lt;/li&gt;
+		&lt;li&gt;Maximum call stack constant: <font color='#008800'>"(sys-info 5)"</font>&lt;/li&gt;
+		&lt;li&gt;Pid of running newLISP process: <font color='#008800'>"(sys-info 6)"</font>&lt;/li&gt;
+		&lt;li&gt;Version number as an <font color='#0000AA'>integer</font> constant: <font color='#008800'>"(sys-info 7)"</font>&lt;/li&gt;
+		&lt;li&gt;Operating system constant: <font color='#008800'>"(sys-info 8)"</font>&lt;/li&gt;
+		&lt;li&gt;Used <font color='#0000AA'>symbols</font> in Dragonfly: &lt;pre&gt;<font color='#008800'>"(symbols 'Dragonfly)"</font>&lt;/pre&gt;&lt;/li&gt;
+		&lt;li&gt;Last system error: <font color='#008800'>"(sys-error)"</font>&lt;/li&gt;
+	&lt;/ul&gt;
+	
+	&lt;/div&gt;"<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:template &lt;template&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;template&gt; name of template</font>
+<font color='#555555'>;; &lt;p&gt;Evaluates the template and returns it.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>template template<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'path-to-templates <font color='#008800'>"./templates/"</font><font color='#AA0000'>)</font>	
+	<font color='#555555'>;;(println path-to-templates)</font>
+  	<font color='#AA0000'>(</font><font color='#0000AA'>push</font> template path-to-templates <font color='#665500'>-1</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font>Web:eval-template <font color='#AA0000'>(</font><font color='#0000AA'>read-file</font> path-to-templates<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:partial &lt;template&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;template&gt; name of partial template</font>
+<font color='#555555'>;; &lt;p&gt;Evaluates the partial template and returns it.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>partial template<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'path-to-partials <font color='#008800'>"./templates/partials/"</font><font color='#AA0000'>)</font>	
+  	<font color='#AA0000'>(</font><font color='#0000AA'>push</font> template path-to-partials <font color='#665500'>-1</font><font color='#AA0000'>)</font>
+  	<font color='#AA0000'>(</font>Web:eval-template <font color='#AA0000'>(</font><font color='#0000AA'>read-file</font> path-to-partials<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:css &lt;css-media&gt; &lt;css-location&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;css-media&gt; a string containing screen or print</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;css-location&gt; the location of your stylesheet</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard stylesheet HTML tag.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>css css-media css-location<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;link rel='stylesheet' type='text/css' media='"</font>css-media<font color='#008800'>"' href='"</font>css-location<font color='#008800'>"' /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:meta &lt;meta-name&gt; &lt;meta-content&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;meta-name&gt; a string containing the meta-name</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;meta-content&gt; a string containing the meta content</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard meta HTML tag.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>meta meta-name meta-content<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;meta name='"</font>meta-name<font color='#008800'>"' content='"</font>meta-content<font color='#008800'>"' /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:rss &lt;rss-title&gt; &lt;rss-location&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;rss-title&gt; a string containing the rss title</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;rss-location&gt; a string containing the rss location</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard RSS HTML tag.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>rss rss-title rss-location<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;link rel='alternate' type='application/rss+xml' title='"</font>rss-title<font color='#008800'>"' href='"</font>rss-location<font color='#008800'>"' /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:script &lt;script-location&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;script-location&gt; a string containing the script location</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard script HTML tag.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>script script-location<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;script type='text/javascript' src='"</font>script-location<font color='#008800'>"'>&lt;/script&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:meta-iphone)</font>
+<font color='#555555'>;; &lt;p&gt;Detects the iPhone and writes an apropiate META tag.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>meta-iphone<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;meta name='viewport' content='width=320, user-scalable=no' /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:compare-lists &lt;list1&gt; &lt;list2&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;list1&gt; list number 1</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;list2&gt; list number 2</font>
+<font color='#555555'>;; &lt;p&gt;Compares two lists and return the score of same and same position. This is a function by cormullion.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>compare-lists list1 list2<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"Comparing "</font> list1 <font color='#008800'>" and "</font> list2 <font color='#008800'>" ..."</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>" "</font><font color='#AA0000'>(</font><font color='#0000AA'>first</font> <font color='#AA0000'>(</font><font color='#0000AA'>count</font> '<font color='#AA0000'>(</font><font color='#0000AA'>true</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>map</font> <font color='#0000AA'>=</font> list1 list2<font color='#AA0000'>)</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#008800'>" elements are the same and in the same position."</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:google-analytics &lt;analytics-id&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;analytics-id&gt; enter the specified id provided by Google Analytics, e.g. UA-123456-7</font>
+<font color='#555555'>;; &lt;p&gt;Writes the Google Analytics tracking code.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>google-analytics analytics-id<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> "
+	&lt;script type=&#092;&#034;text/javascript&#092;&#034;>
+		var gaJsHost <font color='#0000AA'>=</font> <font color='#AA0000'>(</font><font color='#AA0000'>(</font>&#092;&#034;https:&#092;&#034; == document.location.protocol<font color='#AA0000'>)</font> ? &#092;&#034;https://ssl.&#092;&#034; <font color='#0000AA'>:</font> &#092;&#034;http://www.&#092;&#034;<font color='#AA0000'>)</font><font color='#555555'>;</font>
+		document.write<font color='#AA0000'>(</font>unescape<font color='#AA0000'>(</font>&#092;&#034;%3Cscript src='&#092;&#034; <font color='#0000AA'>+</font> gaJsHost <font color='#0000AA'>+</font> &#092;&#034;google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E&#092;&#034;<font color='#AA0000'>)</font><font color='#AA0000'>)</font><font color='#555555'>;</font>
+		&lt;/script&gt;
+		&lt;script type=&#092;&#034;text/javascript&#092;&#034;>
+		try {
+			var pageTracker <font color='#0000AA'>=</font> _gat._getTracker<font color='#AA0000'>(</font>&#092;&#034;<font color='#008800'>"analytics-id"</font>&#092;&#034;<font color='#AA0000'>)</font><font color='#555555'>;</font>
+			pageTracker._trackPageview<font color='#AA0000'>(</font><font color='#AA0000'>)</font><font color='#555555'>;</font>
+		} <font color='#0000AA'>catch</font><font color='#AA0000'>(</font>err<font color='#AA0000'>)</font> <font color='#008800'>{}</font>
+	&lt;/script&gt;				
+	"<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Date Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:todays-date-german including actual time)</font>
+<font color='#555555'>;; &lt;p&gt;Writes todays date including time in german localization&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>todays-date-german<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set-locale</font> <font color='#008800'>"de_DE"</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#AA0000'>(</font><font color='#0000AA'>date</font> <font color='#AA0000'>(</font><font color='#0000AA'>date-value</font><font color='#AA0000'>)</font> <font color='#665500'>0</font> <font color='#008800'>"%A, den %d. %B %Y um %H:%M:%S Uhr"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:time-now)</font>
+<font color='#555555'>;; &lt;p&gt;Writes the actual time&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>time-now<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#AA0000'>(</font><font color='#0000AA'>date</font> <font color='#AA0000'>(</font><font color='#0000AA'>date-value</font><font color='#AA0000'>)</font> <font color='#665500'>0</font> <font color='#008800'>"%H:%M:%S"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Image Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:image &lt;image_name&gt; &lt;image_url&gt;, &lt;options&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;image_name&gt; a string containing the image alternative title</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;image_url&gt; a string containing the url</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;options&gt; optional settings like class, rel, width, height ...</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard HTML image.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>image image-name image-url, image-options<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;img src='"</font>image-url<font color='#008800'>"' alt='"</font>image-name<font color='#008800'>"' title='"</font>image-name<font color='#008800'>"' border='0' "</font>image-options<font color='#008800'>" /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Link Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:link_to &lt;link_name&gt; &lt;link_url&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;link_name&gt; a string containing the link's name</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;link_url&gt; a string containing the url</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard HTML link&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>link_to link-name link-url<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;a href='"</font>link-url<font color='#008800'>"'>"</font>link-name<font color='#008800'>"&lt;/a&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:link_mailto &lt;link_name&gt; &lt;options&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;name&gt; a string containing the link's name</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;options&gt; a string containing the url</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard HTML mailto link&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>link_mailto link-name link-url<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;a href='mailto:"</font>link-url<font color='#008800'>"'>"</font>link-name<font color='#008800'>"&lt;/a&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Form Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_open &lt;form_action&gt; &lt;form_method)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;name&gt; a string containing the form action</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;name&gt; a string containing the form submit method POST/GET</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard form open element&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-open form_action form_method<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;table&gt;&lt;form action='"</font>form_action<font color='#008800'>"' method='"</font>form_method<font color='#008800'>"'>"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_textfield &lt;form_name&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;name&gt; a string containing the text field name</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard form field with size '30'&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-textfield form_name<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tr class='form_row'>&lt;td class='form_label'>&lt;label for='"</font>form_name<font color='#008800'>"'>"</font><font color='#AA0000'>(</font><font color='#0000AA'>title-case</font> form_name<font color='#AA0000'>)</font><font color='#008800'>"&lt;/label&gt;&lt;/td&gt;&lt;td class='form_input'>&lt;input id='"</font>form_name<font color='#008800'>"' name='"</font>form_name<font color='#008800'>"' size='30' type='text' /&gt;&lt;/td&gt;&lt;/tr&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_submit &lt;form_value&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;value&gt; a string containing the value for the submit button</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard form submit button.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-submit form_value<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tr class='form_row'>&lt;td class='form_label'>&amp;nbsp&#059;&lt;/td&gt;&lt;td class='form_input'>&lt;input id='commit' type='submit' value='"</font>form_value<font color='#008800'>"' /&gt;&lt;/td&gt;&lt;/tr&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_hidden &lt;form_name&gt; &lt;form_value&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;form_name&gt; a string containing the name for the hidden field</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;form_value&gt; a string containing the value for the hidden field</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard form hidden field.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-hidden form_name form_value<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;input type='hidden' name='"</font>form_name<font color='#008800'>"' value='"</font>form_value<font color='#008800'>"' /&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_close)</font>
+<font color='#555555'>;; &lt;p&gt;Writes a form close tag&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-close<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;/form&gt;&lt;/table&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:form_generate-from-columns &lt;tablename&gt;)</font>
+<font color='#555555'>;; &lt;p&gt;Generates a form including input field from the given table.</font>
+<font color='#555555'>;; The form uses POST Method and refers to itself. It includes one hidden</font>
+<font color='#555555'>;; field called dragonfly_form, to detect form submit.</font>
+<font color='#555555'>;; &lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>form-generate-from-columns table<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'columns <font color='#AA0000'>(</font>sql3:columns table<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;table&gt;&lt;form id='form_"</font>table<font color='#008800'>"' action='./?"</font>templatename<font color='#008800'>"/"</font>find<font color='#008800'>"' method='POST'>"</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>dolist</font> <font color='#AA0000'>(</font>column_name columns<font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tr class='form_row'>&lt;td class='form_label'>&lt;label for='"</font>column_name<font color='#008800'>"'>"</font><font color='#AA0000'>(</font><font color='#0000AA'>title-case</font> column_name<font color='#AA0000'>)</font><font color='#008800'>"&lt;/label&gt;&lt;/td&gt;&lt;td class='form_input'>&lt;input id='"</font>column_name<font color='#008800'>"' name='"</font>column_name<font color='#008800'>"' size='30' type='text' /&gt;&lt;/td&gt;&lt;/tr&gt;"</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tr class='form_row'>&lt;td class='form_label'>&amp;nbsp&#059;&lt;/td&gt;&lt;td class='form_input'>&lt;input id='form_submit' type='submit' name='commit' value='Add' /&gt;&lt;/td&gt;&lt;/tr&gt;"</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;input type='hidden' name='databasetable' value='"</font>table<font color='#008800'>"' /&gt;"</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;/form&gt;&lt;/table&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Table Functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:table_open &lt;head_elements&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;head_elements&gt; a list containing the table head</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard table open element including a head, generated from a list.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>table_open table_head_elements<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'table_colspan table_head_elements<font color='#AA0000'>)</font> <font color='#555555'>;count of table_head_elements for defining a correct table-colspan</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> "
+	&lt;!-- BEGIN table -->
+	&lt;table&gt;
+	&lt;thead&gt;&lt;tr&gt;"
+		<font color='#AA0000'>(</font><font color='#0000AA'>dolist</font> <font color='#AA0000'>(</font>th-element table_head_elements<font color='#AA0000'>)</font>
+			<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>=</font> $idx <font color='#665500'>0</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;th class='table_firstcolumn'>"</font>th-element<font color='#008800'>"&lt;/th&gt;"</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;th&gt;"</font>th-element<font color='#008800'>"&lt;/th&gt;"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>)</font>
+	<font color='#008800'>"&lt;/tr&gt;&lt;/thead&gt;"</font>
+  <font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:table_data &lt;table_elements&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;table_elements&gt; a list containing all table elements (row by row, from left to right), including empty cells</font>
+<font color='#555555'>;; &lt;p&gt;Writes the table data generated from a list.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>table_data table_elements<font color='#AA0000'>)</font>
+	<font color='#555555'>; initialize maximum length per row with offset -1, because counting starts at "0"	</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'rowlength <font color='#AA0000'>(</font><font color='#0000AA'>length</font> table_colspan<font color='#AA0000'>)</font><font color='#AA0000'>)</font>	
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'rowlength <font color='#AA0000'>(</font><font color='#0000AA'>-</font> rowlength <font color='#665500'>1</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tbody&gt;"</font>
+			<font color='#AA0000'>(</font><font color='#0000AA'>dotimes</font> <font color='#AA0000'>(</font>i <font color='#665500'>1</font><font color='#AA0000'>)</font>
+				<font color='#AA0000'>(</font><font color='#0000AA'>dolist</font> <font color='#AA0000'>(</font>td-element table_elements<font color='#AA0000'>)</font>
+					<font color='#555555'>; here we do some modulo calculation to determine if a new row begins</font>
+					<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>=</font> <font color='#AA0000'>(</font><font color='#0000AA'>mod</font> $idx <font color='#AA0000'>(</font><font color='#0000AA'>length</font> table_colspan<font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#665500'>0</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;tr&gt;&lt;td class='table_firstcolumn'>"</font>td-element<font color='#008800'>"&lt;/td&gt;"</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;td&gt;"</font>td-element<font color='#008800'>"&lt;/td&gt;"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+					<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>=</font> <font color='#AA0000'>(</font><font color='#0000AA'>mod</font> $idx <font color='#AA0000'>(</font><font color='#0000AA'>length</font> table_colspan<font color='#AA0000'>)</font><font color='#AA0000'>)</font> rowlength<font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;/tr&gt;"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+				<font color='#AA0000'>)</font>
+			<font color='#AA0000'>)</font>	
+			<font color='#008800'>"&lt;/tbody&gt;"</font>
+  	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:table_footer &lt;table_footer_text&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;table_footer_text&gt; a string containing the table footer text</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard table footer with number of colspan generated from the last table-head.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>table_footer table_footer_text<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> "
+	&lt;tfoot&gt;&lt;tr&gt;&lt;td class='table_foot' colspan='<font color='#008800'>"(length table_colspan)"</font>'><font color='#008800'>"table_footer_text"</font>&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;"
+  <font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:table_close)</font>
+<font color='#555555'>;; &lt;p&gt;Writes a standard table close element.&lt;/p&gt;</font>
+<font color='#555555'>;; </font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>table_close<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>print</font> <font color='#008800'>"&lt;/table&gt;&lt;!-- END table -->"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !nldb Wrapper for a pure newLISP Database (flat)</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>create-sampledatabase, databasename<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font> <font color='#0000AA'>if</font> <font color='#AA0000'>(</font> <font color='#0000AA'>not</font> <font color='#AA0000'>(</font> <font color='#0000AA'>find</font> databasename <font color='#AA0000'>(</font> <font color='#0000AA'>directory</font> <font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#AA0000'>)</font> 
+	   <font color='#AA0000'>(</font> <font color='#0000AA'>begin</font>
+		 <font color='#AA0000'>(</font> nldb:create-table 'demo '<font color='#AA0000'>(</font> amount what where who datevalue <font color='#0000AA'>when</font> <font color='#AA0000'>)</font> <font color='#AA0000'>)</font> 
+	     <font color='#AA0000'>(</font> <font color='#0000AA'>set</font> 'financier_entry <font color='#AA0000'>(</font><font color='#0000AA'>list</font>  <font color='#008800'>"$10 "</font> <font color='#008800'>"Google AdWords"</font> <font color='#008800'>"Advertising"</font> <font color='#008800'>"Marc"</font> <font color='#AA0000'>(</font><font color='#0000AA'>date-value</font><font color='#AA0000'>)</font><font color='#AA0000'>(</font><font color='#0000AA'>date</font> <font color='#AA0000'>)</font> <font color='#AA0000'>)</font> <font color='#AA0000'>)</font>
+			<font color='#AA0000'>(</font><font color='#0000AA'>dotimes</font> <font color='#AA0000'>(</font>i <font color='#665500'>30</font><font color='#AA0000'>)</font>
+	     		<font color='#AA0000'>(</font> nldb:add-row 'demo  financier_entry <font color='#AA0000'>)</font>
+			<font color='#AA0000'>)</font>
+	     <font color='#AA0000'>(</font> nldb:save-db databasename <font color='#AA0000'>)</font>
+
+	   <font color='#AA0000'>)</font>
+	   <font color='#AA0000'>(</font>nldb:load-db databasename<font color='#AA0000'>)</font> <font color='#555555'>; else load existing database</font>
+	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>create-database, databasename<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>not</font> <font color='#AA0000'>(</font><font color='#0000AA'>find</font> databasename <font color='#AA0000'>(</font> <font color='#0000AA'>directory</font> <font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>begin</font>
+			<font color='#AA0000'>(</font>nldb:save-db databasename<font color='#AA0000'>)</font> <font color='#555555'>; creating database</font>
+		<font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font>nldb:load-db databasename<font color='#AA0000'>)</font> <font color='#555555'>; else load existing database</font>
+	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>create-table, databasename tablename fields<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>nldb:load-db databasename<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>nldb:create-table 'tablename fields <font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>nldb:save-db databasename<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:show-database)</font>
+<font color='#555555'>;; &lt;p&gt;Writes some information about the currently used nldb&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>show-database<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> "
+	&lt;div id='dragonfly_database-information' style='border:1px dotted #00aeef<font color='#555555'>; width:700px; padding:8px; margin-top:20px;' ></font>
+	&lt;h2&gt;Database information&lt;/h2&gt;&lt;pre&gt;
+	"<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>nldb:show<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;/pre&gt;&lt;/div&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !sqlite3 Wrapper</font>
+<font color='#555555'>;===============================================================================</font>
+
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:sqlite-open &lt;databasename&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;databasename&gt; string containing the database name</font>
+<font color='#555555'>;; &lt;p&gt;Open the SQLite database or creates it, if it does not exist.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-open databasename<font color='#AA0000'>)</font>
+	<font color='#555555'>;; close old connections</font>
+	<font color='#AA0000'>(</font>sql3:close<font color='#AA0000'>)</font>
+	
+	<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font>sql3:open databasename<font color='#AA0000'>)</font> 
+		<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'flashnotice <font color='#008800'>"Database was successfully opened or created."</font><font color='#AA0000'>)</font> 
+	<font color='#AA0000'>)</font> 	
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:sqlite-tables)</font>
+<font color='#555555'>;; &lt;p&gt;Shows the existing tables in the current database.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-tables<font color='#AA0000'>)</font> 
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> "
+	&lt;div id='dragonfly_database-information' style='border:1px dotted #00aeef<font color='#555555'>; width:800px; padding:8px; margin-top:20px;margin-bottom:20px' ></font>
+	&lt;h2&gt;Existing tables in SQLite Database&lt;/h2&gt;&lt;pre&gt;
+	"
+	<font color='#AA0000'>(</font>sql3:tables<font color='#AA0000'>)</font>"
+	&lt;/pre&gt;&lt;/div&gt;"<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:sqlite-columns)</font>
+<font color='#555555'>;; &lt;p&gt;Shows the existing columns in a given table.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-columns table<font color='#AA0000'>)</font> 
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> "
+	&lt;div id='dragonfly_database-information' style='border:1px dotted #00aeef<font color='#555555'>; width:800px; padding:8px; margin-top:20px;margin-bottom:20px' ></font>
+	&lt;h2&gt;Existing columns in SQLite table &lt;i&gt;<font color='#008800'>"table"</font>&lt;/i&gt;&lt;/h2&gt;&lt;pre&gt;
+	"
+	<font color='#AA0000'>(</font>sql3:columns table<font color='#AA0000'>)</font>"
+	&lt;/pre&gt;&lt;/div&gt;"<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-empty-table table<font color='#AA0000'>)</font> 
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'query <font color='#AA0000'>(</font><font color='#0000AA'>append</font> <font color='#008800'>"DELETE FROM "</font>table<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>sql3:sql query<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-query query<font color='#AA0000'>)</font> 
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'sqlarray <font color='#AA0000'>(</font>sql3:sql query<font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#555555'>; results of query</font>
+	<font color='#555555'>;; close old connections</font>
+	<font color='#AA0000'>(</font>sql3:close<font color='#AA0000'>)</font>	
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-insert table values<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'query <font color='#AA0000'>(</font><font color='#0000AA'>append</font> <font color='#008800'>"INSERT INTO "</font>table<font color='#008800'>" VALUES ("</font>values<font color='#008800'>")"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font>sql3:sql query<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>sqlite-get-tabledata query<font color='#AA0000'>)</font> 
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'sqlarray <font color='#AA0000'>(</font>sql3:sql query<font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#555555'>; results of query</font>
+	
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !twitter functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#555555'>;; <font color='#308080'>@syntax</font> (Dragonfly:twitter-search &lt;keyword&gt;)</font>
+<font color='#555555'>;; <font color='#308080'>@param</font> &lt;keyword&gt; string containing the keyword for search</font>
+<font color='#555555'>;; &lt;p&gt;Writes the results of the search in nice speech bubbles.&lt;/p&gt;</font>
+<font color='#555555'>;;</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>twitter-search keyword rpp<font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'xml <font color='#AA0000'>(</font><font color='#0000AA'>get-url</font> <font color='#AA0000'>(</font><font color='#0000AA'>string</font> <font color='#008800'>"http://search.twitter.com/search.atom?rpp="</font>rpp<font color='#008800'>"&amp;q="</font>keyword<font color='#AA0000'>)</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>xml-type-tags</font> <font color='#0000AA'>nil</font> <font color='#0000AA'>nil</font> <font color='#0000AA'>nil</font> <font color='#0000AA'>nil</font><font color='#AA0000'>)</font> <font color='#555555'>; no extra tags</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'sxml <font color='#AA0000'>(</font><font color='#0000AA'>xml-parse</font> xml <font color='#665500'>31</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font> <font color='#555555'>; turn on SXML options</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'entry-index <font color='#AA0000'>(</font><font color='#0000AA'>ref-all</font> '<font color='#AA0000'>(</font>entry <font color='#0000AA'>*</font><font color='#AA0000'>)</font> sxml <font color='#0000AA'>match</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>when</font> <font color='#AA0000'>(</font><font color='#0000AA'>empty?</font> entry-index<font color='#AA0000'>)</font>
+    <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"No entries found"</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;div id='twitter_search_results'>&lt;h3&gt;You searched for '"</font>keyword<font color='#008800'>"' and we found&lt;/h3&gt;"</font><font color='#AA0000'>)</font>
+  <font color='#AA0000'>(</font><font color='#0000AA'>dolist</font> <font color='#AA0000'>(</font>idx entry-index<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;div class='bubble'>&lt;blockquote&gt;&lt;p&gt;"</font><font color='#AA0000'>)</font>    
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'entry <font color='#AA0000'>(</font>sxml idx<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+    <font color='#AA0000'>(</font><font color='#0000AA'>println</font> 
+				<font color='#AA0000'>(</font><font color='#0000AA'>lookup</font> 'title entry<font color='#AA0000'>)</font> 
+				<font color='#008800'>"&lt;/p&gt;&lt;/blockquote&gt;"</font>
+				<font color='#008800'>"&lt;cite&gt;&lt;strong&gt;"</font>
+				<font color='#AA0000'>(</font><font color='#0000AA'>lookup</font> '<font color='#AA0000'>(</font>author <font color='#0000AA'>name</font><font color='#AA0000'>)</font> entry <font color='#AA0000'>)</font> <font color='#008800'>"&lt;/strong&gt; on "</font> 
+			 	<font color='#AA0000'>(</font><font color='#0000AA'>lookup</font> 'published entry<font color='#AA0000'>)</font> <font color='#008800'>"&lt;/cite&gt;&lt;/div&gt;"</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"&lt;/div&gt;"</font><font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !SEO functions (just ideas - really alpha!!!)</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>clean-html<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'page <font color='#AA0000'>(</font><font color='#0000AA'>get-url</font> <font color='#008800'>"http://www.marchildmann.de/"</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>replace</font> <font color='#008800'>"<[^>]*>"</font> page <font color='#008800'>""</font> <font color='#665500'>0</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>println</font> page<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+   
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>check-meta-description<font color='#AA0000'>)</font>
+	
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'description "&lt;meta name=&#092;&#034;description&#092;&#034;`
+	      content=&#092;&#034;newLISP is a general purpose scripting language <font color='#0000AA'>for</font> developing web applications <font color='#0000AA'>and</font> programs in general <font color='#0000AA'>and</font> in the domains of artificial intelligence <font color='#AA0000'>(</font>AI<font color='#AA0000'>)</font> <font color='#0000AA'>and</font> statistics.&#092;&#034;>"<font color='#AA0000'>)</font>
+	<font color='#555555'>;;(println (regex "&lt;meta name=&#092;&#034;description&#092;&#034; content=&#092;&#034;(.*)&#092;&#034;>/i" "&lt;meta name=&#092;&#034;description&#092;&#034;`</font>
+	<font color='#555555'>;;	      content=&#092;&#034;newLISP is a general purpose scripting language for developing web applications and programs in general and in the domains of artificial intelligence (AI) and statistics.&#092;&#034;>"))</font>
+	<font color='#555555'>;;(println $0)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'description-length <font color='#AA0000'>(</font><font color='#0000AA'>length</font> description<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>or</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'><</font> description-length <font color='#665500'>60</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"Your meta description with "</font>description-length<font color='#008800'>" characters is too short."</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>></font> description-length <font color='#665500'>170</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"Your meta description with "</font>description-length<font color='#008800'>" characters is too long."</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>and</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>>=</font> description-length <font color='#665500'>60</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'><=</font> description-length <font color='#665500'>170</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"Your meta description with "</font>description-length<font color='#008800'>" characters is ideal."</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>check-meta-keywords keywords<font color='#AA0000'>)</font>
+	
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'number-keywords <font color='#AA0000'>(</font><font color='#0000AA'>length</font> keywords<font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>or</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'><</font> number-keywords <font color='#665500'>5</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"The number of meta-keywords "</font>number-keywords<font color='#008800'>" are too small."</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>></font> number-keywords <font color='#665500'>10</font><font color='#AA0000'>)</font> <font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"The number of meta-keywords "</font>number-keywords<font color='#008800'>" are too much."</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>and</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'>>=</font> number-keywords <font color='#665500'>5</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>if</font> <font color='#AA0000'>(</font><font color='#0000AA'><=</font> number-keywords <font color='#665500'>10</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>println</font> <font color='#008800'>"Your number of meta-keywords "</font>number-keywords<font color='#008800'>" are ideal."</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+<font color='#555555'>;===============================================================================</font>
+<font color='#555555'>; !Google functions</font>
+<font color='#555555'>;===============================================================================</font>
+
+<font color='#AA0000'>(</font><font color='#0000AA'>define</font> <font color='#AA0000'>(</font>google-results-domain domain<font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'json <font color='#AA0000'>(</font><font color='#0000AA'>get-url</font> <font color='#AA0000'>(</font><font color='#0000AA'>string</font> <font color='#008800'>"http://ajax.googleapis.com/ajax/services/search/web?v=1.0&amp;q="</font>domain<font color='#AA0000'>)</font><font color='#AA0000'>)</font><font color='#AA0000'>)</font>
+	<font color='#AA0000'>(</font><font color='#0000AA'>begin</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>regex</font> <font color='#008800'>"&#092;&#034;estimatedResultCount&#092;&#034;:&#092;&#034;(.*)&#092;&#034;,"</font> json<font color='#AA0000'>)</font>
+		<font color='#AA0000'>(</font><font color='#0000AA'>set</font> 'erc $1<font color='#AA0000'>)</font>	
+	<font color='#AA0000'>)</font>
+<font color='#AA0000'>)</font>
+
+
+<font color='#AA0000'>(</font><font color='#0000AA'>context</font> MAIN<font color='#AA0000'>)</font>
+
+</pre><center><font face='Arial' size='-3' color='#666666'>syntax highlighting with <a href="http://newlisp.org">newLISP</a>&nbsp;and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a></font></center></body></html>

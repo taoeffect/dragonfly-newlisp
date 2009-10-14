@@ -1,0 +1,280 @@
+/* RESET STYLES AT FIRST */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; font-weight: inherit; font-style: inherit; font-size: 100%; font-family: inherit; vertical-align: baseline; background: transparent;  }
+
+:focus { outline: 0; } 
+caption, th, td { text-align: left; font-weight: normal; }
+a { color: #000000; text-decoration: none; }
+a:hover {  text-decoration: underline; }
+
+body {
+	font: 11px 'Arial';
+	background: white !important;
+	/* background: #00D6D9; */
+	padding-left:50px;
+}
+
+.clear {
+	clear:both;
+	margin-top:11px;
+	margin-bottom:11px;
+}
+
+/* Wrap */
+
+#wrap .inner{
+	width:480px;
+	margin:0 auto;
+}
+
+/* Header */
+
+#header{
+	margin-top: 42px;
+}
+
+/* Navigation */
+#header ul {
+	width: 480px;
+	margin-top:15px;
+}
+
+	#header ul li {
+		display: inline;
+		font-size:14px;
+		font-weight:bold;
+		padding: 6px;
+		margin-right: 12px;
+	}
+
+	#header ul li:hover {
+		background: #000000;			
+	}
+
+	#header ul li:hover a {
+		color: #fff;
+		text-decoration:none;			
+	}
+	
+	#header ul li.active{
+		background: #000;	
+	}
+	
+	#header ul li.active a{
+		color: #FFF;
+	}
+
+/* Clear Lines */
+
+.line-dotted {
+	height: 1px;
+	margin: 25px 0 25px;
+	border-top: 1px dotted #c1c1c1;
+}
+
+.line-solid {
+	height: 1px;
+	margin: 25px 0 25px;
+	border-top: 1px solid #c1c1c1;
+}
+
+
+
+/* Content Styling */
+#content {
+	width: 480px;
+	float: left;
+	margin-top: 5px;
+}
+
+	#content img {
+		border: 1px solid #c1c1c1;
+		padding: 2px;
+		margin-bottom:11px;
+	}
+	
+	#content h1 {
+		font-size:26px;
+		font-weight:bold;
+		margin-bottom:12px;
+	}
+	
+	#content h2 {
+		font-size:22px;
+		font-weight:bold;
+		margin-top:22px;
+	}
+
+	#content h3 {
+		font-size:18px;
+		font-weight:bold;
+		margin-top:18px;
+	}
+
+	#content h4 {
+		font-size:14px;
+		font-weight:bold;
+	}
+
+	/* Paragraph styles */
+	
+	#content p {
+		font-size:12px;
+		line-height:17px;
+	}
+	
+	#content .author {
+		color:#00aeef;
+		margin-top:2px;
+		margin-bottom:6px;
+	}
+
+	#content .extract {
+		font-style: italic;
+		font-size: 12px;
+		margin-bottom:24px;
+	}
+	
+	#content ul, ol {
+		margin-top:12px;
+		padding-left:25px;
+	}
+	
+	#content li {
+		font-size:12px;
+		line-height:17px;
+	}
+
+	/* Title Styling */
+	#content .title,
+	#content-full .title{
+		height: 25px;
+		background: #000000;
+		margin: 25px 0 25px;
+	}
+
+	#content .title p,
+	#content-full .title p{
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: bold;
+		padding: 5px 8px;
+	}
+
+	#content .title.nomargin,
+	#content-full .title.nomargin {
+		margin: 0;
+		margin-bottom: 20px;
+	}
+
+
+/* nice table definitions */
+
+	table {
+		font-family:Tahoma,Verdana,Arial,sans-serif;
+		padding:0;
+		empty-cells:show;
+		border-spacing:0px;
+		background-color:#ffffff;
+	}
+
+	table th {
+		font-size:12px;
+		border-bottom:2px solid #000000;		
+		border-left:1px solid #000000;
+		padding-top:4px;
+		padding-bottom:4px;		
+		padding-left:10px;
+	}
+
+	table td {
+		font-size:10px;
+		padding-top:4px;
+		padding-bottom:4px;		
+		padding-left:10px;
+		border-left:1px solid #000000;
+		border-bottom:1px solid #000000;		
+	}
+
+	.table_foot {
+		border:0;
+	}
+
+	.table_firstcolumn {
+		border-left:0px;
+	}
+
+	.table_lastrow {
+		height:20px;
+		border-bottom:none;
+	}
+	
+
+
+/* Dragonfly User Guide Menu */
+
+#menu {
+		width: 470px;
+		display: block;
+		background: #000000;
+		opacity:0.9;
+		-webkit-box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.25);
+		-moz-box-shadow: rgba(0,0,0,0.25) 0.25em 0.25em 1em;	
+		color: #ffffff;
+		padding:5px;
+		position: absolute;
+		z-index: 10;
+		margin-top:5px;
+		padding-bottom:10px;
+}
+
+#menu dt {
+	font-weight: bold;
+	font-size: 13px;
+	color:#00aeef;
+}
+
+#menu dd {
+	padding-left:5px;
+	font-weight: normal;
+	font-size: 11px;
+}
+	
+#menu dt { padding:0; margin:8px 0 0 0;}
+#menu a { color: #ffffff; background: none !important;}
+#menu .L, #menu .R {float: left; width: 50%; margin: 0; padding: 0;}
+#menu .R { float: right; }
+
+/* Dragonfly Styles */
+
+#dragonfly_benchmark {
+	font-size:11px;
+	color:#303030;
+}
+
+#dragonfly_logo {
+	font-size:12px;
+	color:#00AEEF;
+}
+
+#dragonfly_logo a {
+	color:#00AEEF;
+	text-decoration:none;
+}
+
+#dragonfly_panel {
+	font-size:12px;
+	color:#FFFFFF;
+}
+
+.dragonfly_panel_uppercase {
+	color:#FFFFFF;
+	font-size:10px;	
+	text-transform:uppercase;
+}
+
+.dragonfly_uppercase {
+	color:#303030;
+	font-size:10px;	
+	text-transform:uppercase;
+}
+

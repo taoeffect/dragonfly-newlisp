@@ -1,0 +1,47 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "| marchildmann.com") %><p>
+		</div>
+		
+		<img src="../images/houses.jpg" class="border" alt="Houses" width="474" height="267"/>
+		
+		
+		<h1>We did the best we can ...</h1>
+		<p class="author">Written by Marc Hildmann</p>
+		<p class="extract">... but didn't find anything in our templates or in a database. SORRY!</p>
+		<p>This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. <a href="#">Read more</a></p>
+
+		<h2>We did the best we can ...</h2>
+		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
+
+		<h3>We did the best we can ...</h3>
+		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
+
+		<h4>We did the best we can ...</h4>
+		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
+		
+		<div class="line-dotted"></div>
+
+
+		<% (Dragonfly:benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>
+

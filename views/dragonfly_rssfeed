@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>An RSS Blog - Daily News and Information Related to RSS Feeds, Syndication and Aggregation.</title>
+        <description>Daily RSS Blog and news related to RSS, really simple syndication, rdf, blogs, syndication and news aggregation. Information related to marketing RSS, new RSS software releases, beta test opportunities, new RSS directories and discussions of opportunities related to RSS.</description>
+        <link>http://www.rss-specifications.com/blog.htm</link>
+        <lastBuildDate>Wed, 22 Jul 2009 15:28:30 -0400</lastBuildDate>
+        <pubDate>Tue, 28 Nov 2006 09:00:00 -0500</pubDate>
+        <generator>FeedForAll v2.0 (2.0.1.0) http://www.feedforall.com</generator>
+        <image>
+            <url>http://www.rss-specifications.com/rss-spec-rss.gif</url>
+            <title>RSS Specifications</title>
+            <link>http://www.rss-specifications.com</link>
+            <description>RSS specifications, everything you need to know about rss.</description>
+            <width>88</width>
+            <height>31</height>
+        </image>
+        <item>
+            <title>How to use XSLT to style an RSS feed</title>
+            <description>XSLT is a fairly well-supported technology. It allows you take any XML file – including RSS – and transform it into an styled HTML document. It is kind of like CSS on steroids.&lt;br /&gt;
+ &lt;br /&gt;
+&lt;a href=&quot;http://nfriedly.com/techblog/2009/06/how-to-use-xslt-to-style-an-rss-feed/&quot; target=&quot;_blank&quot; &gt;How to use XSLT to style an RSS feed&lt;/a&gt;</description>
+            <link>http://www.rss-specifications.com/blog.htm#1096</link>
+            <guid isPermaLink="false">1096</guid>
+            <pubDate>Thu, 23 Jul 2009 09:00:00 -0400</pubDate>
+        </item>
+        <item>
+            <title>ABCs of Web 2.0</title>
+            <description>Web 2.0 is a perceived transition of the Web to web-based applications. Web 2.0 is the next generation of technology solutions where interactive content is the norm.&lt;br /&gt;
+&lt;br /&gt;
+There is no agreement on exactly what Web 2.0 means. Check out the &lt;a href=&quot;http://www.small-business-software.net/abcs-of-web-2.htm&quot; target=&quot;_blank&quot; &gt;ABCs of Web 2.0&lt;/a&gt;</description>
+            <link>http://www.rss-specifications.com/blog.htm#1027</link>
+            <guid isPermaLink="false">1027</guid>
+            <pubDate>Fri, 17 Apr 2009 09:00:00 -0400</pubDate>
+        </item>
+    </channel>
+</rss>

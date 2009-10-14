@@ -1,0 +1,43 @@
+
+/* twitter search definitions */
+
+#twitter_search_results {
+	width:260px;
+}
+
+#twitter_search_results p {
+	font-size:11px;
+}
+
+/* normal bubble */
+
+.bubble p { margin-top:20px; font-size: 12px; }
+.bubble cite { font-size: 12px; font-weight:bold; margin-bottom:10px;}
+
+
+div.bubble {
+	width: auto;
+	font-size: 0.75em;
+	margin-bottom: 24px;
+}
+
+div.bubble blockquote {
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #c9c2c1;
+	background-color: #fff;
+}
+
+div.bubble blockquote p {
+	margin: 10px;
+	padding: 0px;
+}
+
+div.bubble cite {
+	position: relative;
+	margin: 0px;
+	padding: 7px 0px 0px 15px;
+	top: 6px;
+	background: transparent url(../images/tip.gif) no-repeat 20px 0;
+	font-style: normal;
+}

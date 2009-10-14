@@ -1,0 +1,46 @@
+<% (Dragonfly:partial "doctype") %>
+<% (Dragonfly:partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (Dragonfly:partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (Dragonfly:title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Using newLISP Database</h1>
+		<% (Dragonfly:use-database "blog.nldb") %>
+		<% 
+			(if (= Dragonfly:action "save")
+				(Dragonfly:new-row "blog.nldb" 'entries Web:POST) 
+			)
+		%>
+		<% (Dragonfly:create-table "blog.nldb" 'entries (list "ID" "Headline" "Text" "Author")) %>
+		<% (Dragonfly:table_open (nldb:list-columns entries)) %>
+		<% (set 'query (nldb:select-rows 'entries true true)) %>
+		<% (map Dragonfly:table_data query) %>
+		<% (Dragonfly:table_close) %>
+		<br/><br/>
+
+		<% (Dragonfly:form-generate-from-columns "blog.nldb" entries) %>
+		
+		<div class="line-dotted"></div>
+
+
+		<% (Dragonfly:benchmark-result) %>
+		
+		<div class="line-solid"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (Dragonfly:partial "footer") %>
+

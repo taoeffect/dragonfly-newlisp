@@ -1,0 +1,2 @@
+<% (Dragonfly:twitter-search "michael jackson" "1") %>
+<% (exit) %>
