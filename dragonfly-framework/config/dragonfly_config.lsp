@@ -4,6 +4,9 @@
 
 (context 'Dragonfly)
 
+; location of newlisp shared directory (for module support)
+(constant 'newlisp-dir "/usr/share/newlisp")
+
 ; setting a defaultview
 (constant 'defaultview "dragonfly_welcome")
 ; setting a defaultaction

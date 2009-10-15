@@ -46,9 +46,9 @@
 (constant 'http-400 "Status: 400 Bad Request\r\n")
 (constant 'http-401 "Status: 401 Unauthorized\r\n")
 (constant 'http-403 "Status: 403 Forbidden\r\n")
-(constant 'http-404 "Status: Not Found\r\n")
-(constant 'http-410 "Status: Gone\r\n")
-(constant 'http-500 "Status: Internal Server Error\r\n")
+(constant 'http-404 "Status: 404 Not Found\r\n")
+(constant 'http-410 "Status: 410 Gone\r\n")
+(constant 'http-500 "Status: 500 Internal Server Error\r\n")
 
 (constant 'http-html-header "Content-Type: text/html; charset=utf-8\r\nConnection: keep-alive\r\n")
 (constant 'http-xml-header "Content-Type: text/xml; charset=utf-8\r\nConnection: keep-alive\r\n")
@@ -336,9 +336,7 @@
 ;; <p>Evaluates the partial and returns it.</p>
 ;; 
 (define (partial partialname)
-	(set 'path-to-partials partials-path)	
-  	(push partialname path-to-partials -1)
-  	(Web:eval-template (read-file path-to-partials))
+  	(Web:eval-template (read-file (append partials-path partialname)))
 )
 
 ;; @syntax (Dragonfly:title <websitename>)
