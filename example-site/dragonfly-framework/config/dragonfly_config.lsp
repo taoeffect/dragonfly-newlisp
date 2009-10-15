@@ -1,11 +1,11 @@
-;===============================================================================
-; !Defining new context
-;===============================================================================
-
 (context 'Dragonfly)
 
 ; location of newlisp shared directory (for module support)
 (constant 'newlisp-dir "/usr/share/newlisp")
+
+; location of RESTful resources (relative to DOCUMENT_ROOT)
+(constant 'restful-dir "views")
+
 
 ; setting a defaultview
 (constant 'defaultview "dragonfly_welcome")
