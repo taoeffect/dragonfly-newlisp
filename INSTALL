@@ -1,0 +1,51 @@
+Congratulations on choosing Dragonfly!
+
+Setting up Dragonfly is easy, there are only two steps, copying files,
+and changing the configuration to suit your site. Typically the configuration
+needs no adjusting, but depending on your situation you may need to make some
+adjustments.
+
+Dragonfly requires the following to work:
+
+      * newLISP v10.1 or greater.
+      * For magic redirection Apache web server is required.
+
+If you meet those requirements, great! If you're using a custom web server,
+you might want to setup your own redirection script based on the .htaccess file.
+
+ ==========================
+ = Step 1 - Copying Files =
+ ==========================
+
+There are three things you'll need to copy into your site's root to install
+Dragonfly. You'll find these files inside the 'example-site' folder.
+
+1) The 'dragonfly-framework' folder
+2) index.cgi
+3) .htaccess (this file is hidden)
+
+By "site root" we mean the folder that represents your basic web address,
+for example if your website is located at:
+
+	http://wwww.example-site.com/
+	
+And on your webserver that is represented by this folder (called the "site root"):
+
+	/home/www/example-site.com/
+	
+Then that's the folder you'll want to copy the files into.
+
+ ================================
+ = Step 2 - Configure Dragonfly =
+ ================================
+
+Edit the 'dragonfly_config.lsp' file in dragonfly-framework/config/dragonfly_config.lsp
+
+Read through the comments (they begin with a semi-colon) for instructions on
+what the settings are for.
+
+If you want to prevent .html files from being processed through Dragonfly, open the
+.htaccess file in the site root and read the comments there for how to disable that behavior.
+
+
+TODO: discuss installing and using plugins.
