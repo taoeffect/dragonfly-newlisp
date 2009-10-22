@@ -63,10 +63,10 @@
 
 ; load utils.lsp before loading anything else
 (load (string DRAGONFLY_ROOT "/lib/utils.lsp"))
-
-; next load lib, and plugins, in that order
+; load all our essential stuff
 (load-files-in-dir (string DRAGONFLY_ROOT "/lib") "\.lsp$")
-(load-files-in-dir (string DRAGONFLY_ROOT "/plugins-active") "\.lsp$")
+; plugins are loaded when listener is called so that they
+; can modify the variables in this file is they want.
 
 ;===============================================================================
 ; !Setup Default Routes
@@ -134,41 +134,15 @@
 	)
 )
 
-(define-subclass (Route.ALL Route)
-	((matches?) true)
-	((run)
-		(DF:log-debug "Route.ALL for QUERY_STRING: " QUERY_STRING)
-		(DF:display-error 404)
-	)
-)
-
 (context 'Dragonfly)
 
 (if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
 (if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
 (if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes -1))
-(push (Route.ALL) dragonfly-routes -1)
-
-; TODO: these either need to be deleted or moved elsewhere
-; set the paths to views and partials
-
 
 ;===============================================================================
-; !Core Functions
+; !Public Functions
 ;===============================================================================
-
-; setup our error handler
-(define (error-handler)
-	(Response:status 500)
-	(Response:content-type Response:text-type)
-	(Response:send-headers)
-	(MAIN:println (last (last-error))) ; TODO: make a nice template for this
-	;(log-err "Got error (" (last (last-error)) ") with STDOUT contents:\n{" STDOUT "}")
-	(log-err (last (last-error)))
-	(exit)
-)
-
-(error-event error-handler)
 
 (define (view-path viewname)
 	(string VIEWS_PATH "/" viewname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
@@ -190,24 +164,58 @@
 	(Web:eval-template (read-file (view-path viewname)))
 )
 
-(define (display-error error-code)
+(define (display-error error-code (clear-stdout true))
 	(Response:status error-code)
+	(if clear-stdout (set 'STDOUT ""))
+	
 	(unless (display-view (string error-code))
 		(log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
 		(Web:eval-template ERROR_TEMPLATE)
 	)
 )
 
+; our main entry-point. this calls exit.
 (define (listener)
+	; we load these here so that they can modify any of the variables in this file
+	(load-files-in-dir (string DRAGONFLY_ROOT "/plugins-active") "\.lsp$")
+	
+	; go through 
 	(dolist (route dragonfly-routes)
 		(when (:matches? route)
 			(:run route)
-			(Response:send-headers)
-			(MAIN:println STDOUT)
-			(exit)
+			(send-and-exit)
 		)
 	)
+	
+	(log-info "no route matched for QUERY_STRING: " QUERY_STRING)
+	(display-error 404)
+	(send-and-exit)
 )
+
+;===============================================================================
+; !Private Functions (i.e. you shouldn't ever call these)
+;===============================================================================
+
+(define (send-and-exit)
+	(Response:send-headers)
+	(MAIN:println STDOUT)
+	(exit)
+)
+
+; setup our error handler
+(define (error-handler)
+	(Response:status 500)
+	(Response:content-type Response:text-type)
+	
+	;(log-err "Got error (" (last (last-error)) ") with STDOUT contents:\n{" STDOUT "}")
+	(log-err (last (last-error)))
+	
+	(set 'STDOUT "") ; clear STDOUT
+	(println (last (last-error)))
+	(send-and-exit)
+)
+
+(error-event error-handler)
 
 ;===============================================================================
 ; !Private Variables
