@@ -13,7 +13,7 @@
 				(push (list code description) status-codes))
 			(setf status-code code)
 		)
-		status-code
+		(list status-code (lookup status-code status-codes))
 	)
 )
 
