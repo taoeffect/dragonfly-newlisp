@@ -180,7 +180,7 @@
 ;; @syntax (Dragonfly:partial <partial>)
 ;; @param <partial> name of partial
 ;; <p>Evaluates the partial and returns it.</p>
-;; 
+
 (define (partial partialname)
   	(Web:eval-template (read-file (string PARTIALS_PATH "/" partialname)))
 )
