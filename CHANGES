@@ -14,7 +14,7 @@ Version 0.20
 Version 0.19
 
   * modified Dragonfly:view; now it displays an error view if a file is not found
-  * moved the constant "default404" into dragonfly_config.lsp
+  * moved the constant "DEFAULT404" into dragonfly_config.lsp
   * added the function autoload-css; this function checks automatically for an iPhone and loads a different stylesheet
 
 
@@ -44,11 +44,11 @@ Version 0.14
   * removed the directory "actions" (it's now obsolet)
   * renamed the directory "templates" into "views"
   * renamed the function "Dragonfly:template" into "Dragonfly:view"
-  * added the constants "defaultview" and "defaultaction"
-  * added the constants "views-path" and "partials-path"
+  * added the constants "DEFAULTVIEW" and "DEFAULTACTION"
+  * added the constants "VIEWS_PATH" and "PARTIALS_PATH"
   * added an improved version of Dragonfly:listener contributed by cormullion
   * modified the .htaccess (also contributed by cormullion)
-  * improved the link_to function - it automatically checks if it can use .htaccess or not; it also uses the defaultaction now
+  * improved the link_to function - it automatically checks if it can use .htaccess or not; it also uses the DEFAULTACTION now
 
 Version 0.13
 

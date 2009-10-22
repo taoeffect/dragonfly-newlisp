@@ -1,6 +1,7 @@
 Congratulations on choosing Dragonfly!
 
-Start this application on your localhost OS X
-newlisp -http -d PORT -w /Users/USERNAME/Sites/DIRECTORY &
+'cd' into the example-site folder and run this command:
+
+	newlisp -d 8080 -w . -http
 
 Open Your browser and type localhost:8080 - have FUN!

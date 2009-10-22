@@ -2,7 +2,7 @@
 	<title><% (Dragonfly:title "Dragonfly web framework - User Guide") %></title>
 	<% (Dragonfly:meta "author" "Marc Hildmann") %>
 	<% (Dragonfly:meta "keywords" "newlisp, framework, dragonfly, web framework") %>
-	<% (Dragonfly:css "screen" "/css/screen.css") %>
-	<% (Dragonfly:script "/js/dragonfly.js") %>
+	<% (Dragonfly:css "screen" "/includes/css/screen.css") %>
+	<% (Dragonfly:script "/includes/js/dragonfly.js") %>
 	<% (Dragonfly:rss "Dragonfly web framework RSS Feed" "/dragonfly_rssfeed/xml") %>
 </head>

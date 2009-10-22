@@ -38,13 +38,13 @@
              ; mustn't duplicate columns
              (if (empty? (intersect new-column-list columns))
                  (setf table
-                     (cons (append columns new-column-list)
-                         (map  (fn (r) (append r (dup value (length new-column-list)))) 
+                     (cons (string columns new-column-list)
+                         (map  (fn (r) (string r (dup value (length new-column-list)))) 
                                (rest table))))))))
 
 (define (truncate data-list size)
 ;; @syntax (truncate data-list size)
-  (0 size (append data-list (dup nil size))))
+  (0 size (string data-list (dup nil size))))
 
 (define (add-row table-name data)
 ;; @syntax (add-row table-name data)
@@ -210,7 +210,7 @@
 (define (show)
 ;; @syntax (show)
 ;; Show the database
-  (println 
+  (println
     (dup "_" 60) "\n"
     "Contents of database "  (context)  "\n"
     " " (length tables) " table" (if (> (length tables) 1) "s" "") ": " tables "\n")

@@ -2,72 +2,11 @@
 ;; @module Web
 ;; @author Jeff Ober <jeffober@gmail.com>
 ;; @version 0.3.1 beta
-;; @location http://static.artfulcode.net/newlisp/web.lsp
-;; @package http://static.artfulcode.net/newlisp/web.qwerty
-;; @description A collection of functions for writing web-based software.
-;; <b>Features:</b>
-;; <ul>
-;;   <li>ASP/PHP-style templates</li>
-;;   <li>Cookies</li>
-;;   <li>Entities translation</li>
-;;   <li>GET/POST parameters</li>
-;;   <li>HTTP header control</li>
-;;   <li>Sessions</li>
-;;   <li>URL building and parsing</li>
-;;   <li>URL encoding and decoding</li>
-;;   <li>query building and parsing</li>
-;; </ul>
-;; <b>Known issues</b>
-;; <ul>
-;;   <li>
-;;     When used in conjunction with the official @link http://newlisp.nfshost.com/code/modules/cgi.lsp.html CGI
-;;     module, @link http://newlisp.nfshost.com/code/modules/cgi.lsp.html CGI must be loaded first. In the case of
-;;     identical GET and POST parameters, the value is stored in GET, but the value will be POST. This
-;;     is due to the fact that CGI stores both GET and POST in the same association list and overwrites
-;;     GET values with POST.
-;;   </li>
-;; </ul>
-;; 
-;; <b>Note:</b> for JSON encoding and decoding, see the @link http://static.artfulcode.net/newlisp/json.lsp.html Json module.
-;; 
-;; <h4>To do</h4>
-;; &bull; add MIME decoding for multipart posts
 ;;
-;; <h4>Version history</h4>
-;; <b>0.3.1</b>
-;; &bull; fixed ineffective usage of set/setf
-;;
-;; <b>0.3</b>
-;; &bull; made parse-query more tolerant and fixed parsing bug
-;; &bull; cookie now accepts an additional parameter that only permits access during HTTPS sessions
-;; 
-;; <b>0.2</b>
-;; &bull; build-url now accepts query strings in addition to assoc lists
-;; &bull; session-id now accepts an optional parameter to set the session id
-;; &bull; fixed some typos with 'clean-sessions'
-;; &bull; fixed extra parameter in 'define-session-handlers'
-;; 
-;; <b>0.1</b>
-;; &bull; initial release
-;; 
+;; Modifictations (in C-style) by Greg Slepak <greg at taoeffect.com>
+;; Based on version 0.3.1 beta by Jeff, located here:
+;; http://static.artfulcode.net/newlisp/web.lsp.html
 (context 'Web)
-
-;===============================================================================
-; !Constants and definitions
-;===============================================================================
-
-(constant 'POST_LIMIT 4096)
-
-(define GET)
-(define POST)
-(define COOKIE)
-
-(define SESSION_DIR "/tmp")
-(define SESSION_MAX_AGE (* 60 60 24 7)) ; seconds
-(define SESSION_KEY "NLWSESID")
-(define SESSION_PREFIX "NLWSES")
-(define SESSION_STARTED)
-(define SESSION_ID) ; stores the current session id
 
 ;===============================================================================
 ; !Encoding and decoding
@@ -217,7 +156,7 @@
 (define (hex-decode-char ch)
   (when (starts-with ch "%")
     (pop ch))
-  (char (int (append "0x" $1))))
+  (char (int (string "0x" $1))))
 
 ;; @syntax (Web:url-encode <str>)
 ;; @param <str> a string token to encode for use in a URL
@@ -238,18 +177,6 @@
 (define (url-decode str)
   (replace "+" str " ")
   (replace REGEX_HEX_ENCODED_CHAR str (hex-decode-char $1) 0x10000))
-
-;; @syntax (Web:parse-query <query-string>)
-;; @param <query-string> a URL-encoded query string
-;; @return an association list of decoded key-value pairs
-;; <p>Parses a URL-encoded query string and returns a list of key-values pairs.</p>
-(constant 'REGEX_QUERY (regex-comp {&([^&=]+?)=([^&=]+?)(?=&|$)} 1))
-
-(define (parse-query query)
-  (when (starts-with query "?")
-    (pop query))
-  (push "&" query)
-  (find-all REGEX_QUERY query (list (url-decode $1) (url-decode $2)) 0x10000))
 
 ;; @syntax (Web:build-query <a-list>)
 ;; @param <a-list> an association list
@@ -348,245 +275,12 @@
       (if (lookup "fragment" url) (string "#" (lookup "fragment" url)) ""))))
 
 ;===============================================================================
-; !Headers, COOKIES, GET, and POST
-;===============================================================================
-
-;; @syntax (Web:header <str-key> <str-value>)
-;; @param <str-key> the header name (e.g., "Content-type")
-;; @param <str-value> the header value (e.g., "text/html")
-;; <p>Sets an HTTP output header. Headers are printed using 'Web:send-headers'.</p>
-(define headers '(("Content-type" "text/html")))
-
-(define (header key value)
-  (if (lookup key headers)
-    (setf (assoc key headers) value)
-    (push (list key value) headers -1)))
-
-;; @syntax (Web:redir <str-url>)
-;; @param <str-url> a URL string
-;; <p>Redirects the client to <str-url>.</p>
-(define (redir url)
-  (header "Location" url))
-
-;; @syntax (Web:send-headers)
-;; <p>Writes the HTTP headers to stdout. This function should be called regardless
-;; of whether any headers have been manually set to ensure that the minimum HTTP
-;; headers are properly sent. Note: no check is made to verify that output has not
-;; already begun.</p>
-(define (send-headers)
-  (dolist (header headers)
-    (print (format "%s: %s\n" (first header) (last header))))
-  (println))
-
-;; @syntax (Web:cookie <str-key>)
-;; @param <str-key> the cookie's name
-;; 
-;; @syntax (Web:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only> [<bool-secure-only>]]]])
-;; @param <str-key> the cookie's name
-;; @param <str-key> the cookie's value
-;; @param <int-expires> (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie
-;; @param <str-path> (optional) the cookie's path; default is the current path
-;; @param <str-domain> (optional) the cookie's domain; default is the current host
-;; @param <bool-http-only> (optional) whether the cookie may be read by client-side scripts
-;; @param <bool-secure-only> (optional) whether the cookie may be accessed/set outside of HTTPS
-;; <p>In the first syntax, 'cookie' returns the value of the cookie named <str-key> or 'nil'. If
-;; <str-key> is not provided, an association list of all cookie values is returned.</p>
-;; <p>In the second syntax, 'cookie' sets a new cookie or overwrites an existing cookie in the
-;; client's browser. Note that <bool-http-only> defaults to true, but is not standard and
-;; therefore is not necessarily implemented in all browsers. <bool-secure-only> defaults to nil.
-;; Cookies use the 'header' function and must be sent before calling 'send-headers'.</p>
-(define (cookie key value expires path domain http-only secure)
-  (cond
-    ((null? key) COOKIES)
-    ((and (null? value) COOKIE)
-     (lookup key COOKIE))
-    (true
-      (when (or (not secure) (and secure (starts-with (lower-case (env "SERVER_PROTOCOL")) "https")))
-        (header "Set-Cookie"
-          (format "%s=%s%s%s%s%s"
-            (url-encode (string key))
-            (url-encode (string value))
-            (if expires (string "; expires=" (date expires 0 "%a, %d-%b-%Y %H:%M:%S %Z")) "")
-            (if path (string "; path=" path) "")
-            (if domain (string "; domain=" domain) "")
-            (if-not http-only "; HttpOnly" "")))))))
-
-;; @syntax (Web:get <str-key>)
-;; <p>Returns the value of <str-key> in the query string or 'nil' if not present.
-;; If <str-key> is not provided, returns an association list of all GET values.</p>
-(define (get key)
-  (when GET (if key (lookup key GET) GET)))
-
-;; @syntax (Web:post <str-key>)
-;; <p>Returns the value of <str-key> in the client-submitted POST data or 'nil' if
-;; not present. If <str-key> is not provided, returns an association list of all
-;; POST values.</p>
-(define (post key)
-  (when POST (if key (lookup key POST) POST)))
-
-;===============================================================================
-; !Session control
-; notes:
-;  * sessions require cookies to function
-;  * close-session or MAIN:exit must be called to save session changes to disk
-;===============================================================================
-
-;; @syntax (Web:define-session-handlers <fn-open> <fn-close> <fn-delete> <fn-clear> <fn-clean>)
-;; @param <fn-open> function to begin a new session
-;; @param <fn-close> function to close a session, saving changes
-;; @param <fn-delete> function to delete a session
-;; @param <fn-clean> function to prune old sessions
-;; <p>Defines handler functions to be called when various session control
-;; functions are used, making custom session storage a fairly simple matter.</p>
-;; The required handler functions are:
-;; <ul>
-;; <li>'fn-open': called by 'open-session'; resumes or starts a new session storage instance, initializing the context tree</li>
-;; <li>'fn-close': called by 'close-session'; writes changes to a session to storage</li>
-;; <li>'fn-delete': called by 'delete-session'; deletes the entire session from storage</li>
-;; <li>'fn-clean': called by 'clean-sessions'; prunes old stored sessions</li>
-;; </ul>
-;; Some useful functions and variables for handler functions:
-;; <ul>
-;; <li>'session-id': function that returns the current session id and sets the session cookie when necessary</li>
-;; <li>'session-context': function that returns the session context dictionary</li>
-;; <li>'SESSION_MAX_AGE': a variable storing the number of seconds after which an orphan session should be deleted</li>
-;; </ul>
-(define (define-session-handlers fn-open fn-close fn-delete fn-clean)
-  (setf _open-session fn-open
-        _close-session fn-close
-        _delete-session fn-delete
-        _clean-sessions fn-clean))
-
-;; @syntax (Web:session-id [<str-sid>])
-;; @param <str-sid> (optional) the session ID to use
-;; @return a unique session id for the client
-;; <p>Creates or retrieves the client's session id. If this is a new session id,
-;; a cookie is set in the client's browser to identify it on future loads.</p>
-;; <p>If <str-sid> is provided, it will be used as the new session ID.</p>
-(define (session-id sid)
-  (setf SESSION_ID
-    (or (when sid
-          (cookie SESSION_KEY sid)
-          sid)
-        SESSION_ID
-        (cookie SESSION_KEY)
-        (begin
-          (setf sid (string SESSION_PREFIX "-" (uuid)))
-          (cookie SESSION_KEY sid)
-          sid))))
-
-;; @syntax (Web:session-context)
-;; @return a symbol pointing to the current session's context dictionary
-;; <p>Run-time session data is stored in a context tree. 'session-context'
-;; returns the current session tree or creates a new one when necessary.
-;; This function is primarily intended for session handlers' use; it is
-;; typically more useful to call 'session' on its own to retrieve an association
-;; list of key/value pairs in an application.</p>
-(define (session-context , ctx)
-  (setf ctx (sym (session-id) 'MAIN))
-  (unless (context? ctx)
-    (context ctx))
-  ctx)
-
-;; @syntax (Web:open-session)
-;; <p>Initializes the client's session.</p>
-(define (open-session)
-  (_open-session)
-  (setf SESSION_STARTED true)
-  (session-id))
-
-;; @syntax (close-session)
-;; <p>Writes any changes to the session to file. This is automatically called
-;; when the distribution function 'exit' is called.</p>
-(define (close-session)
-  (when SESSION_STARTED
-    (_close-session)))
-
-;; @syntax (delete-session)
-;; <p>Deletes the session. Sessions are then turned off and 'open-session'
-;; must be called again to use sessions further.</p>
-(define (delete-session)
-  (unless SESSION_STARTED (throw-error "session is not started"))
-  (_delete-session)
-  (delete (session-context))
-  (cookie SESSION_KEY "" 0)
-  (setf SESSION_STARTED nil))
-
-;; @syntax (clear-session)
-;; <p>Clears all session variables.</p>
-(define (clear-session)
-  (when SESSION_STARTED
-    (dotree (s (session-context))
-      (delete (sym s (session-context))))))
-
-;; @syntax (clean-sessions)
-;; <p>Cleans old session files. This function is not currently called automatically;
-;; note that there is the possibility of a race condition with this function and other
-;; session handling functions.</p>
-(define (clean-sessions)
-  (_clean-sessions))
-
-;; @syntax (session [<str-key> [<str-value>]])
-;; @param <str-key> the session key
-;; @param <str-value> the new value
-;; When called with both <str-key> and <str-value>, sets the session variable. When
-;; called with only <str-key>, returns the value of <str-key>. Otherwise, returns
-;; an association list of session variables. Returns nil if the session is not
-;; opened.
-(define (session key value)
-  (cond
-    ((not SESSION_STARTED) nil)
-    ((and key value) (context (session-context) key value))
-    ((true? key) (context (session-context) key))
-    (true (let ((alist '()))
-            (dotree (s (session-context))
-              (push (list (name s) (context (session-context) (name s))) alist -1))
-            alist))))
-
-;===============================================================================
-; !Default session handlers
-; 
-; The default session handlers use newLISP's 'save' and 'load' functions to
-; easily serialize and import context data to and from file records. The files
-; are stored unencrypted, so a custom handler should be used on a shared
-; system.
-;===============================================================================
-
-; Returns the name of the file in which the session data is stored.
-(define (default-session-file)
-  (string SESSION_DIR "/" (session-id) ".lsp"))
-
-; Loads/creates the session file; creates a new context tree when
-; necessary.
-(define (default-open-session)
-  (if (file? (default-session-file))
-    (load (default-session-file))
-    (save (default-session-file) (session-context))))
-
-; Saves the session context to the session file.
-(define (default-close-session)
-  (save (default-session-file) (session-context)))
-
-; Deletes the session file.
-(define (default-delete-session)
-  (when (file? (default-session-file))
-    (delete-file (default-session-file))))
-
-; Deletes old session files.
-(define (default-clean-sessions , f)
-  (dolist (tmp-file (directory SESSION_DIR))
-    (when (starts-with tmp-file SESSION_PREFIX)
-      (setf f (string SESSION_DIR "/" tmp-file))
-      (when (> (- (date-value) (file-info f 5 nil)) SESSION_MAX_AGE)
-        (delete-file f)))))
-
-;===============================================================================
 ; !Templating
 ;===============================================================================
 
-;; @syntax (Web:eval-template <str-template> <ctx-context>)
+;; @syntax (Web:eval-template <str-template> [<ctx-context>])
 ;; @param <str-template> a string containing the template syntax
-;; @param <ctx-context> the context in which to evaluate the template
+;; @param <ctx-context> Unless you have a very good reason for it, leave this alone.
 ;; <p>Translates a template using ASP-like tags, creating small islands of
 ;; newLISP code in an HTML (or other) document. This is similar to the
 ;; distribution CGI module&apos;s 'put-page' function, except that the short-cut
@@ -603,117 +297,18 @@
 (define OPEN_TAG "<%")
 (define CLOSE_TAG "%>")
 
-(define (eval-template str (ctx MAIN) , start end next-start next-end block (buf ""))
-  (setf start (find OPEN_TAG str))
-  (setf end (find CLOSE_TAG str))
-  
-  ;; Prevent use of code island tags inside code island from breaking parsing.
-  (when (and start end)
-    (while (and (setf next-end (find CLOSE_TAG (slice str (+ end 2))))
-                (setf next-start (find OPEN_TAG (slice str (+ end 2))))
-                (< next-end next-start))
-      (inc end (+ next-end 2)))
-    (when (and start (not end)) (throw-error "Unbalanced tags.")))
-  
-  (while (and start end)
-    (write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
-    (setf block (slice str (+ start 2) (- end start 2)))
-    (if (starts-with block "=")
-      (write-buffer buf (string "(print " (rest block) ")"))
-      (write-buffer buf (trim block)))
-    (setf str (slice str (+ end 2)))
-    (setf start (find OPEN_TAG str))
-    (setf end (find CLOSE_TAG str))
-    
-    ;; Prevent use of code island tags inside code island from breaking parsing.
-    (when (and start end)
-      (while (and (setf next-end (find CLOSE_TAG (slice str (+ end 2))))
-                  (setf next-start (find OPEN_TAG (slice str (+ end 2))))
-                  (< next-end next-start))
-        (inc end (+ next-end 2)))
-      (when (and start (not end)) (throw-error "Unbalanced tags."))))
-  
-  (write-buffer buf (string "(print [text]" str "[/text])"))
-  (eval-string buf ctx))
-
-;===============================================================================
-; !Module initialization
-; 
-; Install default session handlers and create the GET, POST, and COOKIE data
-; structures.
-;===============================================================================
-
-; Content-Disposition: form-data; name="file"; filename="white-napkin.jpg"\r\nContent-Type: image/jpeg\r\n\r\n\253\152\191\160\128\144JFIF
-; Content-Disposition: form-data; name="text"\r\n\r\nadsf\r\n
-(define (mime-decode str , content-type parts re decoded)
-  (when (setf content-type (regex {^multipart/form-data; boundary=(.+?)$} (env "CONTENT_TYPE") 1))
-    (setf parts (find-all (string "--" (content-type 3) {\r\n(.+?)(?=--)}) str $1 (| 2 4)))
-    (dolist (part parts)
-      (cond
-        ((regex {Content-Disposition: form-data; name="(.+?)"\r\n\r\n(.*?)\s+} part 1)
-         (push (list $1 $2) decoded -1))
-        ((regex {Content-Disposition: form-data; name="(.+?)"; filename="(.+?)"\r\nContent-Type: (.+?)\r\n\r\n(.*)$} part (| 1 2 4))
-         (push (list $1 (list (list "filename" $2) (list "content-type" $3) (list "bytes" $4))) decoded -1))))
-    decoded))
-
-
-; Install default session handlers
-(define-session-handlers
-  default-open-session
-  default-close-session
-  default-delete-session
-  default-clean-sessions)
-
-; Read GET data
-(setf GET
-  (when (env "QUERY_STRING")
-    (parse-query (env "QUERY_STRING"))))
-
-; Read POST data
-(if-not (context? CGI)
-  ;; CGI module not present; read and parse the POST data ourselves
-  (let ((post "") (buffer ""))
-   (unless (zero? (peek (device)))
-    (while (read-buffer (device) buffer POST_LIMIT)
-     (write-buffer post buffer)))
-
-   (setf POST (when post (parse-query post))))
-
-;This will replace the above line once mim-decode actually works.
-;(setf POST
-; (when post
-;  (if (env "CONTENT_TYPE")
-;   (mime-decode post)
-;   (parse-query post)))))
-  
-  ;; CGI module present; try to guess which values in CGI:params are
-  ;; from GET and which are from POST.
-  (begin
-    (setf POST '())
-    (dolist (param CGI:params)
-      (unless (lookup (first param) GET)
-        (push param POST)))))
-
-; Read COOKIE data
-(setf COOKIE
-  (when (env "HTTP_COOKIE")
-    (map
-      (lambda (cookie , n)
-        (setf n (find "=" cookie))
-        (list (url-decode (slice cookie 0 n))
-              (url-decode (slice cookie (+ 1 n)))))
-      (parse (env "HTTP_COOKIE") "; *" 0))))
+(define (eval-template str (ctx Dragonfly) , start end next-start next-end block (buf ""))
+	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
+		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
+		(setf block (slice str (+ start 2) (- end start 2)))
+		(if (starts-with block "=")
+			(write-buffer buf (string "(print " (rest block) ")"))
+			(write-buffer buf block)
+		)
+		(setf str (slice str (+ end 2)))
+	)
+	(write-buffer buf (string "(print [text]" str "[/text])"))
+	(eval-string buf ctx)
+)
 
 (context 'MAIN)
-
-; This function wraps the distribution exit routine to ensure that sessions are
-; written when the application exits. It is only called when the 'exit' function
-; is explicitly called. The 'exit' function is renamed 'sys-exit'. The 'Web'
-; function 'close-session' is only called on a normal exit (exit code 0.)
-(define (exit-with-session-close (n 0))
-  (when (zero? n)
-    (Web:close-session))
-  (MAIN:sys-exit))
-
-(constant 'sys-exit exit)
-(constant 'exit exit-with-session-close)

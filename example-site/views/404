@@ -15,7 +15,7 @@
 			<p><% (Dragonfly:title "| marchildmann.com") %><p>
 		</div>
 		
-		<img src="../images/houses.jpg" class="border" alt="Houses" width="474" height="267"/>
+		<img src="/includes/images/houses.jpg" class="border" alt="Houses" width="474" height="267"/>
 		
 		
 		<h1>We did the best we can ...</h1>

@@ -19,7 +19,7 @@
 		<% (Dragonfly:use-database "blog.nldb") %>
 		<% 
 			(if (= Dragonfly:action "save")
-				(Dragonfly:new-row "blog.nldb" 'entries Web:POST) 
+				(Dragonfly:new-row "blog.nldb" 'entries ($POST)) 
 			)
 		%>
 		<% (Dragonfly:create-table "blog.nldb" 'entries (list "ID" "Headline" "Text" "Author")) %>

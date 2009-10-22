@@ -1,14 +1,25 @@
 AddDefaultCharset UTF-8
 Options -Indexes +FollowSymLinks
 
+# Prevent source from being accessed
+<Files ~ "\.lsp$">
+Order allow,deny
+Deny from all
+</Files>
+
 <IfModule mod_rewrite.c>
 RewriteEngine on
 RewriteBase /
 
-RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-f [OR]
+
+# if don't want Dragonfly to process html files comment
+# out the line below (you may need to remove the [OR] above too).
+RewriteCond %{REQUEST_FILENAME} \.html$
 
 # Main URL rewriting.
-RewriteRule ^(.*)$ index.cgi?$1 [L,QSA]
+RewriteRule (.*) index.cgi?$1 [L,QSA]
+
 </IfModule>

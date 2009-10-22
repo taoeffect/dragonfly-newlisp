@@ -1001,9 +1001,9 @@ function drawAllCanvas() { try
 (define (line-color red green blue alpha)
     (if (string? red)
         (let (color red)
-          (set 'red (div (int (append "0x" (0 2 color)) 0 16) 255))
-          (set 'green (div (int (append "0x" (2 2 color)) 0) 255))
-          (set 'blue (div (int (append "0x" (4 2 color)) 0) 255))))
+          (set 'red (div (int (string "0x" (0 2 color)) 0 16) 255))
+          (set 'green (div (int (string "0x" (2 2 color)) 0) 255))
+          (set 'blue (div (int (string "0x" (4 2 color)) 0) 255))))
 
 	(if alpha
    	  (cv (format "ctx.strokeStyle = 'rgba(%d, %d, %d, %g)';" 
@@ -1020,9 +1020,9 @@ function drawAllCanvas() { try
 (define (fill-color red green blue alpha)
     (if (string? red)
         (let (color red)
-          (set 'red (div (int (append "0x" (0 2 color)) 0 16) 255))
-          (set 'green (div (int (append "0x" (2 2 color)) 0) 255))
-          (set 'blue (div (int (append "0x" (4 2 color)) 0) 255))))
+          (set 'red (div (int (string "0x" (0 2 color)) 0 16) 255))
+          (set 'green (div (int (string "0x" (2 2 color)) 0) 255))
+          (set 'blue (div (int (string "0x" (4 2 color)) 0) 255))))
 
 	(if alpha
    	  (cv (format "ctx.fillStyle = 'rgba(%d, %d, %d, %g)';" 
@@ -1032,7 +1032,7 @@ function drawAllCanvas() { try
 )
 
 (define (cv:render mode)
-	(let (page (append (format template-header header-tags)
+	(let (page (string (format template-header header-tags)
 				script-header
 				canvas-script
 				script-close
@@ -1058,7 +1058,7 @@ function drawAllCanvas() { try
     ( (= ostype "OSX")
       (exec "open /tmp/noname.html"))
     ( (= ostype "Win32")
-      (set 'prog (string "cmd /c \"" (env "PROGRAMFILES") 
+      (set 'prog (string "cmd /c \"" PROGRAMFILES 
 ;                 Use either Firefox or Safari 4.0
 ;                 "/Mozilla Firefox 3.1 Beta 2/firefox.exe\""))
                   "/Safari/Safari.exe\""))

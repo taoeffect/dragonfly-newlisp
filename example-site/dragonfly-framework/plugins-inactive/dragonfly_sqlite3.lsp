@@ -72,7 +72,7 @@
 )
 
 (define (sqlite-empty-table table) 
-	(set 'query (append "DELETE FROM "table))
+	(set 'query (string "DELETE FROM "table))
 	(sql3:sql query)
 )
 
@@ -83,7 +83,7 @@
 )
 
 (define (sqlite-insert table values)
-	(set 'query (append "INSERT INTO "table" VALUES ("values")"))
+	(set 'query (string "INSERT INTO "table" VALUES ("values")"))
 	(sql3:sql query)
 )
 

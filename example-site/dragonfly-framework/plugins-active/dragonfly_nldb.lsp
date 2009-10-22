@@ -39,7 +39,7 @@
 ;; directory /databases.</p>
 ;; 
 (define (load-database database)
-	(nldb:load-db (append databases-path database))
+	(nldb:load-db (string databases-path database))
 )
 
 ;; @syntax (Dragonfly:save-database <database>)
@@ -48,7 +48,7 @@
 ;; directory /databases.</p>
 ;; 
 (define (save-database database)
-	(nldb:save-db (append databases-path database))
+	(nldb:save-db (string databases-path database))
 )
 
 ;; @syntax (Dragonfly:show-database)
@@ -59,7 +59,7 @@
 	<div id='dragonfly_database-information' style='border:1px dotted #00aeef; width:700px; padding:8px; margin-top:20px;' >
 	<h2>Database information</h2><pre>
 	")
-	(nldb:show)
+	(with-wrapped-print (nldb:show))
 	(println "</pre></div>")
 )
 
@@ -78,7 +78,7 @@
 ;; directory /databases.</p>
 ;; 
 (define (save-database database)
-	(nldb:save-db (append databases-path database))
+	(nldb:save-db (string databases-path database))
 )
 
 ;; @syntax (Dragonfly:add-row <database> <tablename> <data>)

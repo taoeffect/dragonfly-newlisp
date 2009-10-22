@@ -1,122 +1,155 @@
+;; @author Greg Slepak
+
 (context 'Response)
 
-;; mark Public API
+;===============================================================================
+; !Public API
+;===============================================================================
 
-(define (Response:Response str)
-	(_response 200 str)
+(define (status code description)
+	(if code
+		(begin
+			(unless (assoc code status-codes)
+				(push (list code description) status-codes))
+			(setf status-code code)
+		)
+		status-code
+	)
 )
+
+;; @syntax (Request:header <str-key>)
+;; @param <str-key> the header's name
+;; 
+;; @syntax (Request:header <str-key> <str-value>)
+;; @param <str-key> the header's name
+;; @param <str-value> the header's value
+;; <p>In the first syntax, returns the header matching <str-key> or,
+;; if <str-key> is nil, all of the headers in a list</p>
+;; <p>In the second syntax, sets or updates the header matching <str-key> or,
+;; if <str-value> is nil, deletes the header for <str-key>.</p>
+(define (header key)
+	(if (nil? key) headers
+		(empty? $args) (lookup key headers)
+		(let (value (first $args))
+			(if value
+				(if (assoc key headers)
+					(setf (lookup key headers) value)
+					(push (list key value) headers -1)
+				)
+				(pop headers (find key headers comp-func))
+			)
+		)
+	)
+)
+
+;; @syntax (Request:cookie <str-key>)
+;; @param <str-key> the cookie's name
+;; 
+;; @syntax (Request:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])
+;; @param <str-key> the cookie's name
+;; @param <str-value> the cookie's value
+;; @param <int-expires> (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie
+;; @param <str-path> (optional) the cookie's path; default is the current path
+;; @param <str-domain> (optional) the cookie's domain; default is the current host
+;; @param <bool-http-only> (optional) whether the cookie may be read by client-side scripts
+;; <p>In the first syntax, 'cookie' returns the value of the cookie named <str-key> or 'nil'. If
+;; <str-key> is not provided, an association list of all cookie values is returned.</p>
+;; <p>In the second syntax, 'cookie' sets a new cookie. If <str-value> is nil then any existing
+;; cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
+(define (cookie key)
+	(local (value expires path domain http-only)
+		(map set '(value expires path domain http-only) $args)
+		(if (nil? key) cookies
+			(empty? $args) (lookup key cookies)
+			(nil? value) (pop cookies (find key cookies comp-func))
+			(let (cookie (list key value expires path domain http-only))
+				(if (assoc key cookies)
+					(setf (assoc key cookies) cookie)
+					(push cookie cookies -1)
+				)
+			)
+		)
+	)
+)
+
+(define (send-headers)
+	(print "Status: " status-code " " (lookup status-code status-codes) "\r\n")
+	(dolist (header headers) (print (first header) ": " (last header) "\r\n"))
+	(dolist (cookie cookies) (print "Set-Cookie: " (apply format-cookie cookie) "\r\n"))
+	(print "\r\n")
+)
+
+;===============================================================================
+; !Public Convenience Functions and Variables
+;===============================================================================
 
 (define (redirect path)
 	(header "Location" path)
-	(_response 302)
+	(status 302)
+	(send-headers)
+	(exit)
 )
 
-(define (not-found str)
-	(_response 404 str)
+(define (send-headers-with-status code description)
+	(status code description)
+	(send-headers)
 )
 
-(define (error str)
-	(_response 500 str)
-)
-
-;; mark Headers
-
-;; add the header with key and associated value to the list of headers
-;; replaces the old value if key is already in there
-(define (header key val)
-	(set 'key (join (map title-case (parse key "-")) "-"))
-	(if (member key _headers)
-    	(setf (assoc key _headers) (list key val))
-    	(push (list key val) _headers)
+(define (content-type value)
+	(if value
+		(header "Content-Type" value)
+		(header "Content-Type")
 	)
 )
 
-(define (header? key)
-	(lookup key _headers)
-)
+(constant 'text-type "text/plain; charset=utf-8")
+(constant 'html-type "text/html; charset=utf-8")
+(constant 'xml-type "text/xml; charset=utf-8")
+(constant 'atom-type "application/atom+xml; charset=utf-8")
 
-(define (headers)
-	_headers
-)
+;===============================================================================
+; !Private Functions
+;===============================================================================
 
-
-;; mark Cookies
-
-(define (set-cookie key value domain path expires)
-	(if (cookie-set? key '? domain path)
-		(delete-cookie key domain path)
-	)
-	(push (list key value domain path expires) _cookies -1)
-)
-
-
-;; needs to check for set cookies in _cookies and remove
-(define (delete-cookie key domain path)
-	(if (cookie-set? key '? domain path)
-		(pop _cookies (find (list key '? domain path '?) _cookies match))
-		(set-cookie key nil domain path (date-value))
-	)
-)
-
-; NOTE: bug fixed: definition was (cookie-set? key domain path)
-(define (cookie-set? key value domain path)
-	(true? (find (list key value domain path '?) _cookies match))
-)
-
-;; mark Private API
-
-; returns a string version ready for sending to browser of the cookie
-(define (_format-cookie key value domain path expires)
-	;; expires must be timestamp (use date-value)
-	(set 'value (if value (string value) ""))
-	(let (cookie "")
-		(write-buffer cookie (format "%s=%s" key value))
-		(if expires (write-buffer cookie (format "; expires=%s" (date (int expires) 0 "%a, %d %b %Y %H:%M:%S %Z"))))
-		(if path (write-buffer cookie (format "; path=%s" path)))
-		(if domain (write-buffer cookie (format "; domain=%s" domain)))
+; we do *NOT* want to use url-encode on the value
+; that's something the user can do if they want to.
+; these parameters must match the order in the 'cookie' function.
+(define (format-cookie key value expires path domain http-only)
+	(let (cookie (string key "=" value))
+		(if expires (write-buffer cookie (string "; expires=" (date expires 0 "%a, %d %b %Y %H:%M:%S %Z"))))
+		(if path (write-buffer cookie (string "; path=" path)))
+		(if domain (write-buffer cookie (string "; domain=" domain)))
 		cookie
 	)
 )
 
-; hack to get it work on both newlisp and apache because of bug in newlisp
-(define (print-header code , header)
-	; (if (find "newLISP" (env "SERVER_SOFTWARE"))
-	; 	(println "HTTP/1.0 " code " " (lookup code _response-codes) "\r\n")
-	; 	(println "Status: " code " " (lookup code _response-codes) "\r\n")
-	; )
-	
-	(print "Status: " code " " (lookup code _response-codes) "\r\n")
-	
-	; (set 'header (string code " " (lookup code _response-codes)))
-	; (set '$status-header (append "HTTP/1.0 " header "\r\n")) ; for newlisp
-	; (println "Status: " header)
+; this is used by the cookie and header functions
+(define (comp-func x y)
+	(= x (y 0))
 )
 
-;; http://en.kioskea.net/contents/internet/http.php3
-;; http://hoohoo.ncsa.uiuc.edu/cgi/out.html
+;===============================================================================
+; !Private Variables
+;===============================================================================
 
-;; NOTE: completely changed
-(define (_response code content)
-	; (print-header code)
-	(print "Status: " code " " (lookup code _response-codes) "\r\n")
-	(dolist (hdrs _headers) (print (hdrs 0) ": " (hdrs 1) "\r\n"))
-	(dolist (cookie _cookies) (print "Set-Cookie: " (apply _format-cookie cookie) "\r\n"))
-	(print "Content-type: " _content-type "\r\n\r\n")
-	(print (string content))
-	(exit)
-)
-
-;; mark Private variables
-
-(set '_response-codes
+; common status codes, you can easily add your own using Response:status
+(set 'status-codes
   '((200 "OK")
+	(301 "Moved Permanently")
 	(302 "Found")
-    (404 "Not Found")
-    (500 "Internal Error"))
+	(400 "Bad Request")
+	(401 "Unauthorized")
+	(403 "Forbidden")
+	(404 "Not Found")
+	(410 "Gone")
+	(500 "Internal Error"))
 )
 
-(set '_content-type "text/html; charset=utf-8")
-(set '_headers '())
-(set '_cookies '())
+(set 'headers '())
+(set 'cookies '())
+(set 'status-code 200)
+
+(content-type html-type)
+(header "Connection" "keep-alive")
 
 (context MAIN)

@@ -1,0 +1,34 @@
+This file contains information on what to watch out for when upgrading
+from one version of dragonfly to another.
+---------------------------------------------------------------
+
+From 0.2 or earlier to 0.5:
+
+* Enforcing variable naming conventions:
+	1) Constants are CAPITALIZED and use the '_' to separate words
+	2) Variables are lowercase and use the '-' to separate words
+
+Examples:
+	find 'documentroot' replace with 'DOCUMENT_ROOT'
+	find 'dragonfly_version' replace with 'DRAGONFLY_VERSION'
+	
+Purpose:
+	This is done so that it's clear which parts of Dragonfly
+	are user-customizable and which are not, and to make naming
+	conflicts more difficult.
+	
+* To avoid having too many constants all over the place, possibly
+  causing confusion and conflicts with other similarly named variables,
+  and to avoid cluttering the code, all environment variables have simply
+  been placed into the PHP-like env map. Some constants still
+  exist, namely those starting with 'dragonfly'
+
+	Dragonfly:host => (env "HTTP_HOST")
+	Dragonfly:useragent => (env "HTTP_USER_AGENT")
+	Dragonfly:server => (env "SERVER_SOFTWARE")
+	Dragonfly:programfiles => (env "PROGRAMFILES")
+	Dragonfly:proxy => (env "HTTP_PROXY")	
+
+	You can also use the new PHP-like symbol $SERVER instead of env.
+	
+	Example: ($SERVER "HTTP_HOST")

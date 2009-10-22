@@ -39,15 +39,15 @@
 ;; 
 (define (table_open table_head_elements)
   (set 'table_colspan table_head_elements) ;count of table_head_elements for defining a correct table-colspan
-  (print "
+  (print {
 	<!-- BEGIN table -->
 	<table>
-	<thead><tr>"
-		(dolist (th-element table_head_elements)
-			(if (= $idx 0) (print "<th class='table_firstcolumn'>"th-element"</th>") (print "<th>"th-element"</th>"))
-		)
-	"</tr></thead>"
-  )
+	<thead><tr>})
+	
+	(dolist (th-element table_head_elements)
+		(if (= $idx 0) (print "<th class='table_firstcolumn'>"th-element"</th>") (print "<th>"th-element"</th>"))
+	)
+	(print "</tr></thead>")
 )
 
 ;; @syntax (Dragonfly:table_data <table_elements>)

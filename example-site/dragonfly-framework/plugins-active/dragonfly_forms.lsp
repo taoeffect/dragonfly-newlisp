@@ -96,7 +96,7 @@
   (set 'columns (nldb:list-columns tablename))
   (print "<table><form id='form_"table"' action='?"viewname"/"{save}"' method='POST'>")
 	(dolist (column_name columns)
-		(print "<tr class='form_row'><td class='form_label'><label for='"column_name"'>"(title-case column_name)"</label></td><td class='form_input'><input id='"column_name"' name='"column_name"' size='30' type='text' /></td></tr>")
+		(print "<tr class='form_row'><td class='form_label'><label for='"column_name"'>"column_name"</label></td><td class='form_input'><input id='"column_name"' name='"column_name"' size='30' type='text' /></td></tr>")
 	)
   (print "<tr class='form_row'><td class='form_label'>&nbsp;</td><td class='form_input'><input id='form_submit' type='submit' name='commit' value='Add' /></td></tr>")
   (print "<input type='hidden' name='databasetable' value='"table"' />")

@@ -38,7 +38,7 @@
 ;; <p>Reads EXIF information stored in the image.</p>
 ;; 
 (define (read-exif image-url)
-  (set 'imagepath (append documentroot image-url))
+  (set 'imagepath (string DOCUMENT_ROOT image-url))
 
   (print "Path to image: ")
   	(print imagepath)

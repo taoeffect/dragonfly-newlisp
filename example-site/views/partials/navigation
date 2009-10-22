@@ -1,5 +1,5 @@
 <!-- BEGIN NAVIGATION -->
-<img src="../images/marchildmann-com.gif" alt="MarcHildmann.com" width="474" height="50"/>
+<img src="/includes/images/marchildmann-com.gif" alt="MarcHildmann.com" width="474" height="50"/>
 <ul>
 	<li>
 	<a href="index.html" onclick="toggleMenu(); return false;" id="guidesMenu">Dragonfly web framework</a>

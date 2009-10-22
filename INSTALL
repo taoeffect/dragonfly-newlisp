@@ -39,7 +39,7 @@ Then that's the folder you'll want to copy the files into.
  = Step 2 - Configure Dragonfly =
  ================================
 
-Edit the 'dragonfly_config.lsp' file in dragonfly-framework/config/dragonfly_config.lsp
+Edit the 'config.lsp' file in dragonfly-framework.
 
 Read through the comments (they begin with a semi-colon) for instructions on
 what the settings are for.

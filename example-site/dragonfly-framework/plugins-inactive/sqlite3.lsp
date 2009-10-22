@@ -64,7 +64,7 @@
 	"/usr/lib/libsqlite3.so.0" ; Debian
 	"/usr/lib/libsqlite3.0.dylib" ; Mac OSX Darwin
 	"/usr/local/lib/libsqlite3.so" ; Solaris
-	(string (env "PROGRAMFILES") "/sqlite3/sqlite3.dll") ; Win32/MinGW
+	(string PROGRAMFILES "/sqlite3/sqlite3.dll") ; Win32/MinGW
 ))
 
 
@@ -266,7 +266,7 @@
 ;; @return A list of column names for a table.
 
 (define (columns aTable)
-        (if (list? (sql (append "select * from " aTable " where 0;")))
+        (if (list? (sql (string "select * from " aTable " where 0;")))
                 col-names))
 
 
