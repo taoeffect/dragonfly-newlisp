@@ -5,5 +5,3 @@ Congratulations on choosing Dragonfly!
 	newlisp -d 8080 -w . -http
 
 Open Your browser and type localhost:8080 - have FUN!
-
-Test
