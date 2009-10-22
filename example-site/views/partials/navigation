@@ -7,30 +7,30 @@
 	          <div id="menu" class="clearfix" style="display: none;">
 	            <dl class="L">
 	              <dt>Start Here</dt>
-				  <dd><% (Dragonfly:link_to  "Welcome" "dragonfly_welcome" "index") %></dd>
+				  <dd><% (link_to  "Welcome" "dragonfly_welcome" "index") %></dd>
 
 	              <dt>Tables</dt>
-	              <dd><% (Dragonfly:link_to "Generate tables from lists" "dragonfly_tables" "index") %></dd>
+	              <dd><% (link_to "Generate tables from lists" "dragonfly_tables" "index") %></dd>
 
 	              <dt>AJAX</dt>
-	              <dd><% (Dragonfly:link_to "Some simple AJAX calls" "dragonfly_ajax" "index") %></dd>
+	              <dd><% (link_to "Some simple AJAX calls" "dragonfly_ajax" "index") %></dd>
 	
 	              <dt>Twitter</dt>
-	              <dd><% (Dragonfly:link_to "Using Twitter with Dragonfly" "dragonfly_twitter" "index") %></dd>
+	              <dd><% (link_to "Using Twitter with Dragonfly" "dragonfly_twitter" "index") %></dd>
 
 	              <dt>SEO Experiments</dt>
-	              <dd><% (Dragonfly:link_to "Experiments in SEO" "dragonfly_seo" "index") %></dd>
+	              <dd><% (link_to "Experiments in SEO" "dragonfly_seo" "index") %></dd>
 				</dl>
 	
 				<dl class="R">
 	              <dt>Useful information</dt>
-	              <dd><% (Dragonfly:link_to  "Dragonfly debugging information" "dragonfly_debug" "index") %></dd>
+	              <dd><% (link_to  "Dragonfly debugging information" "dragonfly_debug" "index") %></dd>
 				</dl>
 				</div>
 	</li>
-	<li><% (Dragonfly:link_to "Home" "welcome" "index") %></li>
-	<li><% (Dragonfly:link_to "Blog" "blog" "index") %></li>
-	<li><% (Dragonfly:link_to "Photographie" "photographie" "index") %></li>
+	<li><% (link_to "Home" "welcome" "index") %></li>
+	<li><% (link_to "Blog" "blog" "index") %></li>
+	<li><% (link_to "Photographie" "photographie" "index") %></li>
 
 </ul>
 <!-- END NAVIGATION -->

@@ -307,8 +307,10 @@
 		)
 		(setf str (slice str (+ end 2)))
 	)
-	(write-buffer buf (string "(print [text]" str "[/text])"))
-	(eval-string buf ctx)
+	(when str
+		(write-buffer buf (string "(print [text]" str "[/text])"))
+		(eval-string buf ctx)
+	)
 )
 
 (context 'MAIN)

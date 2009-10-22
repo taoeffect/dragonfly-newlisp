@@ -1,1 +1,1 @@
-<% (Dragonfly:time-now) %>
+<% (time-now) %>

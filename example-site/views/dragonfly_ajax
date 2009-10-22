@@ -1,32 +1,32 @@
-<% (Dragonfly:partial "doctype") %>
-<% (Dragonfly:partial "header") %>
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
 
 <body>
 
 <div id="wrap">
 	<div id="header">
-		<% (Dragonfly:partial "navigation") %>	
+		<% (display-partial "navigation") %>	
 		<div class="clear"></div>
 	</div>
 
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (Dragonfly:title "| Dragonfly web framework") %><p>
+			<p><% (title "| Dragonfly web framework") %><p>
 		</div>
 		
 		<h1>AJAX calls</h1>
 		<p class="extract">Dragonfly provides some simple AJAX functions. With AJAX, web applications can retrieve data from the server asynchronously in the background without interfering with the display and behavior of the existing page. The use of AJAX techniques has led to an increase in interactive or dynamic interfaces on web pages and better quality of Web services due to the asynchronous mode. Data is usually retrieved using the XMLHttpRequest object. (source: wikipedia.org)
 		</p>
 		<h2>Current time</h2>
-		<p><% (Dragonfly:ajax-updater "timer" "/dragonfly_ajax-date/index" "gettime" "1000") %></p>
+		<p><% (ajax-updater "timer" "/dragonfly_ajax-date/index" "gettime" "1000") %></p>
 
 		<h2>Real-time tweets for 'michael jackson'</h2>
-		<p><% (Dragonfly:ajax-updater "twitter" "/dragonfly_ajax-twitter/index" "gettweets" "1000") %></p>
+		<p><% (ajax-updater "twitter" "/dragonfly_ajax-twitter/index" "gettweets" "1000") %></p>
 		
 		<div class="line-dotted"></div>
 
-		<% (Dragonfly:benchmark-result) %>
+		<% (benchmark-result) %>
 		
 		<div class="line-dotted"></div>
 		
@@ -34,5 +34,5 @@
 	</div><!-- END CONTENT -->
 	
 </div><!-- END WRAP -->
-<% (Dragonfly:partial "footer") %>
+<% (display-partial "footer") %>
 

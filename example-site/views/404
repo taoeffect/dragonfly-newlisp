@@ -1,18 +1,18 @@
-<% (Dragonfly:partial "doctype") %>
-<% (Dragonfly:partial "header") %>
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
 
 <body>
 
 <div id="wrap">
 	<div id="header">
-		<% (Dragonfly:partial "navigation") %>	
+		<% (display-partial "navigation") %>	
 		<div class="clear"></div>
 	</div>
 
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (Dragonfly:title "| marchildmann.com") %><p>
+			<p><% (title "| marchildmann.com") %><p>
 		</div>
 		
 		<img src="/includes/images/houses.jpg" class="border" alt="Houses" width="474" height="267"/>
@@ -35,7 +35,7 @@
 		<div class="line-dotted"></div>
 
 
-		<% (Dragonfly:benchmark-result) %>
+		<% (benchmark-result) %>
 		
 		<div class="line-dotted"></div>
 		
@@ -43,5 +43,5 @@
 	</div><!-- END CONTENT -->
 	
 </div><!-- END WRAP -->
-<% (Dragonfly:partial "footer") %>
+<% (display-partial "footer") %>
 

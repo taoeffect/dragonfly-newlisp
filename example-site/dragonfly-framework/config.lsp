@@ -30,8 +30,8 @@
 
 ; if you set to nil then make sure to comment out the line in .htaccess
 (constant 'ENABLE_STATIC_TEMPLATES true)
-; extension that triggers the handler (must match the one in .htaccess)
-(constant 'TEMPLATE_EXTENSION ".html")
+; file extensions that triggers the handler (update .htaccess to match this!)
+(constant 'STATIC_EXTENSIONS '(".html"))
 
 ;===============================================================================
 ; Views
@@ -49,8 +49,9 @@
 (constant 'DEFAULTACTION "index") ; display all
 ; setting a default rss view
 (constant 'DEFAULTRSS "dragonfly_rssfeed")
-; setting a 404 view
-(constant 'DEFAULT404 "404")
+; if non-nil, then all of your views (and partials) must have this extension
+; ex: ".html"
+(constant 'TEMPLATE_EXTENSION nil)
 
 ;===============================================================================
 ; RESTful Resources

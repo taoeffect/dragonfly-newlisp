@@ -1,21 +1,21 @@
-<% (Dragonfly:partial "doctype") %>
-<% (Dragonfly:partial "header") %>
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
 
 <body>
 
 <div id="wrap">
 	<div id="header">
-		<% (Dragonfly:partial "navigation") %>	
+		<% (display-partial "navigation") %>	
 		<div class="clear"></div>
 	</div>
 
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (Dragonfly:title "| marchildmann.com") %><p>
+			<p><% (title "| marchildmann.com") %><p>
 		</div>
 
-		<% (Dragonfly:load-database "blog.nldb") %>
+		<% (load-database "blog.nldb") %>
 		<% (set 'data (nldb:select-rows 'entries true true 'ID > )) %>
 		<%	
 
@@ -28,7 +28,7 @@
 		
 		<div class="line-dotted"></div>
 
-		<% (Dragonfly:benchmark-result) %>
+		<% (benchmark-result) %>
 		
 		<div class="line-dotted"></div>
 		
@@ -36,4 +36,4 @@
 	</div><!-- END CONTENT -->
 	
 </div><!-- END WRAP -->
-<% (Dragonfly:partial "footer") %>
+<% (display-partial "footer") %>

@@ -13,7 +13,7 @@
 				(push (list code description) status-codes))
 			(setf status-code code)
 		)
-		(list status-code (lookup status-code status-codes))
+		(assoc status-code status-codes)
 	)
 )
 
@@ -102,10 +102,22 @@
 	)
 )
 
+(define (extension->type file-extension)
+	(if-not (starts-with file-extension ".") (push "." file-extension))
+	(lookup file-extension extension-to-type-map)
+)
+
 (constant 'text-type "text/plain; charset=utf-8")
 (constant 'html-type "text/html; charset=utf-8")
 (constant 'xml-type "text/xml; charset=utf-8")
 (constant 'atom-type "application/atom+xml; charset=utf-8")
+
+(set 'extension-to-type-map
+  '((".html" html-type)
+	(".xml" xml-type)
+	(".rss" xml-type)
+	(".txt" text-type))
+)
 
 ;===============================================================================
 ; !Private Functions

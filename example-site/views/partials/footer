@@ -1,7 +1,7 @@
 
 
 <!-- BEGIN Google Analytics -->
-	<% (Dragonfly:google-analytics "UA-270258-9") %>
+	<% (google-analytics "UA-270258-9") %>
 <!-- END Google Analytics -->
 </body>
 </html>

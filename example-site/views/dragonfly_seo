@@ -1,18 +1,18 @@
-<% (Dragonfly:partial "doctype") %>
-<% (Dragonfly:partial "header") %>
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
 
 <body>
 
 <div id="wrap">
 	<div id="header">
-		<% (Dragonfly:partial "navigation") %>	
+		<% (display-partial "navigation") %>	
 		<div class="clear"></div>
 	</div>
 
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (Dragonfly:title "| Dragonfly web framework") %><p>
+			<p><% (title "| Dragonfly web framework") %><p>
 		</div>
 		
 		<h1>Dragonfly SEO functions</h1>
@@ -21,23 +21,23 @@
 		</p>
 				
 		<h2>Check description length Results</h2>
-		<% (Dragonfly:check-meta-description) %><br/><br/>
+		<% (check-meta-description) %><br/><br/>
 
 		<h2>Check number of meta-keywords</h2>
-		<% (Dragonfly:check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) %><br/><br/>
+		<% (check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) %><br/><br/>
 
 
 		<h2>SEO Results</h2>
-		<% (Dragonfly:table_open (list "Website" "Google Pagerank&trade;" "Estimated Result Count" "No. keywords" "Description")) %>
-		<% (Dragonfly:table_footer "Dragonfly SEO Experiments") %>
-		<% (Dragonfly:table_data (list "www.newlisp.org" "4" (Dragonfly:google-results-domain "www.newlisp.org") (Dragonfly:check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) "") ) %>
-		<% (Dragonfly:table_close) %>
+		<% (table_open (list "Website" "Google Pagerank&trade;" "Estimated Result Count" "No. keywords" "Description")) %>
+		<% (table_footer "Dragonfly SEO Experiments") %>
+		<% (table_data (list "www.newlisp.org" "4" (Dragonfly:google-results-domain "www.newlisp.org") (Dragonfly:check-meta-keywords (list "dragonfly" "framework" "lisp" "marc hildmann")) "") ) %>
+		<% (table_close) %>
 
 
 		
 		<div class="line-dotted"></div>
 
-		<% (Dragonfly:benchmark-result) %>
+		<% (benchmark-result) %>
 		
 		<div class="line-dotted"></div>
 		
@@ -45,5 +45,5 @@
 	</div><!-- END CONTENT -->
 	
 </div><!-- END WRAP -->
-<% (Dragonfly:partial "footer") %>
+<% (display-partial "footer") %>
 

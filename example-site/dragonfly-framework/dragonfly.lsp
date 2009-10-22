@@ -100,16 +100,12 @@
 	((matches?)
 		; ex: .html or .html?a=4
 		(set 'file (if (empty? (set 'chunks (parse QUERY_STRING "?"))) QUERY_STRING (first chunks)))
-		(if (ends-with QUERY_STRING Dragonfly:TEMPLATE_EXTENSION)
-			(set 'content-type Response:html-type)
-			(or (ends-with QUERY_STRING ".xml") (ends-with QUERY_STRING ".rss"))
-			(set 'content-type Response:xml-type)
-		)
+		(set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
 	)
 	((run)
 		; pass through template TODO: make sure this is secure! no ../ bullshit!
 		(DF:log-debug "Route.Static: " file)
-		(Response:content-type content-type)
+		(Response:content-type (Response:extension->type ext))
 		(Web:eval-template (read-file file))
 	)
 )
@@ -126,35 +122,32 @@
 (define-subclass (Route.View Route)
 	((matches?)
 		(if (empty? QUERY_STRING)
-			(set 'viewpath (string Dragonfly:VIEWS_PATH "/" Dragonfly:DEFAULTVIEW))
-			(set 'viewpath (string Dragonfly:VIEWS_PATH "/" (first (parse QUERY_STRING "/"))))
+			(set 'DF:viewname DF:DEFAULTVIEW)
+			(set 'DF:viewname (first (parse QUERY_STRING "/")))
 		)
-		(file? viewpath)
+		(file? (DF:view-path DF:viewname))
 	)
 	((run)
 		; pass through template
-		(DF:log-debug "Route.View: " viewpath)
-		(set 'Dragonfly:viewname (last (parse viewpath "/")))
-		(Web:eval-template (read-file viewpath))
+		(DF:log-debug "Route.View: " DF:viewname)
+		(DF:display-view DF:viewname)
 	)
 )
 
 (define-subclass (Route.ALL Route)
 	((matches?) true)
 	((run)
-		; 404 or redirect to home page?
-		; TODO: if DEFAULT404 not found then still send something
-		(DF:log-debug "Route.ALL")
-		(Web:eval-template (read-file (string Dragonfly:VIEWS_PATH "/" Dragonfly:DEFAULT404)))
+		(DF:log-debug "Route.ALL for QUERY_STRING: " QUERY_STRING)
+		(DF:display-error 404)
 	)
 )
 
 (context 'Dragonfly)
 
-(push (Route.ALL) dragonfly-routes)
-(if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes))
-(if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes))
-(if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes))
+(if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
+(if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
+(if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes -1))
+(push (Route.ALL) dragonfly-routes -1)
 
 ; TODO: these either need to be deleted or moved elsewhere
 ; set the paths to views and partials
@@ -177,12 +170,32 @@
 
 (error-event error-handler)
 
-;; @syntax (Dragonfly:partial <partial>)
-;; @param <partial> name of partial
-;; <p>Evaluates the partial and returns it.</p>
+(define (view-path viewname)
+	(string VIEWS_PATH "/" viewname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
+)
 
-(define (partial partialname)
-  	(Web:eval-template (read-file (string PARTIALS_PATH "/" partialname)))
+(define (partial-path partialname)
+	(string PARTIALS_PATH "/" partialname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
+)
+
+;; @syntax (Dragonfly:display-partial <partial>)
+;; @param <partial> name of partial
+;; <p>Evaluates the partial and returns it (or nil).</p>
+;;
+(define (display-partial partialname)
+  	(Web:eval-template (read-file (partial-path partialname)))
+)
+
+(define (display-view viewname)
+	(Web:eval-template (read-file (view-path viewname)))
+)
+
+(define (display-error error-code)
+	(Response:status error-code)
+	(unless (display-view (string error-code))
+		(log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
+		(Web:eval-template ERROR_TEMPLATE)
+	)
 )
 
 (define (listener)
@@ -195,5 +208,23 @@
 		)
 	)
 )
-	
+
+;===============================================================================
+; !Private Variables
+;===============================================================================
+
+(set 'ERROR_TEMPLATE
+[text]
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title><%= (join (map string (Response:status)) " ") %></title>
+</head><body>
+<h1><%= (last (Response:status)) %></h1>
+<p>The requested URL /<%= QUERY_STRING %> resulted in error <%= (join (map string (Response:status)) " ") %>.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+[/text]
+)
+
 (context MAIN)
