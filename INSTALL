@@ -35,6 +35,9 @@ And on your webserver that is represented by this folder (called the "site root"
 	
 Then that's the folder you'll want to copy the files into.
 
+If you'd like Dragonfly to live somewhere else inside your site root,
+see the Example step at the end of this document.
+
  ================================
  = Step 2 - Configure Dragonfly =
  ================================
@@ -47,5 +50,43 @@ what the settings are for.
 If you want to prevent .html files from being processed through Dragonfly, open the
 .htaccess file in the site root and read the comments there for how to disable that behavior.
 
+ ===========================================================
+ = Example: Testing Demo Site on Apache in Non-Root Folder =
+ ===========================================================
 
-TODO: discuss installing and using plugins.
+Say you want to test Dragonfly out by placing the entire
+directory into the root of your site. The demo site will then
+be located here:
+
+	<site root>/dragonfly/example-site/
+
+And to access it you would use this URL:
+
+	http://www.mysite.com/dragonfly/example-site/
+
+You must make two changes (possible 3) to get it to work with Apache:
+
+1) Change this line in .htaccess 
+
+	RewriteBase /
+To:
+	RewriteBase /dragonfly/example-site/
+	
+2) Edit config.lsp and change this line:
+
+	(constant (global 'DOCUMENT_ROOT) (env "DOCUMENT_ROOT"))
+To:
+	(constant (global 'DOCUMENT_ROOT) "/server/path/to/mysite.com/dragonfly/example-site")
+
+	Note that "/server/path/to" is made up. You would want to use
+	the absolute path to the location of the 'example-site' folder
+	on your server.
+
+A possible third step is required if your newlisp binary is not
+installed in /usr/bin/newlisp. If it's installed somewhere else
+(for example: /path/to/bin/newlisp), then you may need to also
+edit 'index.cgi' file and change the top-line from:
+
+	#!/usr/bin/env newlisp
+To:
+	#!/path/to/bin/newlisp

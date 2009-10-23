@@ -36,11 +36,12 @@
    (replace REGEX_HEX_ENCODED_CHAR str (char (int (string "0x" $1))) 0x10000)
 )
 
-(constant 'REGEX_QUERY (regex-comp {&([^&=]+?)=?([^&=]*?)(?=&|$)} 1))
+(constant 'REGEX_QUERY (regex-comp {&([^&=]+)=?([^&=]*?)(?=&|$)} 1))
 
 (define (parse-query query)
 	(when (starts-with query "?") (pop query))
 	(push "&" query)
+	(DF:log-debug "parsing query: " query " => " (find-all REGEX_QUERY query (list $1 (url-decode $2)) 0x10000))
 	(find-all REGEX_QUERY query (list $1 (url-decode $2)) 0x10000)
 )
 
@@ -102,7 +103,7 @@
 		(dolist (pair (parse-query temp))
 			($POST (first pair) (last pair))
 		)
-		; TODO: log an error here
+		(DF:log-err "couldn't get POST info!")
 	)
 )
 

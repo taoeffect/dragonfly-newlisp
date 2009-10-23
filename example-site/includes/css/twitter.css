@@ -38,6 +38,6 @@ div.bubble cite {
 	margin: 0px;
 	padding: 7px 0px 0px 15px;
 	top: 6px;
-	background: transparent url(/includes/images/tip.gif) no-repeat 20px 0;
+	background: transparent url(includes/images/tip.gif) no-repeat 20px 0;
 	font-style: normal;
 }
