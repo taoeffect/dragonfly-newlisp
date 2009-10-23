@@ -41,7 +41,6 @@
 (define (parse-query query)
 	(when (starts-with query "?") (pop query))
 	(push "&" query)
-	(DF:log-debug "parsing query: " query " => " (find-all REGEX_QUERY query (list $1 (url-decode $2)) 0x10000))
 	(find-all REGEX_QUERY query (list $1 (url-decode $2)) 0x10000)
 )
 

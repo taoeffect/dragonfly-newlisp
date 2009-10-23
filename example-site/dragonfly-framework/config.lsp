@@ -24,7 +24,7 @@
 ;===============================================================================
 
 ; One of 'LOG_DEBUG, 'LOG_INFO, 'LOG_WARN, and 'LOG_ERROR
-(constant 'LOG_LEVEL 'LOG_DEBUG)
+(constant 'LOG_LEVEL 'LOG_INFO)
 ; the location of the logfile
 (constant 'LOG_FILE_PATH (string DRAGONFLY_ROOT "/dragonfly.log"))
 
