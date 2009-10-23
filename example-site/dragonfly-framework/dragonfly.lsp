@@ -216,14 +216,9 @@
 
 ; setup our error handler
 (define (error-handler)
-	(Response:status 500)
-	(Response:content-type Response:text-type)
-	
 	;(log-err "Got error (" (last (last-error)) ") with STDOUT contents:\n{" STDOUT "}")
 	(log-err (last (last-error)))
-	
-	(set 'STDOUT "") ; clear STDOUT
-	(println (last (last-error)))
+	(display-error 500)
 	(send-and-exit)
 )
 
