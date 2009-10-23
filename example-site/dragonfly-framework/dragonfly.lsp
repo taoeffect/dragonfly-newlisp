@@ -144,6 +144,11 @@
 ; !Public Functions
 ;===============================================================================
 
+(define (web-root path)
+	; WEB_ROOT should have a "/" on the end
+	(string WEB_ROOT path)
+)
+
 (define (view-path viewname)
 	(string VIEWS_PATH "/" viewname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
 )
@@ -234,5 +239,8 @@ error was encountered while trying to use an ErrorDocument to handle the request
 </body></html>
 [/text]
 )
+
+(set 'WEB_ROOT (slice DOCUMENT_ROOT (length ORIGINAL_ROOT)))
+(push "/" WEB_ROOT -1)
 
 (context MAIN)

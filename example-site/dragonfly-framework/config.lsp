@@ -10,7 +10,8 @@
 ; dragonfly root
 (constant (global 'DRAGONFLY_ROOT) (string DOCUMENT_ROOT "/dragonfly-framework"))
 ; sync any customization of DOCUMENT_ROOT with the 'env'
-; don't modify this line
+; don't modify these two lines
+(constant (global 'ORIGINAL_ROOT) DOCUMENT_ROOT)
 (env "DOCUMENT_ROOT" DOCUMENT_ROOT)
 
 (context 'Dragonfly)
