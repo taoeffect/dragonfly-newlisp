@@ -247,7 +247,7 @@ error was encountered while trying to use an ErrorDocument to handle the request
 [/text]
 )
 
-(set 'WEB_ROOT (slice DOCUMENT_ROOT (length (real-path))))
+(set 'WEB_ROOT (slice DOCUMENT_ROOT (length ORIGINAL_ROOT)))
 (push "/" WEB_ROOT -1)
 
 (context MAIN)
