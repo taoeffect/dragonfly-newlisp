@@ -107,16 +107,16 @@
 	(lookup file-extension extension-to-type-map)
 )
 
-(constant 'text-type "text/plain; charset=utf-8")
-(constant 'html-type "text/html; charset=utf-8")
-(constant 'xml-type "text/xml; charset=utf-8")
-(constant 'atom-type "application/atom+xml; charset=utf-8")
+(constant
+	'text-type "text/plain; charset=utf-8"  'xml-type "text/xml"
+	'html-type "text/html; charset=utf-8"   'js-type "application/javascript"
+	'atom-type "application/atom+xml"       'css-type "text/css"
+)
 
 (set 'extension-to-type-map
-  '((".html" html-type)
-	(".xml" xml-type)
-	(".rss" xml-type)
-	(".txt" text-type))
+  '((".html" html-type)  (".txt" text-type)
+	(".xml" xml-type)    (".js" js-type)   
+	(".rss" xml-type)    (".css" css-type))
 )
 
 ;===============================================================================
