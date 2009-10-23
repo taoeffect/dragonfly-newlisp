@@ -106,7 +106,9 @@
 		; pass through template TODO: make sure this is secure! no ../ bullshit!
 		(DF:log-debug "Route.Static: " file)
 		(Response:content-type (Response:extension->type ext))
-		(Web:eval-template (read-file file))
+		(unless (Web:eval-template (read-file file))
+			(display-error 404)
+		)
 	)
 )
 
@@ -144,6 +146,9 @@
 ; !Public Functions
 ;===============================================================================
 
+; web-root is used to make things work nicely if the site isn't
+; located at DOCUMENT_ROOT but in a subdirectory of it. Instead
+; of including a link to "/welcome", you'd use (web-root "welcome")
 (define (web-root path)
 	; WEB_ROOT should have a "/" on the end
 	(if (starts-with path "/") (pop path))
@@ -172,6 +177,7 @@
 
 (define (display-error error-code (clear-stdout true))
 	(Response:status error-code)
+	(Response:content-type Response:html-type)
 	(if clear-stdout (set 'STDOUT ""))
 	
 	(unless (display-view (string error-code))
