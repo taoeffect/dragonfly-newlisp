@@ -272,7 +272,7 @@
 		(set 'link-url (string "/" view "/" action))
 	)
 	
-  	(print "<a href='"link-url"'>"link-name"</a>")
+  	(print "<a href='"(web-root link-url)"'>"link-name"</a>")
 )
 
 ;; @syntax (Dragonfly:link_to <link_name> <url>)
@@ -321,6 +321,7 @@
 		(if (starts-with request-url "/") (pop request-url))
 		(push "/?" request-url)
 	)
+	(set 'request-url (web-root request-url))
 	(print "var ajax"html-elementid" = new AjaxRequest(\""request-url"\", responseFunction);")
 	
 	(print "ajax"html-elementid".post(\""params-url"\");")

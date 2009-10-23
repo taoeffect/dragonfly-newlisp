@@ -1,6 +1,8 @@
 ; do not modify the line below
 (dolist (pair (env)) (constant (global (sym (first pair))) (last pair)))
 
+; NOTE: the paths, including folders, shouldn't have slashes on the ends!
+
 ;===============================================================================
 ; Global Constants
 ;===============================================================================

@@ -146,6 +146,7 @@
 
 (define (web-root path)
 	; WEB_ROOT should have a "/" on the end
+	(if (starts-with path "/") (pop path))
 	(string WEB_ROOT path)
 )
 
