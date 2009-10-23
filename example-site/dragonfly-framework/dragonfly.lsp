@@ -43,10 +43,9 @@
 (constant 'DRAGONFLY_MINOR 50)
 (constant 'DRAGONFLY_VERSION (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
-; This is buffer that contains that content that will get written
-; to STDOUT if no errors are thrown. If you define your own Route
-; then you must write the results to it using 'write-buffer' instead
-; of calling 'println' or 'print' directly!
+; This is the buffer that contains the content that will get written
+; to STDOUT if no errors are thrown. In the Dragonfly context 'print'
+; and 'println' are overridden to write to this buffer.
 (define STDOUT "")
 
 ; you can customize this variable with your own routes, note

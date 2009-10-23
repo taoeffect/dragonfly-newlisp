@@ -17,6 +17,47 @@
 ;; @module Dragonfly
 ;; @author Greg Slepak <greg at taoeffect.com>
 
+;; @syntax (with-wrapped-print <body>)
+;; <p>If you're calling a function outside of the Dragonfly context
+;; that in turn calls 'print' or 'println', make sure to wrap the function
+;; call in this macro to prevent the web headers from being screwed up.</p>
+;; @example
+;; (with-wrapped-print (nldb:show))
+(define-macro (with-wrapped-print)
+	(let (saved-p print saved-pn println)
+		(constant 'print Dragonfly:print 'println Dragonfly:println)
+		(eval (cons 'begin $args))
+		(constant 'print saved-p 'println saved-pn)
+	)
+)
+(global 'with-wrapped-print)
+
+;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
+;; @param <sym-subclass> Symbol representing name of the subclass
+;; @param <ctx> The FOOP class you'll be subclassing
+;; <p>This macro must be called in the MAIN context.</p>
+;; @example
+;; (new Class 'Foo)
+;; (define (Foo:get x) (x 1))
+;; (define (Foo:set x v) (setf (x 1) v) x)
+;; 
+;; (define-subclass (Bar Foo)
+;; 	((get x) (x 2))
+;; 	((set x v) (setf (x 2) v) x)
+;; 	((str x) (string x))
+;; )
+;; 
+;; (:get (Foo 1 2)) => 1
+;; (:get (Bar 1 2)) => 2
+;; (:str (:set (Bar 1 2) 3)) => (Bar 1 3)
+(define-macro (define-subclass)
+	(new (args 0 1) (args 0 0))
+	(dolist (method (rest $args))
+		(setf (method 0 0) (sym $it (args 0 0)))
+		(eval (push 'define method))
+	)
+)
+
 (context 'Dragonfly)
 
 ; protect against situation where one of the load functions is used to
@@ -65,41 +106,6 @@
 )
 
 (context 'MAIN)
-
-;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
-;; @param <sym-subclass> Symbol representing name of the subclass
-;; @param <ctx> The FOOP class you'll be subclassing
-;; <p>This macro must be called in the MAIN context.</p>
-;; @example
-;; (new Class 'Foo)
-;; (define (Foo:get x) (x 1))
-;; (define (Foo:set x v) (setf (x 1) v) x)
-;; 
-;; (define-subclass (Bar Foo)
-;; 	((get x) (x 2))
-;; 	((set x v) (setf (x 2) v) x)
-;; 	((str x) (string x))
-;; )
-;; 
-;; (:get (Foo 1 2)) => 1
-;; (:get (Bar 1 2)) => 2
-;; (:str (:set (Bar 1 2) 3)) => (Bar 1 3)
-(define-macro (define-subclass)
-	(new (args 0 1) (args 0 0))
-	(dolist (method (rest $args))
-		(setf (method 0 0) (sym $it (args 0 0)))
-		(eval (push 'define method))
-	)
-)
-
-(define-macro (with-wrapped-print)
-	(let (saved-p print saved-pn println)
-		(constant 'print Dragonfly:print 'println Dragonfly:println)
-		(eval (cons 'begin $args))
-		(constant 'print saved-p 'println saved-pn)
-	)
-)
-(global 'with-wrapped-print)
 
 ; swap the MAIN functions for ours
 (unless Dragonfly:saved-load
