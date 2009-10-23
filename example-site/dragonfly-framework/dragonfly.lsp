@@ -164,11 +164,11 @@
 )
 
 (define (view-path viewname)
-	(string VIEWS_PATH "/" viewname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
+	(string VIEWS_PATH "/" viewname (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 (define (partial-path partialname)
-	(string PARTIALS_PATH "/" partialname (if TEMPLATE_EXTENSION TEMPLATE_EXTENSION ""))
+	(string PARTIALS_PATH "/" partialname (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 ;; @syntax (Dragonfly:display-partial <partial>)

@@ -60,11 +60,13 @@
 (constant 'DEFAULTRSS "dragonfly_rssfeed")
 ; if non-nil, then all of your views (and partials) must have this extension
 ; ex: ".html"
-(constant 'TEMPLATE_EXTENSION nil)
+(constant 'VIEW_EXTENSION nil)
 
 ;===============================================================================
 ; RESTful Resources
 ;===============================================================================
+
+; TODO: implement this
 
 ; set to nil to disable REST handling
 (constant 'ENABLE_RESTFUL_HANDLER true)
