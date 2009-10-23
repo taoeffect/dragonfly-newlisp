@@ -93,7 +93,8 @@
 ; !$POST/$FILES/$BINARY
 ;===============================================================================
 
-(unless (zero? (peek (device)))
+; windows doesn't have 'peek'
+;(unless (zero? (peek (device)))
 	(if (and (setf temp HTTP_CONTENT_TRANSFER_ENCODING) (= temp "binary"))
 		(handle-binary-data)
 		(and (setf temp CONTENT_TYPE) (starts-with temp "multipart/form-data"))
@@ -102,9 +103,8 @@
 		(dolist (pair (parse-query temp))
 			($POST (first pair) (last pair))
 		)
-		(DF:log-err "couldn't get POST info!")
 	)
-)
+;)
 
 ;===============================================================================
 ; !$COOKIES

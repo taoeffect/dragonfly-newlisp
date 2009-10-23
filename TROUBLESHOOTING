@@ -1,0 +1,47 @@
+This document addresses problems getting Dragonfly up and running
+in various environments, currently two: newlisp as server, and Apache.
+
++=================+
+ NEWLISP AS SERVER
++=================+
+
+------------------------------------------------------------
+Problem
+ERR:500 Need \tmp directory on current drive: index.cgi
+
+:: Solution ::
+This happens on Windows. newlisp needs a "tmp" folder in C:.
+Just create it here so that it's here: C:\tmp
+
+------------------------------------------------------------
+Problem
+ERR:404 File or Directory not found: index.html
+
+Solution
+Make sure you're running the newlisp command from within
+the 'example-site' directory, or whatever contains your
+'index.cgi' file. This is the command to run:
+
+	newlisp -w . -http -d 8080
+
++=================+
+ APACHE AS SERVER 
++=================+
+
+------------------------------------------------------------
+Problem
+500 Internal Server Error
+
+Solution
+See example in README to check and make sure that the
+path to newlisp is set correctly in index.cgi.
+
+------------------------------------------------------------
+Problem
+index.cgi is not being run.
+
+Solution
+Try adding this to your .htaccess file at the site root:
+
+	AddHandler cgi-script .cgi
+	

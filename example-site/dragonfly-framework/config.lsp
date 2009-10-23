@@ -13,7 +13,7 @@
 (constant (global 'DRAGONFLY_ROOT) (string DOCUMENT_ROOT "/dragonfly-framework"))
 
 ; sync any customization of DOCUMENT_ROOT with the 'env'
-; don't modify these two lines
+; don't modify these two lines below!
 (constant (global 'ORIGINAL_ROOT) (env "DOCUMENT_ROOT"))
 (env "DOCUMENT_ROOT" DOCUMENT_ROOT)
 
@@ -36,6 +36,11 @@
 (constant 'ENABLE_STATIC_TEMPLATES true)
 ; file extensions that triggers the handler (update .htaccess to match this!)
 (constant 'STATIC_EXTENSIONS '(".html"))
+; alternatively the static handler can be used to load index files given
+; a URL pointing to a directory. This variable customizes the extension
+; of the index file that the handler will check to see if it handles the request
+; ex: mysite.com/myproduct/support => mysite.com/myproduct/support/index.html
+(constant 'STATIC_INDEX_EXTENSION ".html")
 
 ;===============================================================================
 ; Views

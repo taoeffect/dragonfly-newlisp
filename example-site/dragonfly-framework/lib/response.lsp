@@ -104,7 +104,7 @@
 
 (define (extension->type file-extension)
 	(if-not (starts-with file-extension ".") (push "." file-extension))
-	(lookup file-extension extension-to-type-map)
+	(eval (lookup file-extension extension-to-type-map))
 )
 
 (constant

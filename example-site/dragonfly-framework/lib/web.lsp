@@ -297,7 +297,7 @@
 (define OPEN_TAG "<%")
 (define CLOSE_TAG "%>")
 
-(define (eval-template str (ctx Dragonfly) , start end next-start next-end block (buf ""))
+(define (eval-template str (ctx Dragonfly) , start end block (buf ""))
 	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
 		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
 		(setf block (slice str (+ start 2) (- end start 2)))

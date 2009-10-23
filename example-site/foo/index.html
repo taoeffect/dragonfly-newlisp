@@ -1,0 +1,33 @@
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p>Dragonfly web framework<p>
+		</div>
+		<h1>Welcome to a Dragonfly test page!</h1>
+		<p>
+			Here we're testing what happens when you point the browser
+			to a URL like <b>http://mysite.com/foo</b>!
+		</p>
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+
+		<div class="line-dotted"></div>
+
+
+	</div><!-- END CONTENT -->
+
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

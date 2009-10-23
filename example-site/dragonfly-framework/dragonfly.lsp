@@ -32,6 +32,13 @@
 ; so that things like log-err can be written DF:log-err
 (constant (global 'DF) Dragonfly)
 
+; make sure these two are defined
+(if-not DOCUMENT_ROOT (throw-error "Environment variable DOCUMENT_ROOT missing!"))
+(unless QUERY_STRING
+	(constant (global 'QUERY_STRING) "")
+	(env "QUERY_STRING" QUERY_STRING)
+)
+
 (context 'Dragonfly)
 
 ;===============================================================================
@@ -51,10 +58,6 @@
 ; you can customize this variable with your own routes, note
 ; that you might need to clear the default routes out of it (added below)
 (define dragonfly-routes '())
-
-; make sure these two are defined
-(if-not DOCUMENT_ROOT (throw-error "Environment variable DOCUMENT_ROOT missing!"))
-(if-not QUERY_STRING (throw-error "Environment variable QUERY_STRING missing!"))
 
 ;===============================================================================
 ; !Load Libraries and Plugins
@@ -99,11 +102,17 @@
 	((matches?)
 		; ex: .html or .html?a=4
 		(set 'file (if (empty? (set 'chunks (parse QUERY_STRING "?"))) QUERY_STRING (first chunks)))
-		(set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
+		(unless (set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
+			; alternatively 'file' could actually be a directory, in which case
+			; we need to check if there's an index file in it
+			(set 'ext DF:STATIC_INDEX_EXTENSION)
+			(set 'file (string DOCUMENT_ROOT "/" file "/index" ext))
+			(file? file)
+		)
 	)
 	((run)
 		; pass through template TODO: make sure this is secure! no ../ bullshit!
-		(DF:log-debug "Route.Static: " file)
+		(DF:log-debug (context) ": " file)
 		(Response:content-type (Response:extension->type ext))
 		(unless (Web:eval-template (read-file file))
 			(DF:display-error 404)
@@ -130,7 +139,7 @@
 	)
 	((run)
 		; pass through template
-		(DF:log-debug "Route.View: " DF:viewname)
+		(DF:log-debug (context) ": " DF:viewname)
 		(DF:display-view DF:viewname)
 	)
 )
