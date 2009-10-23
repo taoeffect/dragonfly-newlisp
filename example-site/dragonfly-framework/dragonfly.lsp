@@ -107,7 +107,7 @@
 		(DF:log-debug "Route.Static: " file)
 		(Response:content-type (Response:extension->type ext))
 		(unless (Web:eval-template (read-file file))
-			(display-error 404)
+			(DF:display-error 404)
 		)
 	)
 )
