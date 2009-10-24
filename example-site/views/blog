@@ -12,7 +12,7 @@
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (title "| marchildmann.com") %><p>
+			<p><% (title "| runDragonfly.com") %><p>
 		</div>
 
 		<% (load-database "blog.nldb") %>

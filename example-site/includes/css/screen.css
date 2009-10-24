@@ -7,10 +7,14 @@ a { color: #000000; text-decoration: none; }
 a:hover {  text-decoration: underline; }
 
 body {
-	font: 11px 'Arial';
+	font: 11px "Lucida Grande", Helvetica, Arial, Sans-Serif;
 	background: white !important;
 	/* background: #00D6D9; */
 	padding-left:50px;
+}
+
+body img {
+	border:0px;
 }
 
 .clear {
@@ -170,7 +174,7 @@ body {
 /* nice table definitions */
 
 	table {
-		font-family:Tahoma,Verdana,Arial,sans-serif;
+		font-family:"Lucida Grande", Helvetica, Arial, Sans-Serif;
 		padding:0;
 		empty-cells:show;
 		border-spacing:0px;

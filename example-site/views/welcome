@@ -1,0 +1,65 @@
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<img src="<%=(web-root "includes/images/dragonfly_header_1.jpg")%>" class="border" alt="Dragonfly" title="Dragonfly" width="474"/>
+		
+		<h1>Introduction</h1>
+		<p class="extract">Dragonfly is a <b>web framework for newLISP</b>. Development started in June 2009. It focuses on <b>speed</b>, small memory consumption and a <b>small learning curve</b>. Other goodies are a plug and play architecture for writing own helpers or modules and a very <b>easy deployment</b>. It's possible to use it with the builtin newLISP webserver.
+		</p>
+
+		<h2>Ten reasons for tasting Dragonfly...</h2>
+		<ol>
+			<li>You like newLISP</li>
+			<li>You need ultra performance</li>
+			<li>You want a framework with a small memory footprint</li>
+			<li>You hate the rails -like deployment and just want a "transfer to webserver and go"</li>
+			<li>You want a clear and easy-to-use templating language</li>
+			<li>You want partial views in Your templates</li>
+			<li>You want a framework which generates clean and search-friendly URLs</li>
+			<li>You need a framework which is extensible</li>
+			<li>You want a documented framework</li>
+			<li>And discovering new programming styles</li>
+		</ol>
+		<p>&nbsp;</p>
+
+		<h2>Getting Started</h2>
+		<ol>
+			<li>We assume that You've already installed newLISP. If not, then download it first at <% (link_to_external "official site of newLISP" "http://www.newlisp.org/") %></li>
+			<li>Then download the latest version of <% (link_to_external "Dragonfly at GoogleCode" "http://code.google.com/p/dragonfly-newlisp/downloads/list") %></li>
+			<li>Extract the archive to Your harddrive</li>
+			<li>Start the builtin webserver by typing "newlisp -http -c -d 8080 -w /path/to/your/archive"</li>
+			<li>Open Your browser and navigate to <% (link_to_external "http://localhost:8080/" "http://localhost:8080/") %></li>
+		</ol>
+		<p>&nbsp;</p>
+
+		<h2>Exploring the folders</h2>
+		<p>The Dragonfly framework comes with a number of folders. The root folder is called <b class="files">dragonfly-framework</b>. This folder contains just two files, <b class="files">dragonfly.lsp</b> and <b class="files">README.TXT</b>. The <b class="files">dragonfly.lsp</b> contains core functions like routing and benchmarking.</p><br/>
+		<p>The subfolders are <b class="folders">config</b>, <b class="folders">docs</b>, <b class="folders">helpers-active</b>, <b class="folders">helpers-inactive</b>, <b class="folders">modules-active</b> and <b class="folders">modules-inactive</b>.</p><br/>
+		<p>Your web applications config will be stored in the subfolder <b class="folders">config</b>, in the file <b class="file">dragonfly_config.lsp</b>.</p>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

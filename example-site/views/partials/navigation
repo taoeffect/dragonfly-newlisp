@@ -1,10 +1,11 @@
 <!-- BEGIN NAVIGATION -->
-<img src="<%=(web-root "includes/images/marchildmann-com.gif")%>" alt="MarcHildmann.com" width="474" height="50"/>
+<a href="./"><img src="<%=(web-root "includes/images/dragonfly_logo_white.gif")%>" alt="Dragonfly web framework" title="Dragonfly web framework" width="260" height="40"/></a>
 <ul>
+	<li><% (link_to "Welcome" "welcome" "index") %></li>
 	<li>
-	<a href="index.html" onclick="toggleMenu(); return false;" id="guidesMenu">Dragonfly web framework</a>
+	<a href="index.html" onclick="toggleMenu(); return false;" id="guidesMenu">User Guide</a>
 	
-	          <div id="menu" class="clearfix" style="display: none;">
+	          <div id="menu" class="clearfix" style="display:none;">
 	            <dl class="L">
 	              <dt>Start Here</dt>
 				  <dd><% (link_to  "Welcome" "dragonfly_welcome" "index") %></dd>
@@ -28,10 +29,6 @@
 				</dl>
 				</div>
 	</li>
-	<li><% (link_to "Home" "welcome" "index") %></li>
-	<li><% (link_to "Blog" "blog" "index") %></li>
-	<li><% (link_to "Photographie" "photographie" "index") %></li>
-
 </ul>
 <!-- END NAVIGATION -->
 

@@ -1,8 +1,9 @@
 <head>
 	<title><% (title "Dragonfly web framework - User Guide") %></title>
-	<% (meta "author" "Marc Hildmann") %>
+	<% (meta "author" "Marc Hildmann, Greg Slepak") %>
 	<% (meta "keywords" "newlisp, framework, dragonfly, web framework") %>
 	<% (css "screen" (web-root "includes/css/screen.css")) %>
 	<% (script (web-root "includes/js/dragonfly.js")) %>
+	<% (script (web-root "includes/js/jquery-1.3.2.min.js")) %>
 	<% (rss "Dragonfly web framework RSS Feed" (web-root "?dragonfly_rssfeed/xml")) %>
 </head>

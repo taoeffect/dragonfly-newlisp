@@ -4,14 +4,17 @@ window.onload = function () {
 };
 	
 /* toggleMenu function for Dragonfly User Guide Menu */
-function toggleMenu(){
+function toggleMenu() {
 
-  if (document.getElementById('menu').style.display == "none") {
-    document.getElementById('menu').style.display = "block";
-  } else {
-    document.getElementById('menu').style.display = "none";
-  }
+	/* very basic without animation */
+	if ($('#menu').is(':visible')) {
+	    $('#menu').hide();
+	} else {
+	    $('#menu').show();
+	}
+
 }
+
 
 /* simple AJAX Request */
 
