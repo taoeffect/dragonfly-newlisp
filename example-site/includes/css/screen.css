@@ -150,6 +150,9 @@ body img {
 		line-height:17px;
 	}
 
+	#content li a { color: #00aeef; text-decoration: none; }
+	#content li a:hover {  text-decoration: underline; }
+	
 	/* Title Styling */
 	#content .title,
 	#content-full .title{

@@ -1,5 +1,5 @@
 <head>
-	<title><% (title "Dragonfly web framework - User Guide") %></title>
+	<title><% (title " - Dragonfly web framework") %></title>
 	<% (meta "author" "Marc Hildmann, Greg Slepak") %>
 	<% (meta "keywords" "newlisp, framework, dragonfly, web framework") %>
 	<% (css "screen" (web-root "includes/css/screen.css")) %>
