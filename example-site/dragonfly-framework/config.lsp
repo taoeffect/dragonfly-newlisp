@@ -53,7 +53,7 @@
 ; location of partials
 (constant 'PARTIALS_PATH (string DOCUMENT_ROOT "/views/partials"))
 ; setting a default view
-(constant 'DEFAULTVIEW "dragonfly_welcome")
+(constant 'DEFAULTVIEW "welcome")
 ; setting a default action
 (constant 'DEFAULTACTION "index") ; display all
 ; setting a default rss view
