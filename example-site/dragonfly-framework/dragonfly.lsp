@@ -163,6 +163,10 @@
 	(string WEB_ROOT path)
 )
 
+(define (include)
+	(print (read-file (apply string $args)))
+)
+
 (define (view-path viewname)
 	(string VIEWS_PATH "/" viewname (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )

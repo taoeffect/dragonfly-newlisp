@@ -24,7 +24,7 @@
 		<p>Dragonfly requires the following to work:</p>
 		<ul>
 			<li>newLISP v10.1 or greater.</li>
-			<li>For magic redirection Apache web server is required.</li>
+			<li>For magic redirection Apache web server is recommended.</li>
 		</ul>
 		
 		<p>If you meet those requirements, great! If you're using a custom web server, you might want to setup your own redirection script based on the .htaccess file.

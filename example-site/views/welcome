@@ -20,7 +20,7 @@
 		<h1>Introduction</h1>
 		<p class="extract">Dragonfly is a <b>web framework for newLISP</b>. Development started in June 2009. It focuses on <b>speed</b>, small memory consumption and a <b>small learning curve</b>. Other goodies are a plug and play architecture for writing own helpers or modules and a very <b>easy deployment</b>. It's possible to use it with the builtin newLISP webserver.
 		</p>
-
+		
 		<h2>Ten reasons for tasting Dragonfly...</h2>
 		<ol>
 			<li>You like newLISP</li>
