@@ -1,0 +1,75 @@
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Getting Started</h1>
+		<p class="extract">
+		Setting up Dragonfly is easy, there are only two steps, copying files, and changing the configuration to suit your site. Typically the configuration needs no adjusting, but depending on your situation you may need to make some adjustments.	
+		</p>
+		
+		<h2>Requirements</h2>
+		<p>Dragonfly requires the following to work:</p>
+		<ul>
+			<li>newLISP v10.1 or greater.</li>
+			<li>For magic redirection Apache web server is required.</li>
+		</ul>
+		
+		<p>If you meet those requirements, great! If you're using a custom web server, you might want to setup your own redirection script based on the .htaccess file.
+		</p>
+
+		<h2>Step 1 - Copying Files</h2>
+		<p>There are three things you'll need to copy into your site's root to install
+		Dragonfly. You'll find these files inside the 'example-site' folder.</p>
+		
+		<ol>
+			<li>The 'dragonfly-framework' folder</li>
+			<li>index.cgi</li>
+			<li>.htaccess (this file is hidden)</li>
+		</ol>
+		
+		<p>By "site root" we mean the folder that represents your basic web address,
+		for example if your website is located at:<br/><br/>
+		http://wwww.example-site.com/
+		<br/><br/>
+		And on your webserver that is represented by this folder (called the "site root"):
+		<br/><br/>
+		/home/www/example-site.com/
+		<br/><br/>
+		Then that's the folder you'll want to copy the files into.
+		<br/><br/>
+		If you'd like Dragonfly to live somewhere else inside your site root,
+		see the Example step at the end of this document.
+		</p>
+
+		<h2>Step 2 - Configure Dragonfly</h2>
+		<p>Edit the 'config.lsp' file in dragonfly-framework.<br/><br/>Read through the comments (they begin with a semi-colon) for instructions on what the settings are for.<br/><br/>If you want to prevent .html files from being processed through Dragonfly, open the .htaccess file in the site root and read the comments there for how to disable that behavior.
+		</p>
+
+		<h2>Step 3 - That's it'</h2>
+		<p>You're ready to run Dragonfly!</p>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
