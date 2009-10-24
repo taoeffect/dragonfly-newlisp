@@ -29,6 +29,15 @@
 (constant 'LOG_FILE_PATH (string DRAGONFLY_ROOT "/dragonfly.log"))
 
 ;===============================================================================
+; Templating
+;===============================================================================
+
+; Add an '=' sign after the OPEN_TAG to inline the output
+; ex: <%= (+ 1 1) %> will print '2' to the output webpage
+(constant 'OPEN_TAG "<%")
+(constant 'CLOSE_TAG "%>")
+
+;===============================================================================
 ; Filtering of static files (for .php-like behavior)
 ;===============================================================================
 

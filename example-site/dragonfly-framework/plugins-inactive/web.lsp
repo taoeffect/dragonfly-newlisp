@@ -274,43 +274,4 @@
       (if (null? params) "" (string "?" (build-query params)))
       (if (lookup "fragment" url) (string "#" (lookup "fragment" url)) ""))))
 
-;===============================================================================
-; !Templating
-;===============================================================================
-
-;; @syntax (Web:eval-template <str-template> [<ctx-context>])
-;; @param <str-template> a string containing the template syntax
-;; @param <ctx-context> Unless you have a very good reason for it, leave this alone.
-;; <p>Translates a template using ASP-like tags, creating small islands of
-;; newLISP code in an HTML (or other) document. This is similar to the
-;; distribution CGI module&apos;s 'put-page' function, except that the short-cut
-;; &lt;%= foo %&gt; is used to simply output the value of 'foo' and tags
-;; may span multiple lines.</p>
-;; <p>Note that the opening and closing tags may be changed by setting the
-;; values of 'Web:OPEN_TAG' and 'Web:CLOSE_TAG' if desired. The shortcut
-;; print tag will be 'Web:OPEN_TAG' + '='.</p>
-;; @example
-;; (Web:eval-template "&lt;p&gt;&lt;%= (* 3 3) %&gt;&lt;/p&gt;")
-;; =&gt; "&lt;p&gt;9&lt;/p&gt;"
-;; (Web:eval-template "&lt;p&gt;&lt;% (println (* 3 3)) %&gt;&lt;/p&gt;")
-;; =&gt; "&lt;p&gt;9&lt;/p&gt;"
-(define OPEN_TAG "<%")
-(define CLOSE_TAG "%>")
-
-(define (eval-template str (ctx Dragonfly) , start end block (buf ""))
-	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
-		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
-		(setf block (slice str (+ start 2) (- end start 2)))
-		(if (starts-with block "=")
-			(write-buffer buf (string "(print " (rest block) ")"))
-			(write-buffer buf block)
-		)
-		(setf str (slice str (+ end 2)))
-	)
-	(when str
-		(write-buffer buf (string "(print [text]" str "[/text])"))
-		(eval-string buf ctx)
-	)
-)
-
 (context 'MAIN)

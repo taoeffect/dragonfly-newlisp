@@ -114,7 +114,7 @@
 		; pass through template TODO: make sure this is secure! no ../ bullshit!
 		(DF:log-debug (context) ": " file)
 		(Response:content-type (Response:extension->type ext))
-		(unless (Web:eval-template (read-file file))
+		(unless (DF:eval-template (read-file file))
 			(DF:display-error 404)
 		)
 	)
@@ -163,10 +163,6 @@
 	(string WEB_ROOT path)
 )
 
-(define (include)
-	(print (read-file (apply string $args)))
-)
-
 (define (view-path viewname)
 	(string VIEWS_PATH "/" viewname (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
@@ -175,16 +171,27 @@
 	(string PARTIALS_PATH "/" partialname (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
-;; @syntax (Dragonfly:display-partial <partial>)
-;; @param <partial> name of partial
-;; <p>Evaluates the partial and returns it (or nil).</p>
-;;
+;; @syntax (Dragonfly:include)
+;; <p>String-concats its arguments to form a path and displays the file inline
+;; without evaluating it as a template.</p>
+;; @see (Dragonfly:display-file)
+(define (include)
+	(print (read-file (apply string $args)))
+)
+
+;; @syntax (Dragonfly:display-file)
+;; <p>String-concats its arguments and displays the file
+;; at that path after passing it through 'eval-template'.</p>
+(define (display-file)
+	(eval-template (read-file (apply string $args)))
+)
+
 (define (display-partial partialname)
-  	(Web:eval-template (read-file (partial-path partialname)))
+  	(display-file (partial-path partialname))
 )
 
 (define (display-view viewname)
-	(Web:eval-template (read-file (view-path viewname)))
+	(display-file (view-path viewname))
 )
 
 (define (display-error error-code (clear-stdout true))
@@ -194,9 +201,26 @@
 	
 	(unless (display-view (string error-code))
 		(log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
-		(Web:eval-template ERROR_TEMPLATE)
+		(eval-template ERROR_TEMPLATE)
 	)
 )
+
+(define (eval-template str (ctx Dragonfly) , start end block (buf ""))
+	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
+		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
+		(setf block (slice str (+ start 2) (- end start 2)))
+		(if (starts-with block "=")
+			(write-buffer buf (string "(print " (rest block) ")"))
+			(write-buffer buf block)
+		)
+		(setf str (slice str (+ end 2)))
+	)
+	(when str
+		(write-buffer buf (string "(print [text]" str "[/text])"))
+		(eval-string buf ctx)
+	)
+)
+
 
 ; our main entry-point. this calls exit.
 (define (listener)

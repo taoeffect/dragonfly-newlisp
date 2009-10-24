@@ -1,5 +1,5 @@
 #!/usr/bin/newlisp
-;; @author Jeff Ober <jeffober@gmail.com>, Greg Slepak <greg at taoeffect.com>
+;; @author Jeff Ober <jeffober@gmail.com>
 
 (context 'Session)
 
