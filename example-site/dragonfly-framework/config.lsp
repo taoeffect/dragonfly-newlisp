@@ -75,21 +75,9 @@
 ; RESTful Resources
 ;===============================================================================
 
-; TODO: implement this
-
 ; set to nil to disable REST handling
 (constant 'ENABLE_RESTFUL_HANDLER true)
-; location of RESTful resources (relative to DOCUMENT_ROOT)
-(constant 'RESTFUL_DIR "resources")
-
-; define any RESTful resources (just the root, i.e. the first slash)
-; note that to allow runtime modification this is not a constant
-(define restful-resources '(
-	"create"
-	"show"
-	"edit"
-	"update"
-	"remove"
-))
+; location of RESTful resources
+(constant 'RESOURCES_PATH (string DOCUMENT_ROOT "/resources"))
 
 (context MAIN)

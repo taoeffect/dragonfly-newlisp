@@ -3,7 +3,7 @@
 <ul>
 	<li><% (link_to "Welcome" "welcome" "index") %></li>
 	<li>
-	<a href="index.html" onclick="toggleMenu(); return false;" id="guidesMenu">User Guide</a>
+	<a href="#" onclick="toggleMenu(); return false;" id="guidesMenu">User Guide</a>
 	
 	          <div id="menu" class="clearfix" style="display:none;">
 	            <dl class="L">
