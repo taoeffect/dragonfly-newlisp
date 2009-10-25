@@ -127,7 +127,10 @@ body img {
 		line-height:17px;
 		margin-top:8px;
 	}
-	
+
+	#content p a { color: #00aeef; text-decoration: none; }
+	#content p a:hover {  text-decoration: underline; }
+		
 	#content .author {
 		color:#00aeef;
 		margin-top:2px;
@@ -152,6 +155,49 @@ body img {
 
 	#content li a { color: #00aeef; text-decoration: none; }
 	#content li a:hover {  text-decoration: underline; }
+
+	/* Code Styling */
+
+	#content p.code {
+		padding:10px;
+		background:#333333;
+		font-family:Courier;
+		font-size:12px;
+		color:#ffffff;
+	}
+
+	#content p.info {
+		margin-top:10px;
+		margin-bottom:30px;
+		margin-left:80px;
+		padding:10px;
+		background:#fff9d8;
+		font-size:12px;
+		color:#000000;
+	}
+	
+	#content p.info b {
+		text-transform:uppercase;
+	}
+
+	#content p.config {
+		margin-top:10px;
+		margin-bottom:30px;
+		margin-left:80px;
+		padding:10px;
+		background:#d5e9f6;
+		font-size:12px;
+		color:#000000;
+	}
+	
+	#content p.config b {
+		text-transform:uppercase;
+	}
+	
+	#content h3.code {
+		color:#00aeef;
+	}
+
 	
 	/* Title Styling */
 	#content .title,

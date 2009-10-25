@@ -23,15 +23,41 @@
 		<h2>Static Routes</h2>
 		<p>Static Routes in Dragonfly provide two behaviours:</p>
 		<ul>
-			<li>1a</li>
-			<li>1b</li>
+			<li>1a) example-site.com/somefile.html</li>
+			<li>1b) example-site.com/foo/</li>
 		</ul>
 		
-		<p>A description about static routes.</p>
+		<h3>1a. example-site.com/somefile.html</h3>
+		<p>If somefile.html is an actual file, but the default configuration is set to filter that through the Route.Static that reads in the file and passes it through the template evaluator and then displays it.
+		</p>
 
+		<h3>1b. example-site.com/foo/</h3>
+		<p>If "foo" is a folder, then it will be searched for an index file by default. In the config.lsp, the STATIC_INDEX_EXTENSION is set to ".html". So it will search for an "index.html" inside of the foo folder. If it exists it will pass it through the template evaluator and displays it.
+		</p>
+		<p class="config"><b>Configuration</b><br/>You may change the constant STATIC_INDEX_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>
+		
+		
 		<h2>RESTful Routes</h2>
 		<p>Here comes a description about RESTful routes in Dragonfly.</p>
 		
+		<h2>Using views</h2>
+		<p class="extract">A view is simply a web page, or a page fragment, like a header or footer. In fact, views can flexibly be embedded within other views. In that case we call them partials.</p>
+
+		<h3 class="code">How to load a view</h3>
+		<p>Example: open Your favorite text-editor and enter the following:</p>
+		<p class="code">
+			Hello World
+		</p>
+		<p>Save the file as "hello" into Your views directory. Now open Your browser and navigate to <a href="http://www.example-site.com/hello">example-site.com/hello</a>. That's it!</p>
+		<p class="info"><b>Information</b><br/>You can put nearly everything into views: (X)HTML, Javascript, newLISP code.</p>
+		<p class="config"><b>Configuration</b><br/>If VIEW_EXTENSION is ".html" for example, then when example-site.com/hello is called Dragonfly will search for a "hello.html" file in the VIEWS_PATH. It also applies to the partials, too.</p>
+				
+		<h3 class="code">How to load a partial view</h3>
+		<p class="code">
+			(display-partial "header")
+		</p>
+		
+		<p>This simple argument would load the "header"-partial from the partials directory.</p>
 
 
 		
