@@ -82,8 +82,8 @@
 		)
 	)
 	
-	; these two functions should be global
-	(global 'load-files-in-dir 'regex-captcha)
+	; these two functions should be global (define-subclass should not)
+	(global 'load-files-in-dir 'regex-captcha 'load-once)
 	
 	; swap these functions for ours and save the originals
 	(constant (global 'sys-load) load)
