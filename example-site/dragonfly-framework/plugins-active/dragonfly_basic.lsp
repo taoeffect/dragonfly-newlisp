@@ -89,25 +89,25 @@
   (set 'mem_total_usage (+ mem_cells_kilobytes mem_symbols_kilobytes))
 
   (println "
-	<div id='dragonfly_debug' style='width:474px; margin-top:20px;' >
+	<div id='dragonfly_debug'>
 	<h1>Dragonfly DEBUG information</h1><br/>
 	<h2>HOST</h2>" HTTP_HOST "
 	<h2>DOCUMENT ROOT</h2>"DOCUMENT_ROOT"
-	<h3>DRAGONFLY ROOT</h3>"DRAGONFLY_ROOT"
-	<h3>Windows Programfiles</h3>"PROGRAMFILES"
-	<h3>QUERY</h3>"QUERY_STRING"
-	<h3>REQUEST METHOD</h3>"REQUEST_METHOD"
-	<h3>DEFAULT VIEW</h3>"DEFAULTVIEW"
-	<h3>DEFAULT ACTION</h3>"DEFAULTACTION"
-	<h3>CURRENT VIEW</h3>"viewname"
-	<h3>VIEW ACTION</h3>"action"
-	<h3>USER-AGENT</h3>"HTTP_USER_AGENT"
-	<h3>Proxy</h3>"HTTP_PROXY"
-	<h3>SERVER</h3>"SERVER_SOFTWARE"
-	<h3>$GET</h3>"($GET)"
-	<h3>$POST</h3>"($POST)"
-	<h3>$SERVER</h3>"(string {<table>} (join (map (fn (x) (string {<tr><td>} (x 0) {</td><td>} (x 1) "</td></tr>")) ($SERVER))) "</table>")"
-	<h3>System information</h3>
+	<h2>DRAGONFLY ROOT</h2>"DRAGONFLY_ROOT"
+	<h2>Windows Programfiles</h2>"PROGRAMFILES"
+	<h2>QUERY</h2>"QUERY_STRING"
+	<h2>REQUEST METHOD</h2>"REQUEST_METHOD"
+	<h2>DEFAULT VIEW</h2>"DEFAULTVIEW"
+	<h2>DEFAULT ACTION</h2>"DEFAULTACTION"
+	<h2>CURRENT VIEW</h2>"viewname"
+	<h2>VIEW ACTION</h2>"action"
+	<h2>USER-AGENT</h2>"HTTP_USER_AGENT"
+	<h2>Proxy</h2>"HTTP_PROXY"
+	<h2>SERVER</h2>"SERVER_SOFTWARE"
+	<h2>$GET</h2>"($GET)"
+	<h2>$POST</h2>"($POST)"
+	<h2>$SERVER</h2>"(string {<table>} (join (map (fn (x) (string {<tr><td>} (x 0) {</td><td>} (x 1) "</td></tr>")) ($SERVER))) "</table>")"
+	<h2>System information</h2>
 	<ul>
 		<li>Total memory usage: "mem_total_usage" KB</li>	
 		<li>Number of Lisp Cells (16 bytes per cell): "(sys-info 0)"</li>
