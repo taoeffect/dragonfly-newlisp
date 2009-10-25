@@ -102,7 +102,7 @@
 )
 
 (define (view-path view-name)
-	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
+	(string PAGES_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 (define (partial-path partial-name)
@@ -202,8 +202,8 @@
 
 ; Route.Static handles "normal" URLs, i.e. the URL represents the actual
 ; location of the file. Two scenarios are handled:
-; 1) URL refers to real file ending in one of the STATIC_EXTENSIONS
-; 2) URL refers to real directory and has an index file ending in STATIC_INDEX_EXTENSION
+; 1) URL refers to real file ending in one of the STATIC_TRIGGER_EXTENSIONS
+; 2) URL refers to real directory and has an index file ending in STATIC_TEST_EXTENSIONS
 (define-subclass (Route.Static Route)
 	((matches?)
 		(set 'chunks (parse QUERY_STRING "?"))
@@ -212,8 +212,8 @@
 			(set 'file (first chunks))
 			; check if 'file' has one of the static extensions. If not, it could
 			; be a directory with an index file inside of it, so check that.
-			(unless (set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
-				(set 'ext DF:STATIC_INDEX_EXTENSION)
+			(unless (set 'ext (exists (curry ends-with file) DF:STATIC_TRIGGER_EXTENSIONS))
+				(set 'ext DF:STATIC_TEST_EXTENSIONS)
 				(set 'file (string DOCUMENT_ROOT "/" file "/index" ext))
 			)
 			; finally, we match only if the file actually exists

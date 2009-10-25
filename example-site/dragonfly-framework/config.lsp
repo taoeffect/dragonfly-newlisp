@@ -43,13 +43,24 @@
 
 ; if you set to nil then make sure to comment out the line in .htaccess
 (constant 'ENABLE_STATIC_TEMPLATES true)
-; file extensions that triggers the handler (update .htaccess to match this!)
-(constant 'STATIC_EXTENSIONS '(".html"))
-; alternatively the static handler can be used to load index files given
-; a URL pointing to a directory. This variable customizes the extension
-; of the index file that the handler will check to see if it handles the request
-; ex: mysite.com/myproduct/support => mysite.com/myproduct/support/index.html
-(constant 'STATIC_INDEX_EXTENSION ".html")
+; File extensions that trigger the handler immediately.
+; This list can be large with no real performance penalty.
+; Make *sure* to update .htaccess to match this! (see comment there.)
+(constant 'STATIC_TRIGGER_EXTENSIONS '(".html"))
+; If STATIC_PATH_PREFIX is non-nil, then the static handler will check to
+; see if the given URL exists when prepended with the prefix, relative
+; to the DOCUMENT_ROOT. It can be used in conjunction with the
+; STATIC_TEST_EXTENSIONS to create pretty URLs.
+(constant 'STATIC_PATH_PREFIX "pages/")
+; You can use the static handler to create pretty URLs using the
+; STATIC_TEST_EXTENSIONS constant. It is used to check for index files in
+; directories and in conjunction with STATIC_PATH_PREFIX.
+; Here are some examples:
+; (=> means "loads file")
+; example-site.com/foo => example-site.com/foo/index.html
+; example-site.com/about => example-site.com/pages/about.html
+; Do not make this a very long list, otherwise the page will load slowly.
+(constant 'STATIC_TEST_EXTENSIONS '(".html"))
 
 ;===============================================================================
 ; Views
@@ -58,7 +69,7 @@
 ; set to nil to disable views handling
 (constant 'ENABLE_VIEW_HANDLER true)
 ; location of views
-(constant 'VIEWS_PATH (string DOCUMENT_ROOT "/views"))
+(constant 'PAGES_PATH (string DOCUMENT_ROOT "/views"))
 ; location of partials
 (constant 'PARTIALS_PATH (string DOCUMENT_ROOT "/views/partials"))
 ; setting a default view
