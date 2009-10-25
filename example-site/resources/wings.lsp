@@ -10,20 +10,21 @@
 	(wings-opacity 0.5))
 )
 
-(define (Resource.Wings:Resource.Wings response-format)
+(define (Resource.Wings:Resource.Wings id response-format)
 	; defaults to calling show
-	(show response-format)
+	(show id response-format)
 )
 
-(define (show response-format)
+(define (show id response-format)
+	; uh-oh! No range checking on 'resource-id' ...
 	(if (= response-format "json")
 		(begin
 			(Response:content-type Response:json-type)
-			(print (Json:lisp->json my-data))
+			(print (Json:lisp->json (my-data id)))
 		)
 		(begin
 			(Response:content-type Response:text-type)
-			(print my-data)
+			(print (my-data id))
 		)
 	)
 )

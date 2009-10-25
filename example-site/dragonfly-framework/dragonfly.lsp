@@ -234,21 +234,24 @@
 ; Route.Resource handles URLs that refer to RESTful resources, represented
 ; as newLISP contexts. These resources reside in the RESOURCES_PATH as .lsp files.
 ; The URL works in a similar manner to twitter's RESTful API:
-; http://mysite.com/<resource_name>[/resource_action][.restponse_format][?get_paramters]
+; http://mysite.com/<resource_name>[/resource_action][/resource_id][.restponse_format][?get_paramters]
 ; <resource_name> maps to a context name in a special way: first "Resource." is prepended
 ; to the name, then the underscores are removed and the name is mapped to title case.
+; <resource_name> may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore, and
+; must start with a letter.
 ; ex: resource_name => Resource.ResourceName
 ; The name also maps to a real file located in RESOURCES_PATH by appending ".lsp" to the name:
 ; ex: resource_name => load file: RESOURCES_PATH/resource_name.lsp
-; If <resource_name> implements <resource_action>, then that function is called
-; optionally passing in the <response_format> in as a paramter (if it was given).
+; If <resource_name> implements <resource_action>, then that function is called.
+; <resource_action> follows the same naming rules as <resource_name>.
+; When <resource_action> is called, the optional paramters <resource_id> and <response_format>
+; are passed in.
+; <resource_id> may only contain numbers, and <response_format> may only contain letters.
 ; If no <resource_action> is specified, then the resource's default function is called instead.
-; <resource_name>, <resource_action> and <response_format> may only contain alphanumeric
-; characters and the underscore.
 (define-subclass (Route.Resource Route)
 	((matches?)
-		(when (regex {^(\w+)(/(\w+))?(\.(\w+))?} QUERY_STRING)
-			(set 'resource_name $1 'resource_action $3 'response_format $5)
+		(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
+			(set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
 			(file? (set 'path (DF:resource-path resource_name)))
 		)
 	)
@@ -263,8 +266,8 @@
 		
 		(if-not (lambda? action) (DF:die ctx-str ":" resource_action " not defined!"))
 		
-		; call the action on the resource with the optional response_format
-		(action (if-not (null? response_format) response_format))
+		; call the action on the resource with the optional parameters
+		(action (int resource_id) (if-not (null? response_format) response_format))
 	)
 )
 
