@@ -17,66 +17,21 @@
 ;; @module Dragonfly
 ;; @author Greg Slepak <greg at taoeffect.com>
 
-;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
-;; @param <sym-subclass> Symbol representing name of the subclass
-;; @param <ctx> The FOOP class you'll be subclassing
-;; <p>This macro must be called in the MAIN context.</p>
-;; @example
-;; (new Class 'Foo)
-;; (define (Foo:get x) (x 1))
-;; (define (Foo:set x v) (setf (x 1) v) x)
-;; 
-;; (define-subclass (Bar Foo)
-;; 	((get x) (x 2))
-;; 	((set x v) (setf (x 2) v) x)
-;; 	((str x) (string x))
-;; )
-;; 
-;; (:get (Foo 1 2)) => 1
-;; (:get (Bar 1 2)) => 2
-;; (:str (:set (Bar 1 2) 3)) => (Bar 1 3)
-(define-macro (define-subclass)
-	(new (args 0 1) (args 0 0))
-	(dolist (method (rest $args))
-		(setf (method 0 0) (sym $it (args 0 0)))
-		(eval (push 'define method))
-	)
-)
-
-(context 'Dragonfly)
-
 ; protect against situation where one of the load functions is used to
 ; load this file, thereby redefining the function itself while it's running
 ; and causing newlisp to crash.
+; This may also speed up the loading of this file the second time around.
 (unless load-once
 	
 	(define (load-once)
 		; check if the last argument is a context (to behave like 'load' does)
 		(let (ctx (let (_ctx (last $args)) (if (context? _ctx) _ctx MAIN)))
 			(doargs (file)
-				(unless (or (context? file) (find file _loaded))
-					(push file _loaded)
-					(MAIN:sys-load file ctx)
+				(unless (or (context? file) (find file load-once.loaded))
+					(push file load-once.loaded)
+					(sys-load file ctx)
 				)
 			)
-		)
-	)
-	
-	; places the key/value pairs from assoc-list into ctx
-	(define (into-ctx-assoc ctx assoc-list)
-		(dolist (x assoc-list) (ctx (x 0) (x 1))) ; here dolist is slightly faster than map
-	)
-	
-	; load all .lsp files directory
-	(define (load-files-in-dir dir regex-match)
-		(dolist (x (directory dir regex-match))
-			(load-once (string dir "/" x))
-		)
-	)
-	
-	(define (regex-captcha regex-str str (options 0) (captcha 1))
-		(if (regex regex-str str options)
-			($ captcha)
 		)
 	)
 	
@@ -85,19 +40,57 @@
 	)
 	
 	(define (Dragonfly:print)
-		(write-buffer STDOUT (apply string (args)))
+		(write-buffer Dragonfly:STDOUT (apply string (args)))
 		(last (args)) ; to behave the same way as print
 	)
-)
+	
+	;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
+	;; @param <sym-subclass> Symbol representing name of the subclass
+	;; @param <ctx> The FOOP class you'll be subclassing
+	;; <p>This macro must be called in the MAIN context.</p>
+	;; @example
+	;; (new Class 'Foo)
+	;; (define (Foo:get x) (x 1))
+	;; (define (Foo:set x v) (setf (x 1) v) x)
+	;; 
+	;; (define-subclass (Bar Foo)
+	;; 	((get x) (x 2))
+	;; 	((set x v) (setf (x 2) v) x)
+	;; 	((str x) (string x))
+	;; )
+	;; 
+	;; (:get (Foo 1 2)) => 1
+	;; (:get (Bar 1 2)) => 2
+	;; (:str (:set (Bar 1 2) 3)) => (Bar 1 3)
+	(define-macro (define-subclass)
+		(new (args 0 1) (args 0 0))
+		(dolist (method (rest $args))
+			(setf (method 0 0) (sym $it (args 0 0)))
+			(eval (push 'define method))
+		)
+	)
 
-(context 'MAIN)
-
-; swap the MAIN functions for ours and save the originals
-(unless sys-load
+	(define (regex-captcha regex-str str (options 0) (captcha 1))
+		(if (regex regex-str str options)
+			($ captcha)
+		)
+	)
+	
+	(define (load-files-in-dir dir regex-match)
+		(dolist (x (directory dir regex-match))
+			(load-once (string dir "/" x))
+		)
+	)
+	
+	; these two functions should be global
+	(global 'load-files-in-dir 'regex-captcha)
+	
+	; swap these functions for ours and save the originals
 	(constant (global 'sys-load) load)
-	(constant 'load Dragonfly:load-once)
+	(constant 'load load-once)
 	(constant (global 'sys-print) print)
 	(constant 'print Dragonfly:print)
 	(constant (global 'sys-println) println)
 	(constant 'println Dragonfly:println)
 )
+

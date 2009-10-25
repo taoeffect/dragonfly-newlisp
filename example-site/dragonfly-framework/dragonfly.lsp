@@ -222,7 +222,7 @@
 		)
 	)
 	((run)
-		; pass through template TODO: make sure this is secure! no ../ bullshit!
+		(replace {\.\.[/|\\]} file "" 0) ; we don't want them getting at things they shouldn't
 		(DF:log-debug (context) ": " file)
 		(Response:content-type (Response:extension->type ext))
 		(unless (DF:eval-template (read-file file))
@@ -275,7 +275,7 @@
 	((matches?)
 		(if (empty? QUERY_STRING)
 			(set 'DF:viewname DF:DEFAULTVIEW)
-			(set 'DF:viewname (first (parse QUERY_STRING "/")))
+			(set 'DF:viewname (regex-captcha {^(\w+)/?} QUERY_STRING 1))
 		)
 		(file? (DF:view-path DF:viewname))
 	)
