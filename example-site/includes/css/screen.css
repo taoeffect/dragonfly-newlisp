@@ -158,11 +158,13 @@ body img {
 
 	/* Code Styling */
 
-	#content p.code {
+	#content pre.code {
+		width:auto;
+		margin-top:10px;
 		padding:10px;
 		background:#333333;
 		font-family:Courier;
-		font-size:12px;
+		font-size:10px;
 		color:#ffffff;
 	}
 
