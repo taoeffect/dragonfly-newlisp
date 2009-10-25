@@ -175,7 +175,7 @@
 	; we load these here so that they can modify any of the variables in this file
 	(load-files-in-dir (string DRAGONFLY_ROOT "/plugins-active") "\.lsp$")
 	
-	; go through 
+	; go through all the routes, if one matches, run it and we're done!
 	(dolist (route dragonfly-routes)
 		(when (:matches? route)
 			(:run route)
@@ -194,6 +194,11 @@
 
 ; switch to main prior to using define-subclass
 (context 'MAIN)
+
+; Define the base Route from which all Routes inherit.
+(new Class 'Route)
+(define (Route:matches?) nil)
+(define (Route:run) nil)
 
 ; Route.Static handles "normal" URLs, i.e. the URL represents the actual
 ; location of the file. Two scenarios are handled:
