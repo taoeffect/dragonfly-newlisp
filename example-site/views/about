@@ -1,0 +1,49 @@
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<img src="<%=(web-root "includes/images/dragonfly_header_3.jpg")%>" class="border" alt="Dragonfly" title="Dragonfly" width="474"/>
+		
+		<h1>About the authors</h1>
+		<p class="extract">Dragonfly development was started in June 2009 by Marc Hildmann. He developed on his own until version 0.20. Since October 2009 Greg Slepak is on board and doing a lot of core programming. In November 2009 their first big release - Dragonfly 0.50 - happened.
+		</p>
+		<h3 class="code">Marc Hildmann</h3>
+		<p><img class="profile-left" src="<%=(web-root "includes/images/profile_marchildmann.jpg")%>" class="border" alt="Marc Hildmann" title="Marc Hildmann" />Marc Hildmann is a web developer since 1998, started writing apps in pure PHP, tried a little bit Ruby on Rails, experimented with some PHP Frameworks like Codeigniter and finally discovered newLISP. He's interested in retro-computing, especially the first XEROX machines and the good old SGI Indy.</p>
+		<h3 class="code">Greg Slepak</h3>
+		<p><img class="profile-right" src="<%=(web-root "includes/images/profile_gregslepak.png")%>" class="border" alt="Greg Slepak" title="Greg Slepak" />Greg Slepak's primary area of expertise is in software development. He's written software in a variety of languages, on a variety of platforms, for a variety of purposes. When he's not coding he's busy learning about how everything works.</p>
+		
+		
+		<h2>How Do we "sell" Dragonfly?! Well ...</h2>
+
+		<p class="info">"You want a framework which generates clean and searchfriendly URLs."<br/>- Marc</p>
+		<p class="info">"It's Designer Friendly!"<br/>- Greg</p>
+		<p class="info">"You want a framework with a small memory footprint."<br/>- Marc</p>
+		<p class="info">"Power. Speed. Simplicity."<br/>- Greg</p>
+		<p class="info">"It's not a bloated app framework. It doesn't create a gigantic folder heirarchy. It doesn't tell you how to write your web app. It doesn't ask you to learn a new handicapped templating language. It doesn't even require you to create your own routes, the defaults are often enough for most website layouts. Best of all, everything's newLISP. Everything's fast."<br/>- Greg</p>
+		<p>&nbsp;</p>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

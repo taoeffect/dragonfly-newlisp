@@ -33,6 +33,7 @@
 				</div>
 	</li>
 	<li><% (link_to "Code" "code" "index") %></li>
+	<li><% (link_to "About" "about" "index") %></li>
 </ul>
 <!-- END NAVIGATION -->
 

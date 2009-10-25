@@ -127,6 +127,18 @@ body img {
 		line-height:17px;
 		margin-top:8px;
 	}
+	
+	#content p img.profile-left {
+		float:left;
+		margin-right:10px;
+		width:60px;
+	}
+
+	#content p img.profile-right {
+		float:right;
+		margin-left:10px;
+		width:60px;
+	}
 
 	#content p a { color: #00aeef; text-decoration: none; }
 	#content p a:hover {  text-decoration: underline; }
