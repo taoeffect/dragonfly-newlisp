@@ -5,9 +5,11 @@
 (context 'Resource.Wings)
 
 (set 'my-data
-  '((wings (left right))
+  '(
+	(wings (left right))
 	(wings-condition ("good" "excellent"))
-	(wings-opacity 0.5))
+	(wings-opacity 0.5)
+   )
 )
 
 (define (Resource.Wings:Resource.Wings id response-format)
