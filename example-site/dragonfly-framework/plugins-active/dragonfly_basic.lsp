@@ -96,17 +96,17 @@
 	<h3>DRAGONFLY ROOT</h3>"DRAGONFLY_ROOT"
 	<h3>Windows Programfiles</h3>"PROGRAMFILES"
 	<h3>QUERY</h3>"QUERY_STRING"
+	<h3>REQUEST METHOD</h3>"REQUEST_METHOD"
 	<h3>DEFAULT VIEW</h3>"DEFAULTVIEW"
 	<h3>DEFAULT ACTION</h3>"DEFAULTACTION"
 	<h3>CURRENT VIEW</h3>"viewname"
-	<h3>CURRENT ACTION</h3>"action"
-	<h3>CURRENT SELECTOR</h3>"selector"
-	<h3>CURRENT PARAMS</h3>"params"
+	<h3>VIEW ACTION</h3>"action"
 	<h3>USER-AGENT</h3>"HTTP_USER_AGENT"
 	<h3>Proxy</h3>"HTTP_PROXY"
 	<h3>SERVER</h3>"SERVER_SOFTWARE"
-	<h3>POST</h3>"($POST)"
-	<h3>GET</h3>"($GET)"
+	<h3>$GET</h3>"($GET)"
+	<h3>$POST</h3>"($POST)"
+	<h3>$SERVER</h3>"(string {<table>} (join (map (fn (x) (string {<tr><td>} (x 0) {</td><td>} (x 1) "</td></tr>")) ($SERVER))) "</table>")"
 	<h3>System information</h3>
 	<ul>
 		<li>Total memory usage: "mem_total_usage" KB</li>	
