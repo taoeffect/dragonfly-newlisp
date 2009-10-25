@@ -1,47 +1,35 @@
-<% (display-partial "doctype") %>
-<% (display-partial "header") %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>We're sorry, but something went wrong (404)</title>
+	<style type="text/css">
+		body { background-color: #ffffff; color: #666; text-align: center; font-family: arial, sans-serif; }
+		div.dialog {
+			width: 500px;
+			padding: 5px 20px 20px 20px;
+			margin: 4em auto 0 auto;
+			border: 1px solid #00aeef;
+			border-right-color: #00aeef;
+			border-bottom-color: #00aeef;
+		}
+		div.backtrace {
+			font-size: 9pt;
+			font-family: "Courier New", Courier, mono;
+			text-align: left;
+		}
+		h1 { font-size: 100%; color: #333333; line-height: 1.5em; }
+		
+		.dialog a { color: #00aeef; text-decoration: none; }
+		.dialog a:hover {  text-decoration: underline; }
+
+	</style>
+</head>
 
 <body>
-
-<div id="wrap">
-	<div id="header">
-		<% (display-partial "navigation") %>	
-		<div class="clear"></div>
-	</div>
-
-	<div id="content">
-				
-		<div class="title nomargin">
-			<p><% (title "| marchildmann.com") %><p>
-		</div>
-		
-		<img src="<%=(web-root "includes/images/houses.jpg")%>" class="border" alt="Houses" width="474" height="267"/>
-		
-		
-		<h1>We did the best we can ...</h1>
-		<p class="author">Written by Marc Hildmann</p>
-		<p class="extract">... but didn't find anything in our templates or in a database. SORRY!</p>
-		<p>This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. This is called a 404 header. It's send by Your webserver. <a href="#">Read more</a></p>
-
-		<h2>We did the best we can ...</h2>
-		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
-
-		<h3>We did the best we can ...</h3>
-		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
-
-		<h4>We did the best we can ...</h4>
-		<p>... but didn't find anything in our templates or in a database. SORRY!</p>
-		
-		<div class="line-dotted"></div>
-
-
-		<% (benchmark-result) %>
-		
-		<div class="line-dotted"></div>
-		
-		
-	</div><!-- END CONTENT -->
-	
-</div><!-- END WRAP -->
-<% (display-partial "footer") %>
-
+  <div class="dialog">
+    <h1>We're sorry, but something went wrong. (404)</h1>
+    <p>We couldn't find the page or file You asked for. Start over right <a href="./">here</a>.</p>
+  </div>
+</body>
+</html>
