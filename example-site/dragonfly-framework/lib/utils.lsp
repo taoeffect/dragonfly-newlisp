@@ -17,21 +17,6 @@
 ;; @module Dragonfly
 ;; @author Greg Slepak <greg at taoeffect.com>
 
-;; @syntax (with-wrapped-print <body>)
-;; <p>If you're calling a function outside of the Dragonfly context
-;; that in turn calls 'print' or 'println', make sure to wrap the function
-;; call in this macro to prevent the web headers from being screwed up.</p>
-;; @example
-;; (with-wrapped-print (nldb:show))
-(define-macro (with-wrapped-print)
-	(let (saved-p print saved-pn println)
-		(constant 'print Dragonfly:print 'println Dragonfly:println)
-		(eval (cons 'begin $args))
-		(constant 'print saved-p 'println saved-pn)
-	)
-)
-(global 'with-wrapped-print)
-
 ;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
 ;; @param <sym-subclass> Symbol representing name of the subclass
 ;; @param <ctx> The FOOP class you'll be subclassing
@@ -71,7 +56,7 @@
 			(doargs (file)
 				(unless (or (context? file) (find file _loaded))
 					(push file _loaded)
-					(saved-load file ctx)
+					(MAIN:sys-load file ctx)
 				)
 			)
 		)
@@ -107,8 +92,12 @@
 
 (context 'MAIN)
 
-; swap the MAIN functions for ours
-(unless Dragonfly:saved-load
-	(def-new 'load 'Dragonfly:saved-load)
+; swap the MAIN functions for ours and save the originals
+(unless sys-load
+	(constant (global 'sys-load) load)
 	(constant 'load Dragonfly:load-once)
+	(constant (global 'sys-print) print)
+	(constant 'print Dragonfly:print)
+	(constant (global 'sys-println) println)
+	(constant 'println Dragonfly:println)
 )

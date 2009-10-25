@@ -20,6 +20,11 @@
 			to a URL like <b>http://mysite.com/foo</b>, where "foo" is
 			a real directory (as opposed to a view or resource).
 		</p>
+		<p>
+			Value of cookie "foo" (reload page if nil): <%=($COOKIES "foo")%>
+			
+			<% (Response:cookie "foo" (amb "foo" "bar" "baz")) %>
+		</p>
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

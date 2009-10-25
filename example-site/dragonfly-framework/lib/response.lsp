@@ -73,10 +73,10 @@
 )
 
 (define (send-headers)
-	(print "Status: " status-code " " (lookup status-code status-codes) "\r\n")
-	(dolist (header headers) (print (first header) ": " (last header) "\r\n"))
-	(dolist (cookie cookies) (print "Set-Cookie: " (apply format-cookie cookie) "\r\n"))
-	(print "\r\n")
+	(sys-print "Status: " status-code " " (lookup status-code status-codes) "\r\n")
+	(dolist (header headers) (sys-print (first header) ": " (last header) "\r\n"))
+	(dolist (cookie cookies) (sys-print "Set-Cookie: " (apply format-cookie cookie) "\r\n"))
+	(sys-print "\r\n")
 )
 
 ;===============================================================================
@@ -111,6 +111,7 @@
 	'text-type "text/plain; charset=utf-8"  'xml-type "text/xml"
 	'html-type "text/html; charset=utf-8"   'js-type "application/javascript"
 	'atom-type "application/atom+xml"       'css-type "text/css"
+	'json-type "application/json"
 )
 
 (set 'extension-to-type-map

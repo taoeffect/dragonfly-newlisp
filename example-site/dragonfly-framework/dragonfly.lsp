@@ -23,13 +23,14 @@
 ;; Its's features are a short learning curve, lightweight and fun in programming - 
 ;; just like newLISP itself.</p>
 
-; $SERVER is a synonym for env
-; this line at top because it must be executed in MAIN
-; for $GET, $POST, and $FILES see lib/request.lsp
+;===============================================================================
+; !Basic Setup, Global Vars, and Sanity Checks
+;===============================================================================
+
+; $SERVER is a synonym for env, for $GET, $POST, and $FILES see lib/request.lsp
 (constant (global '$SERVER) env)
 
-; DF is a shorthand to the Dragonfly context
-; so that things like log-err can be written DF:log-err
+; DF is a convenient shorthand to the Dragonfly context
 (constant (global 'DF) Dragonfly)
 
 ; make sure these two are defined
@@ -38,6 +39,9 @@
 	(constant (global 'QUERY_STRING) "")
 	(env "QUERY_STRING" QUERY_STRING)
 )
+
+; seed the random number generator immediately.
+(seed (time-of-day))
 
 (context 'Dragonfly)
 
@@ -68,107 +72,45 @@
 ; load all our essential stuff
 (load-files-in-dir (string DRAGONFLY_ROOT "/lib") "\.lsp$")
 ; plugins are loaded when listener is called so that they
-; can modify the variables in this file is they want.
-
-;===============================================================================
-; !Setup Default Routes
-;===============================================================================
-
-; we want 3 basic routes:
-
-; 1) Basic files
-; 	- URL has an extension, assume it's a file and try to load it
-; 2) Resources
-; 	- URL begins with one of the reserved resource keywords
-; 		(i.e. create/show/update/remove)
-; 3) Views
-; 	- Anything else. Will attempt to show one of the views in /views
-; 	
-; To specify a route you'll need just two things:
-; 	- A filter function that returns true/nil
-; 	- A function that gets called if the filter returned true
-; 		it must also return true/nil which will indicate it was
-; 		to send a response or not. Note however that the function
-;		does not need to return actually, it can call (exit) if
-;		everything went fine.
-
-; switch to main prior to using define-subclass
-(context 'MAIN)
-
-; the static route is used to serve possibly templated files
-; for example, so that you can include newLISP code in .html files
-; will also handle .xml and .rss extensions
-(define-subclass (Route.Static Route)
-	((matches?)
-		; ex: .html or .html?a=4
-		(set 'file (if (empty? (set 'chunks (parse QUERY_STRING "?"))) QUERY_STRING (first chunks)))
-		(unless (set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
-			; alternatively 'file' could actually be a directory, in which case
-			; we need to check if there's an index file in it
-			(set 'ext DF:STATIC_INDEX_EXTENSION)
-			(set 'file (string DOCUMENT_ROOT "/" file "/index" ext))
-			(file? file)
-		)
-	)
-	((run)
-		; pass through template TODO: make sure this is secure! no ../ bullshit!
-		(DF:log-debug (context) ": " file)
-		(Response:content-type (Response:extension->type ext))
-		(unless (DF:eval-template (read-file file))
-			(DF:display-error 404)
-		)
-	)
-)
-
-(define-subclass (Route.Resource Route)
-	((matches?)
-		nil
-	)
-	((run)
-		; pass along to Resource
-	)
-)
-
-(define-subclass (Route.View Route)
-	((matches?)
-		(if (empty? QUERY_STRING)
-			(set 'DF:viewname DF:DEFAULTVIEW)
-			(set 'DF:viewname (first (parse QUERY_STRING "/")))
-		)
-		(file? (DF:view-path DF:viewname))
-	)
-	((run)
-		; pass through template
-		(DF:log-debug (context) ": " DF:viewname)
-		(DF:display-view DF:viewname)
-	)
-)
-
-(context 'Dragonfly)
-
-(if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
-(if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
-(if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes -1))
+; can modify the variables in this file if they want.
+; you can also load the inactive plugins on a need-to-load basis
+; by using the 'activate-plugin' function.
 
 ;===============================================================================
 ; !Public Functions
 ;===============================================================================
 
-; web-root is used to make things work nicely if the site isn't
-; located at DOCUMENT_ROOT but in a subdirectory of it. Instead
-; of including a link to "/welcome", you'd use (web-root "welcome")
+;; @syntax (Dragonfly:activate-plugin <plugin-name-1> [<plugin-name-2> ...])
+;; @param <plugin-name-1> The name of the plugin to load, without the ".lsp" extension.
+;; <p>Loads (once only) an inactive plugin(s). Quite often you'll only want some plugins
+;; loaded when 'listener' is called, and only sometimes you'll need to load a
+;; specific plugin. This can speed things up, especially if the plugin is large.</p>
+(define (activate-plugin)
+	(doargs (plugin-name)
+		(load-once (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name ".lsp"))
+	)
+)
+
+;; @syntax (Dragonfly:web-root <path>)
+;; <p>web-root is used to make things work nicely if the site isn't
+;; located at DOCUMENT_ROOT but in a subdirectory of it. Instead
+;; of including a link to "/welcome", you'd use (web-root "welcome")</p>
 (define (web-root path)
 	; WEB_ROOT should have a "/" on the end
 	(if (starts-with path "/") (pop path))
 	(string WEB_ROOT path)
 )
 
-(define (view-path viewname)
-	(string VIEWS_PATH "/" viewname (if VIEW_EXTENSION VIEW_EXTENSION ""))
+(define (view-path view-name)
+	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
-(define (partial-path partialname)
-	(string PARTIALS_PATH "/" partialname (if VIEW_EXTENSION VIEW_EXTENSION ""))
+(define (partial-path partial-name)
+	(string PARTIALS_PATH "/" partial-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
+)
+
+(define (resource-path resource-name)
+	(string RESOURCES_PATH "/" resource-name ".lsp")
 )
 
 ;; @syntax (Dragonfly:include)
@@ -221,6 +163,12 @@
 	)
 )
 
+(define (die)
+	(let (msg (apply string $args))
+		(log-err msg)
+		(throw-error msg)
+	)
+)
 
 ; our main entry-point. this calls exit.
 (define (listener)
@@ -241,12 +189,108 @@
 )
 
 ;===============================================================================
+; !Setup Default Routes
+;===============================================================================
+
+; switch to main prior to using define-subclass
+(context 'MAIN)
+
+; Route.Static handles "normal" URLs, i.e. the URL represents the actual
+; location of the file. Two scenarios are handled:
+; 1) URL refers to real file ending in one of the STATIC_EXTENSIONS
+; 2) URL refers to real directory and has an index file ending in STATIC_INDEX_EXTENSION
+(define-subclass (Route.Static Route)
+	((matches?)
+		(set 'chunks (parse QUERY_STRING "?"))
+		(when (not (empty? chunks))
+			; ex: .html or .html?a=4
+			(set 'file (first chunks))
+			; check if 'file' has one of the static extensions. If not, it could
+			; be a directory with an index file inside of it, so check that.
+			(unless (set 'ext (exists (curry ends-with file) DF:STATIC_EXTENSIONS))
+				(set 'ext DF:STATIC_INDEX_EXTENSION)
+				(set 'file (string DOCUMENT_ROOT "/" file "/index" ext))
+			)
+			; finally, we match only if the file actually exists
+			; this allows us to support without conflict twitter-like RESTful URLs with format specifiers
+			(file? file)
+		)
+	)
+	((run)
+		; pass through template TODO: make sure this is secure! no ../ bullshit!
+		(DF:log-debug (context) ": " file)
+		(Response:content-type (Response:extension->type ext))
+		(unless (DF:eval-template (read-file file))
+			(DF:display-error 404)
+		)
+	)
+)
+
+; Route.Resource handles URLs that refer to RESTful resources, represented
+; as newLISP contexts. These resources reside in the RESOURCES_PATH as .lsp files.
+; The URL works in a similar manner to twitter's RESTful API:
+; http://mysite.com/<resource_name>[/resource_action][.restponse_format][?get_paramters]
+; <resource_name> maps to a context name in a special way: first "Resource." is prepended
+; to the name, then the underscores are removed and the name is mapped to title case.
+; ex: resource_name => Resource.ResourceName
+; The name also maps to a real file located in RESOURCES_PATH by appending ".lsp" to the name:
+; ex: resource_name => load file: RESOURCES_PATH/resource_name.lsp
+; If <resource_name> implements <resource_action>, then that function is called
+; optionally passing in the <response_format> in as a paramter (if it was given).
+; If no <resource_action> is specified, then the resource's default function is called instead.
+; <resource_name>, <resource_action> and <response_format> may only contain alphanumeric
+; characters and the underscore.
+(define-subclass (Route.Resource Route)
+	((matches?)
+		(when (regex {^(\w+)(/(\w+))?(\.(\w+))?} QUERY_STRING)
+			(set 'resource_name $1 'resource_action $3 'response_format $5)
+			(file? (set 'path (DF:resource-path resource_name)))
+		)
+	)
+	((run)
+		(load path)
+		(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
+		(set 'ctx-sym (sym ctx-str))
+		
+		; If no action is specified, use the default function
+		(if (null? resource_action) (set 'resource_action ctx-str))
+		(set 'action (eval (sym resource_action ctx-sym)))
+		
+		(if-not (lambda? action) (DF:die ctx-str ":" resource_action " not defined!"))
+		
+		; call the action on the resource with the optional response_format
+		(action (if-not (null? response_format) response_format))
+	)
+)
+
+(define-subclass (Route.View Route)
+	((matches?)
+		(if (empty? QUERY_STRING)
+			(set 'DF:viewname DF:DEFAULTVIEW)
+			(set 'DF:viewname (first (parse QUERY_STRING "/")))
+		)
+		(file? (DF:view-path DF:viewname))
+	)
+	((run)
+		; pass through template
+		(DF:log-debug (context) ": " DF:viewname)
+		(DF:display-view DF:viewname)
+	)
+)
+
+(context 'Dragonfly)
+
+(if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
+(if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
+(if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes -1))
+
+;===============================================================================
 ; !Private Functions (i.e. you shouldn't ever call these)
 ;===============================================================================
 
 (define (send-and-exit)
 	(Response:send-headers)
-	(MAIN:println STDOUT)
+	(sys-print STDOUT)
 	(exit)
 )
 

@@ -1,4 +1,5 @@
-; TODO: implement string based and get rid of the class based
+; @author Greg Slepak
+; TODO: implement string based and get rid of the FOOP based
 
 ; (define (sanitize-path p)
 ; 	(replace {([^\\])?//} p "/" 0)
