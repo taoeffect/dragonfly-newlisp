@@ -27,11 +27,12 @@
 			<li>1b) example-site.com/foo/</li>
 		</ul>
 		
-		<h3>1a. example-site.com/somefile.html</h3>
+		<h3 class="code">1a. example-site.com/somefile.html</h3>
 		<p>If somefile.html is an actual file, but the default configuration is set to filter that through the Route.Static that reads in the file and passes it through the template evaluator and then displays it.
 		</p>
+		<p class="config"><b>Configuration</b><br/>You may change the constant STATIC_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>
 
-		<h3>1b. example-site.com/foo/</h3>
+		<h3 class="code">1b. example-site.com/foo/</h3>
 		<p>If "foo" is a folder, then it will be searched for an index file by default. In the config.lsp, the STATIC_INDEX_EXTENSION is set to ".html". So it will search for an "index.html" inside of the foo folder. If it exists it will pass it through the template evaluator and displays it.
 		</p>
 		<p class="config"><b>Configuration</b><br/>You may change the constant STATIC_INDEX_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>

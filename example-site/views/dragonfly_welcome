@@ -19,6 +19,9 @@
 		<p class="extract">
 		Setting up Dragonfly is easy, there are only two steps, copying files, and changing the configuration to suit your site. Typically the configuration needs no adjusting, but depending on your situation you may need to make some adjustments.	
 		</p>
+
+		<h2>At first one question</h2>
+		<p>Why is this guide so damn narrow? Because most people work on wide screens. So put the Dragonfly Guide on the left and open Your development window  in a new browser window on the right. This way the Dragonfly User Guide will always be visible.</p>
 		
 		<h2>Requirements</h2>
 		<p>Dragonfly requires the following to work:</p>
@@ -27,7 +30,8 @@
 			<li>For magic redirection Apache web server is recommended.</li>
 		</ul>
 		
-		<p>If you meet those requirements, great! If you're using a custom web server, you might want to setup your own redirection script based on the .htaccess file.
+		<p>If you meet those requirements, great!
+		<p class="config"><b>Configuration</b><br/>If you're using a custom web server, you might want to setup your own redirection script based on the .htaccess file.
 		</p>
 
 		<h2>Step 1 - Copying Files</h2>
@@ -50,10 +54,10 @@
 		<br/><br/>
 		Then that's the folder you'll want to copy the files into.
 		<br/><br/>
-		If you'd like Dragonfly to live somewhere else inside your site root,
-		see the Example step at the end of this document.
 		</p>
-
+		<p class="info"><b>Information</b><br/>If you'd like Dragonfly to live somewhere else inside your site root,
+		see the Example step on this page.</p>
+		
 		<h2>Step 2 - Configure Dragonfly</h2>
 		<p>Edit the 'config.lsp' file in dragonfly-framework.<br/><br/>Read through the comments (they begin with a semi-colon) for instructions on what the settings are for.<br/><br/>If you want to prevent .html files from being processed through Dragonfly, open the .htaccess file in the site root and read the comments there for how to disable that behavior.
 		</p>
