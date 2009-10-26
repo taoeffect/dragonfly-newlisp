@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>response.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>response.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;response.lsp</h2><b>Author: </b>Greg Slepak<br/>
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_status"></a><h3><font color=#CC0000>Response:status</font></h3>
+<b>syntax: (<font color=#CC0000>Response:status</font> [<em>int-code</em>] [<em>str-description</em>])</b><br/>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_header"></a><h3><font color=#CC0000>Response:header</font></h3>
+<b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the header's name<br/>
+<br/><br/>
+<b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em> <em>str-value</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the header's name<br/>
+<b>parameter: </b><em>str-value</em> - the header's value<br/>
+ <p>In the first syntax, returns the header matching <em>str-key</em> or,
+ if <em>str-key</em> is nil, all of the headers in a list</p>
+ <p>In the second syntax, sets or updates the header matching <em>str-key</em> or,
+ if <em>str-value</em> is nil, deletes the header for <em>str-key</em>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_cookie"></a><h3><font color=#CC0000>Response:cookie</font></h3>
+<b>syntax: (<font color=#CC0000>Response:cookie</font> <em>str-key</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the cookie's name<br/>
+<br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Request_cookie"></a><h3><font color=#CC0000>Request:cookie</font></h3>
+<b>syntax: (<font color=#CC0000>Request:cookie</font> <em>str-key</em> <em>str-value</em> [<em>int-expires</em> [<em>str-path</em> [<em>str-domain</em> [<em>bool-http-only</em>]]]])</b><br/>
+<b>parameter: </b><em>str-key</em> - the cookie's name<br/>
+<b>parameter: </b><em>str-value</em> - the cookie's value<br/>
+<b>parameter: </b><em>int-expires</em> - (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie<br/>
+<b>parameter: </b><em>str-path</em> - (optional) the cookie's path; default is the current path<br/>
+<b>parameter: </b><em>str-domain</em> - (optional) the cookie's domain; default is the current host<br/>
+<b>parameter: </b><em>bool-http-only</em> - (optional) whether the cookie may be read by client-side scripts<br/>
+ <p>In the first syntax, <tt>cookie</tt> returns the value of the cookie named <em>str-key</em> or <tt>nil</tt>. If
+ <em>str-key</em> is not provided, an association list of all cookie values is returned.</p>
+ <p>In the second syntax, <tt>cookie</tt> sets a new cookie. If <em>str-value</em> is nil then any existing
+ cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

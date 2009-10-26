@@ -1,3 +1,4 @@
+;; @module response.lsp
 ;; @author Greg Slepak
 
 (context 'Response)
@@ -6,6 +7,7 @@
 ; !Public API
 ;===============================================================================
 
+;; @syntax (Response:status [<int-code>] [<str-description>])
 (define (status code description)
 	(if code
 		(begin
@@ -17,10 +19,10 @@
 	)
 )
 
-;; @syntax (Request:header <str-key>)
+;; @syntax (Response:header <str-key>)
 ;; @param <str-key> the header's name
 ;; 
-;; @syntax (Request:header <str-key> <str-value>)
+;; @syntax (Response:header <str-key> <str-value>)
 ;; @param <str-key> the header's name
 ;; @param <str-value> the header's value
 ;; <p>In the first syntax, returns the header matching <str-key> or,
@@ -42,7 +44,7 @@
 	)
 )
 
-;; @syntax (Request:cookie <str-key>)
+;; @syntax (Response:cookie <str-key>)
 ;; @param <str-key> the cookie's name
 ;; 
 ;; @syntax (Request:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])

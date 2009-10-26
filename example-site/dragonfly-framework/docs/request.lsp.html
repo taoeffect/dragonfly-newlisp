@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>request.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>request.lsp</h1></center>
+<p><a href="index.html">Module index</a></p>
+<br/><br/><br/><h2>Module:&nbsp;request.lsp</h2><b>Author: </b>Greg Slepak <greg at taoeffect.com><br/>
+ <h3>$GET/$POST</h3>
+ These are very similar to the PHP $_GET and $_POST associative arrays.
+ Use them to retrieve the GET/POST values.
+ If a variable was specified, but no value assigned (i.e. <tt>/?foo</tt>), then
+ the value will be an empty string (you can use <tt>empty?</tt> to check for this).
+ If the variable doesn<tt>t exist, 'nil</tt> will be returned.
+<br/><br/>
+ The values are url decoded:
+ <pre> "What+time+is+it%3f"  => "What time is it?"</pre>
+ <h3>$FILES</h3>
+ If a <tt>multipart/form-data</tt> content type was submitted, then
+ STDIN is read for the values. Any files are placed in <tt>$FILES</tt>, while
+ other key/value pairs are placed in <tt>$POST</tt>.
+<br/><br/>
+ The values in <tt>$FILES</tt> contain an associative array with more information
+ about the files.
+ <h3>$BINARY</h3>
+ If the environment variable <tt>HTTP_CONTENT_TRANSFER_ENCODING</tt> is set to
+ "binary" then STDIN is read (up to <tt>MAX_POST_LENGTH</tt>) and the data is
+ stored in <tt>$BINARY</tt>. Note that unlike the other symbols in this file,
+ <tt>$BINARY</tt> is a string, not a function.
+ <h3>$COOKIES</h3>
+ The environment variable <tt>HTTP_COOKIE</tt> is parsed and the cookies are
+ in <tt>$COOKIES</tt> as key/value pairs just like <tt>$GET</tt> and <tt>$POST</tt>.
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_$GET"></a><h3><font color=#CC0000>$GET</font></h3>
+<b>syntax: (<font color=#CC0000>$GET</font> <em>str-key</em>)</b><br/>
+<p><b>return: </b>the value of the GET parameter for <em>str-key</em>, nil if no such GET variable was passed in.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_$POST"></a><h3><font color=#CC0000>$POST</font></h3>
+<b>syntax: (<font color=#CC0000>$POST</font> <em>str-key</em>)</b><br/>
+<p><b>return: </b>the value of the POST parameter for <em>str-key</em>, nil if no such POST variable was passed in.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_$FILES"></a><h3><font color=#CC0000>$FILES</font></h3>
+<b>syntax: (<font color=#CC0000>$FILES</font> <em>str-key</em>)</b><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_$COOKIES"></a><h3><font color=#CC0000>$COOKIES</font></h3>
+<b>syntax: (<font color=#CC0000>$COOKIES</font> <em>str-key</em>)</b><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_$BINARY"></a><h3><font color=#CC0000>$BINARY</font></h3>
+<b>syntax: $BINARY</b><br/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

@@ -1,20 +1,5 @@
-;; NOTE: it's OK to load this file multiple times
-
-;;  Copyright (C) <2009> <Greg Slepak>
-;;
-;;  This program is free software: you can redistribute it and/or modify
-;;  it under the terms of the GNU General Public License as published by
-;;  the Free Software Foundation, either version 3 of the License, or
-;;  (at your option) any later version.
-;;
-;;  This program is distributed in the hope that it will be useful,
-;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;  GNU General Public License for more details.
-;;  You should have received a copy of the GNU General Public License
-;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-;;
-;; @module Dragonfly
+; NOTE: it's OK to load this file multiple times
+;; @module utils.lsp
 ;; @author Greg Slepak <greg at taoeffect.com>
 
 ; protect against situation where one of the load functions is used to
@@ -54,13 +39,17 @@
 		)
 		(context MAIN)
 	)
-
+	
+;; @syntax (regex-captcha <str-regex> <str> [<int-options>] [<int-captcha>])
+;; 
 	(define (regex-captcha regex-str str (options 0) (captcha 1))
 		(if (regex regex-str str options)
 			($ captcha)
 		)
 	)
 	
+;; @syntax (load-files-in-dir <str-dir> <regex-match>)
+;;
 	(define (load-files-in-dir dir regex-match)
 		(dolist (x (directory dir regex-match))
 			(load-once (string dir "/" x))
