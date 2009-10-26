@@ -49,7 +49,7 @@
 (constant 'STATIC_TRIGGER_EXTENSIONS '(".html"))
 ; If the path does not have one of the STATIC_TRIGGER_EXTENSIONS, then the
 ; handler will attempt to modify the URL (not including the GET params) using
-; the STATIC_TRANSFORMATIONS, which is simply a list of possible modifictiations
+; the STATIC_TRANSFORMATIONS, which is simply a list of possible modifications
 ; to the path, which is bound to the '_' symbol). If one of them matches a file,
 ; the entire route matches and the file is passed through the template evaluator,
 ; otherwise it will not match and defer to the other handler(s).
