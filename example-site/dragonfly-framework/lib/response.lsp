@@ -7,7 +7,9 @@
 ; !Public API
 ;===============================================================================
 
-;; @syntax (Response:status [<int-code>] [<str-description>])
+;; @syntax (Response:status)
+;; @syntax (Response:status <int-code> [<str-description>])
+;; <br>In the first syntax...
 (define (status code description)
 	(if code
 		(begin
@@ -21,14 +23,13 @@
 
 ;; @syntax (Response:header <str-key>)
 ;; @param <str-key> the header's name
-;; 
 ;; @syntax (Response:header <str-key> <str-value>)
 ;; @param <str-key> the header's name
 ;; @param <str-value> the header's value
-;; <p>In the first syntax, returns the header matching <str-key> or,
-;; if <str-key> is nil, all of the headers in a list</p>
-;; <p>In the second syntax, sets or updates the header matching <str-key> or,
-;; if <str-value> is nil, deletes the header for <str-key>.</p>
+;; <br>In the first syntax, returns the header matching <str-key> or,
+;; if <str-key> is nil, all of the headers in a list.
+;; <br>In the second syntax, sets or updates the header matching <str-key> or,
+;; if <str-value> is nil, deletes the header for <str-key>.
 (define (header key)
 	(if (nil? key) headers
 		(empty? $args) (lookup key headers)
@@ -46,8 +47,7 @@
 
 ;; @syntax (Response:cookie <str-key>)
 ;; @param <str-key> the cookie's name
-;; 
-;; @syntax (Request:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])
+;; @syntax (Response:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])
 ;; @param <str-key> the cookie's name
 ;; @param <str-value> the cookie's value
 ;; @param <int-expires> (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie
@@ -55,7 +55,7 @@
 ;; @param <str-domain> (optional) the cookie's domain; default is the current host
 ;; @param <bool-http-only> (optional) whether the cookie may be read by client-side scripts
 ;; <p>In the first syntax, 'cookie' returns the value of the cookie named <str-key> or 'nil'. If
-;; <str-key> is not provided, an association list of all cookie values is returned.</p>
+;; <str-key> is not provided, an association list of all cookie key/value pairs is returned.</p>
 ;; <p>In the second syntax, 'cookie' sets a new cookie. If <str-value> is nil then any existing
 ;; cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
 (define (cookie key)
@@ -74,6 +74,9 @@
 	)
 )
 
+;; @syntax (Response:send-headers)
+;; <br>Actually sends the headers (without buffering them to 'Dragonfly:STDOUT').
+;; Normally you should never call this yourself!
 (define (send-headers)
 	(sys-print "Status: " status-code " " (lookup status-code status-codes) "\r\n")
 	(dolist (header headers) (sys-print (first header) ": " (last header) "\r\n"))

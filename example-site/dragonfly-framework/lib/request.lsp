@@ -7,7 +7,7 @@
 ;; Use them to retrieve the GET/POST values.
 ;; If a variable was specified, but no value assigned (i.e. '/?foo'), then
 ;; the value will be an empty string (you can use 'empty?' to check for this).
-;; If the variable doesn't exist, 'nil' will be returned.
+;; If the variable does not exist, 'nil' will be returned.
 ;; 
 ;; The values are url decoded:
 ;; <pre> "What+time+is+it%3f"  => "What time is it?"</pre>
