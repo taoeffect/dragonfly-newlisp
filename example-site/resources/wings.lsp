@@ -18,6 +18,9 @@
 )
 
 (define (show id response-format)
+	; unfortunately in this situation we can't use NL's default values to do this for us...
+	(if-not id (set 'id 0))
+	
 	; uh-oh! No range checking on 'resource-id' ...
 	(if (= response-format "json")
 		(begin

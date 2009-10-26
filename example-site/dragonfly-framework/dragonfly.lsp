@@ -102,7 +102,7 @@
 )
 
 (define (view-path view-name)
-	(string PAGES_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
+	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 (define (partial-path partial-name)
@@ -192,42 +192,29 @@
 ; !Setup Default Routes
 ;===============================================================================
 
-; switch to main prior to using define-subclass
-(context 'MAIN)
+; newLISP can't handle calling 'new' outside of MAIN context...
+(context MAIN) (new Class 'Route.Static) (context Route.Static)
 
-; Define the base Route from which all Routes inherit.
-(new Class 'Route)
-(define (Route:matches?) nil)
-(define (Route:run) nil)
-
-; Route.Static handles "normal" URLs, i.e. the URL represents the actual
-; location of the file. Two scenarios are handled:
-; 1) URL refers to real file ending in one of the STATIC_TRIGGER_EXTENSIONS
-; 2) URL refers to real directory and has an index file ending in STATIC_TEST_EXTENSIONS
-(define-subclass (Route.Static Route)
-	((matches?)
-		(set 'chunks (parse QUERY_STRING "?"))
-		(when (not (empty? chunks))
-			; ex: .html or .html?a=4
-			(set 'file (first chunks))
-			; check if 'file' has one of the static extensions. If not, it could
-			; be a directory with an index file inside of it, so check that.
-			(unless (set 'ext (exists (curry ends-with file) DF:STATIC_TRIGGER_EXTENSIONS))
-				(set 'ext DF:STATIC_TEST_EXTENSIONS)
-				(set 'file (string DOCUMENT_ROOT "/" file "/index" ext))
-			)
-			; finally, we match only if the file actually exists
-			; this allows us to support without conflict twitter-like RESTful URLs with format specifiers
-			(file? file)
-		)
+(define (matches?)
+	(set 'chunks (parse QUERY_STRING "?"))
+	(if (empty? chunks) (push DF:DEFAULT_VIEW chunks))
+	; a "double-set" for STATIC_TRANSFORMATIONS + code readability
+	(set 'path (set 'DF:_ (first chunks)))
+	
+	(if (set 'ext (exists (curry ends-with path) DF:STATIC_TRIGGER_EXTENSIONS))
+		; if the path ends with one of the trigger extensions, match if it exists
+		(file? path)
+		; otherwise, check if one of the transformations exists
+		(set 'path (eval (exists (fn (x) (file? (eval x))) DF:STATIC_TRANSFORMATIONS)))
 	)
-	((run)
-		(replace {\.\.[/|\\]} file "" 0) ; we don't want them getting at things they shouldn't
-		(DF:log-debug (context) ": " file)
-		(Response:content-type (Response:extension->type ext))
-		(unless (DF:eval-template (read-file file))
-			(DF:display-error 404)
-		)
+)
+(define (run)
+	(DF:log-debug 'path " " 'chunk)
+	(replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
+	(if-not ext (set 'ext (regex-captcha {.*\.(\w+)$} path)))
+	(if ext (Response:content-type (Response:extension->type ext)))
+	(unless (DF:display-file path)
+		(DF:die "Failed to get: " path)
 	)
 )
 
@@ -248,49 +235,33 @@
 ; are passed in.
 ; <resource_id> may only contain numbers, and <response_format> may only contain letters.
 ; If no <resource_action> is specified, then the resource's default function is called instead.
-(define-subclass (Route.Resource Route)
-	((matches?)
-		(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
-			(set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
-			(file? (set 'path (DF:resource-path resource_name)))
-		)
-	)
-	((run)
-		(load path)
-		(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
-		(set 'ctx-sym (sym ctx-str))
-		
-		; If no action is specified, use the default function
-		(if (null? resource_action) (set 'resource_action ctx-str))
-		(set 'action (eval (sym resource_action ctx-sym)))
-		
-		(if-not (lambda? action) (DF:die ctx-str ":" resource_action " not defined!"))
-		
-		; call the action on the resource with the optional parameters
-		(action (int resource_id) (if-not (null? response_format) response_format))
+(context MAIN) (new Class 'Route.Resource) (context Route.Resource)
+
+(define (matches?)
+	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
+		(set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
+		(file? (set 'path (DF:resource-path resource_name)))
 	)
 )
-
-(define-subclass (Route.View Route)
-	((matches?)
-		(if (empty? QUERY_STRING)
-			(set 'DF:viewname DF:DEFAULTVIEW)
-			(set 'DF:viewname (regex-captcha {^(\w+)/?} QUERY_STRING 1))
-		)
-		(file? (DF:view-path DF:viewname))
-	)
-	((run)
-		; pass through template
-		(DF:log-debug (context) ": " DF:viewname)
-		(DF:display-view DF:viewname)
-	)
+(define (run)
+	(load path)
+	(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
+	(set 'ctx-sym (sym ctx-str))
+	
+	; If no action is specified, use the default function
+	(if (null? resource_action) (set 'resource_action ctx-str))
+	(set 'action (eval (sym resource_action ctx-sym)))
+	
+	(if-not (lambda? action) (DF:die ctx-str ":" resource_action " not defined!"))
+	
+	; call the action on the resource with the optional parameters
+	(action (int resource_id) (if-not (null? response_format) response_format))
 )
 
 (context 'Dragonfly)
 
 (if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
 (if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
-(if ENABLE_VIEW_HANDLER (push (Route.View) dragonfly-routes -1))
 
 ;===============================================================================
 ; !Private Functions (i.e. you shouldn't ever call these)

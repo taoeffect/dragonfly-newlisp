@@ -44,30 +44,15 @@
 		(last (args)) ; to behave the same way as print
 	)
 	
-	;; @syntax (define-subclass (<sym-subclass> <ctx>) <method-1> ...])
-	;; @param <sym-subclass> Symbol representing name of the subclass
-	;; @param <ctx> The FOOP class you'll be subclassing
-	;; <p>This macro must be called in the MAIN context.</p>
-	;; @example
-	;; (new Class 'Foo)
-	;; (define (Foo:get x) (x 1))
-	;; (define (Foo:set x v) (setf (x 1) v) x)
-	;; 
-	;; (define-subclass (Bar Foo)
-	;; 	((get x) (x 2))
-	;; 	((set x v) (setf (x 2) v) x)
-	;; 	((str x) (string x))
-	;; )
-	;; 
-	;; (:get (Foo 1 2)) => 1
-	;; (:get (Bar 1 2)) => 2
-	;; (:str (:set (Bar 1 2) 3)) => (Bar 1 3)
+	; If someday newLISP supports switching contexts like this we'll use it
 	(define-macro (define-subclass)
 		(new (args 0 1) (args 0 0))
+		(context (args 0 0))
 		(dolist (method (rest $args))
 			(setf (method 0 0) (sym $it (args 0 0)))
 			(eval (push 'define method))
 		)
+		(context MAIN)
 	)
 
 	(define (regex-captcha regex-str str (options 0) (captcha 1))

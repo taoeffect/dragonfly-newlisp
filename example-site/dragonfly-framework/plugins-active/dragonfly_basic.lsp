@@ -97,8 +97,7 @@
 	<h2>Windows Programfiles</h2>"PROGRAMFILES"
 	<h2>QUERY</h2>"QUERY_STRING"
 	<h2>REQUEST METHOD</h2>"REQUEST_METHOD"
-	<h2>DEFAULT VIEW</h2>"DEFAULTVIEW"
-	<h2>DEFAULT ACTION</h2>"DEFAULTACTION"
+	<h2>DEFAULT VIEW</h2>"DEFAULT_VIEW"
 	<h2>CURRENT VIEW</h2>"viewname"
 	<h2>VIEW ACTION</h2>"action"
 	<h2>USER-AGENT</h2>"HTTP_USER_AGENT"
@@ -268,9 +267,10 @@
   	; use .htaccess, so we've to write the "?" into the url
     ; else we miss it
 	(if (true? (find "newLISP" SERVER_SOFTWARE))
-		(set 'link-url (string "?" view "/" action))
-		(set 'link-url (string "/" view "/" action))
+		(set 'link-url (string "?" view))
+		(set 'link-url (string "/" view))
 	)
+	(if action (write-buffer link-url (string "/" action)))
 	
   	(print "<a href='"(web-root link-url)"'>"link-name"</a>")
 )
