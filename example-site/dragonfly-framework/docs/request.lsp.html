@@ -19,15 +19,13 @@
  If a variable was specified, but no value assigned (i.e. <tt>/?foo</tt>), then
  the value will be an empty string (you can use <tt>empty?</tt> to check for this).
  If the variable does not exist, <tt>nil</tt> will be returned.
-<br/><br/>
- The values are url decoded:
+ <br><br>The values are url decoded:
  <pre> "What+time+is+it%3f"  => "What time is it?"</pre>
  <h3>$FILES</h3>
  If a <tt>multipart/form-data</tt> content type was submitted, then
  STDIN is read for the values. Any files are placed in <tt>$FILES</tt>, while
  other key/value pairs are placed in <tt>$POST</tt>.
-<br/><br/>
- The values in <tt>$FILES</tt> contain an associative array with more information
+ <br><br>The values in <tt>$FILES</tt> contain an associative array with more information
  about the files.
  <h3>$BINARY</h3>
  If the environment variable <tt>HTTP_CONTENT_TRANSFER_ENCODING</tt> is set to
@@ -35,9 +33,8 @@
  stored in <tt>$BINARY</tt>. Note that unlike the other symbols in this file,
  <tt>$BINARY</tt> is a string, not a function.
  <h3>$COOKIES</h3>
- The environment variable <tt>HTTP_COOKIE</tt> is parsed and the cookies are
+ The environment variable <tt>HTTP_COOKIE</tt> is parsed and the cookies are placed in
  in <tt>$COOKIES</tt> as key/value pairs just like <tt>$GET</tt> and <tt>$POST</tt>.
-
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_$GET"></a><h3><font color=#CC0000>$GET</font></h3>
 <b>syntax: (<font color=#CC0000>$GET</font> <em>str-key</em>)</b><br/>
@@ -49,12 +46,17 @@
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_$FILES"></a><h3><font color=#CC0000>$FILES</font></h3>
 <b>syntax: (<font color=#CC0000>$FILES</font> <em>str-key</em>)</b><br/>
+ <p>Returns an association list with keys <tt>'name</tt>, <tt>'data</tt>, and <tt>'length</tt> for the result
+ of a <tt>multipart/form-data</tt> posted form.</p>
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_$COOKIES"></a><h3><font color=#CC0000>$COOKIES</font></h3>
 <b>syntax: (<font color=#CC0000>$COOKIES</font> <em>str-key</em>)</b><br/>
+<p><b>return: </b>the value of the cookie with the key <em>str-key</em>, or nil if no such cookie exists.</p>
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_$BINARY"></a><h3><font color=#CC0000>$BINARY</font></h3>
 <b>syntax: $BINARY</b><br/>
+ <p>This is a global buffer that contains what was sent to STDIN (up to <tt>MAX_POST_LENGTH</tt>)
+ when the value of environment variable <tt>HTTP_CONTENT_TRANSFER_ENCODING</tt> is set to "binary".</p>
 
 
 

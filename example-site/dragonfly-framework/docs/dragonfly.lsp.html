@@ -11,34 +11,27 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>dragonfly.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;dragonfly.lsp</h2><p>A newLISP web framework for rapid web development</p>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;dragonfly.lsp</h2><p>The heart of Dragonfly - A newLISP web framework for rapid web development.</p>
 <b>Version: </b>0.50<br/>
 <b>Author: </b>Greg Slepak, Marc Hildmann (Team Dragonfly 2009)<br/>
 <b>Location: </b><a href="http://code.google.com/p/dragonfly-newlisp/">http://code.google.com/p/dragonfly-newlisp/</a><br/>
-<br/><br/>
- This file is the main entry-point of the Dragonfly framework and
+ <br>This file is the main entry-point of the Dragonfly framework and
  contains several important functions, as well as the default route
  definitions. The functions here are in the <tt>Dragonfly</tt> context (alias <tt>DF</tt>),
  which is the context your static files will be evaluated in by default.
  Therefore all of the functions here can be called in your templates without
  needing to be context-qualified.
-<br/><br/>
- Dragonfly's design is very simple, you can actually read through its
+ <br><br>Dragonfly's design is very simple, you can actually read through its
  source in very little time to get a great understanding of exactly how
  it works, and to get an idea of what sorts of tricks you can do to
  customize it to your liking (remember, newLISP is <em>extremely</em> dynamic!).
-<br/><br/>
  <h3>The <tt>listener</tt> function</h3>
  The <tt>listener</tt> function is called in <tt>index.cgi</tt>. It is the function that
  kicks everything off by looping through the available routes, finding a
  match, running it, sending the output to the browser, and then exiting.
-<br/><br/>
- However, before all of that, the very *first* thing it does is load the
+ <br><br>Before all of that, the very *first* thing it does is load the
  plugins in the <tt>dragonfly-framework/plugins-active</tt> folder, giving them
  an opportunity to do any special customization that they might require.
-<br/><br/>
- The <tt>listener</tt> function should not be modified at any point in any way.
-<br/><br/>
  <h3>Environment Variables</h3>
  At the very top of the <tt>config.lsp</tt> file there is the following line:
  <pre> (dolist (x (env)) (constant (global (sym (upper-case (first x)))) (last x)))</pre>
@@ -46,18 +39,14 @@
  global symbol out of it. This makes it extremely simple to access environment
  variables, simply type their name! If you prefer PHP-style, you can
  access them through the <tt>$SERVER</tt> function (simply a synonym for <tt>env</tt>).
-<br/><br/>
- To access any web parameters, files, and cookies use the functions <tt>$GET</tt>, <tt>$POST</tt>,
+ <br><br>To access any web parameters, files, and cookies use the functions <tt>$GET</tt>, <tt>$POST</tt>,
  <tt>$FILES</tt>, and <tt>$COOKIES</tt>, respectively. See <tt>Request.lsp</tt> for more information.
-<br/><br/>
  <h3>Routes</h3>
- Routes are simply FOOP contexts (with the <tt>Routes.</tt> prefix) that contain two
- functions: <tt>matches?</tt> and <tt>run</tt>.
-<br/><br/>
- The listener loops through the available routes and calls <tt>matches?</tt> on them
+ <p>Routes are FOOP objects inheriting from the Route class. They should have the <tt>Route.</tt> prefix.
+ Currently they only need to support two functions: <tt>matches?</tt> and <tt>run</tt>.</p>
+ <p>The listener loops through the available routes and calls <tt>matches?</tt> on them
  with no arguments. The route must decide, based on any data available to it,
- whether or not it to return a non-nil value from <tt>matches?</tt>.
-<br/><br/>
+ whether or not it to return a non-nil value from <tt>matches?</tt>.</p>
  Here, for example, is the <tt>matches?</tt> function for <tt>Route.Resource</tt>:
  <pre> (define (matches?)
      (when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
@@ -69,22 +58,37 @@
  There are two default routes: <tt>Route.Static</tt> and <tt>Route.Resource</tt>. See the
  documentation on the example-site and in <tt>config.lsp</tt> for more information on
  what they do.
-<br/><br/>
+ <h3>Resources</h3>
+ <tt>Route.Resource</tt> handles URLs that refer to RESTful resources, represented as FOOP objects
+ deriving from the <tt>Resource</tt> class. The resources reside in the <tt>RESOURCES_PATH</tt> as .lsp files.
+ The URL scheme works in a similar manner to twitter's RESTful API:
+ <pre>http://mysite.com/<em>resource</em>[/<em>action</em>][/<em>id</em>][.<em>response_format</em>][?get paramters...]</pre>
+ <tt>resource</tt> maps to a context name in a special way. First <tt>Resource.</tt> is prepended
+ to the name, then the underscores are removed and the name is written in title case.
+ The <tt>resource</tt> may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore,
+ and it must begin with a letter.
+ <br/><pre> my_resource => Resource.MyResource</pre>
+ The name also maps to a real file located in <tt>RESOURCES_PATH</tt> by appending ".lsp" to the name:
+ <br/><pre> my_resource => load file: RESOURCES_PATH/my_resource.lsp</pre>
+ If <tt>resource</tt> implements <tt>action</tt>, then that function is called.
+ Like <tt>resource</tt>, <tt>action</tt> may only contain letters, numbers, and the underscore.
+ If no <tt>action</tt> is specified, then the resource's default function is called instead.
+ <p>The optional paramters <tt>id</tt> and <tt>response_format</tt> are passed in to the function
+ as parameters (in that order).</p>
+ <p><tt>id</tt> may only contain numbers, and <tt>response_format</tt> may only contain letters.</p>
  <h3>Plugins</h3>
  There are two types of plugins, those in the <tt>plugins-active</tt> folder, and those
  in the <tt>plugins-inactive</tt> folder. The ones in the former are loaded when <tt>listener</tt>
  is called, prior to running the routes. Every .lsp file in the <tt>plugins-active</tt> folder
  is loaded at that point, so you'll only want your most frequently used files in there.
-<br/><br/>
- A good example of an active plugin is a custom route. Defining a custom route consists
- of two basic steps: creating your route "FOOP class", and adding an instance of
+ <p>A good example of an active plugin is a custom route. Defining a custom route consists
+ of two basic steps: creating your <tt>Route</tt> "subclass", and adding an instance of
  it to <tt>Dragonfly:dragonfly-routes</tt>. Take a look at how it's done in the source of
- <tt>dragonfly.lsp</tt> for more info.
-<br/><br/>
- Inactive plugins are simply those that should be loaded on a "need to use" basis.
+ <tt>dragonfly.lsp</tt> for more info.</p>
+ <p>Inactive plugins are simply those that should be loaded on a "need to use" basis.
  Most plugins will probably fall into this category. Use <tt>Dragonfly:activate-plugin</tt>
  to load them. All plugins are loaded exactly once, no matter how many times
- <tt>activate-plugin</tt> is called on them.
+ <tt>activate-plugin</tt> is called on them.</p>
 
 
 

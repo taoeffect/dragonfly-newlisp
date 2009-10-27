@@ -2,6 +2,7 @@
 
 (DF:activate-plugin "artfulcode/json")
 
+(new Resource 'Resource.Wings)
 (context 'Resource.Wings)
 
 (set 'my-data

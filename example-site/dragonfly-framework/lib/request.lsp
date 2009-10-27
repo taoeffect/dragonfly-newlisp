@@ -8,15 +8,13 @@
 ;; If a variable was specified, but no value assigned (i.e. '/?foo'), then
 ;; the value will be an empty string (you can use 'empty?' to check for this).
 ;; If the variable does not exist, 'nil' will be returned.
-;; 
-;; The values are url decoded:
+;; <br><br>The values are url decoded:
 ;; <pre> "What+time+is+it%3f"  => "What time is it?"</pre>
 ;; <h3>$FILES</h3>
 ;; If a 'multipart/form-data' content type was submitted, then
 ;; STDIN is read for the values. Any files are placed in '$FILES', while
 ;; other key/value pairs are placed in '$POST'.
-;; 
-;; The values in '$FILES' contain an associative array with more information
+;; <br><br>The values in '$FILES' contain an associative array with more information
 ;; about the files.
 ;; <h3>$BINARY</h3>
 ;; If the environment variable 'HTTP_CONTENT_TRANSFER_ENCODING' is set to
@@ -24,16 +22,20 @@
 ;; stored in '$BINARY'. Note that unlike the other symbols in this file,
 ;; '$BINARY' is a string, not a function.
 ;; <h3>$COOKIES</h3>
-;; The environment variable 'HTTP_COOKIE' is parsed and the cookies are
+;; The environment variable 'HTTP_COOKIE' is parsed and the cookies are placed in
 ;; in '$COOKIES' as key/value pairs just like '$GET' and '$POST'.
-
 ;; @syntax ($GET <str-key>)
 ;; @return the value of the GET parameter for <str-key>, nil if no such GET variable was passed in.
 ;; @syntax ($POST <str-key>)
 ;; @return the value of the POST parameter for <str-key>, nil if no such POST variable was passed in.
 ;; @syntax ($FILES <str-key>)
+;; <p>Returns an association list with keys ''name', ''data', and ''length' for the result
+;; of a 'multipart/form-data' posted form.</p>
 ;; @syntax ($COOKIES <str-key>)
+;; @return the value of the cookie with the key <str-key>, or nil if no such cookie exists.
 ;; @syntax $BINARY
+;; <p>This is a global buffer that contains what was sent to STDIN (up to 'MAX_POST_LENGTH')
+;; when the value of environment variable 'HTTP_CONTENT_TRANSFER_ENCODING' is set to "binary".</p>
 
 ;===============================================================================
 ; !Global Variables

@@ -1,32 +1,25 @@
 ;; @module dragonfly.lsp
-;; @description A newLISP web framework for rapid web development
+;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
 ;; @version 0.50
 ;; @author Greg Slepak, Marc Hildmann (Team Dragonfly 2009)
 ;; @location http://code.google.com/p/dragonfly-newlisp/
-;; 
-;; This file is the main entry-point of the Dragonfly framework and
+;; <br>This file is the main entry-point of the Dragonfly framework and
 ;; contains several important functions, as well as the default route
 ;; definitions. The functions here are in the 'Dragonfly' context (alias 'DF'),
 ;; which is the context your static files will be evaluated in by default.
 ;; Therefore all of the functions here can be called in your templates without
 ;; needing to be context-qualified.
-;; 
-;; Dragonfly's design is very simple, you can actually read through its
+;; <br><br>Dragonfly's design is very simple, you can actually read through its
 ;; source in very little time to get a great understanding of exactly how
 ;; it works, and to get an idea of what sorts of tricks you can do to
 ;; customize it to your liking (remember, newLISP is <extremely> dynamic!).
-;; 
 ;; <h3>The 'listener' function</h3>
 ;; The 'listener' function is called in 'index.cgi'. It is the function that
 ;; kicks everything off by looping through the available routes, finding a
 ;; match, running it, sending the output to the browser, and then exiting.
-;; 
-;; However, before all of that, the very *first* thing it does is load the
+;; <br><br>Before all of that, the very *first* thing it does is load the
 ;; plugins in the 'dragonfly-framework/plugins-active' folder, giving them
 ;; an opportunity to do any special customization that they might require.
-;; 
-;; The 'listener' function should not be modified at any point in any way.
-;; 
 ;; <h3>Environment Variables</h3>
 ;; At the very top of the 'config.lsp' file there is the following line:
 ;; <pre> (dolist (x (env)) (constant (global (sym (upper-case (first x)))) (last x)))</pre>
@@ -34,18 +27,14 @@
 ;; global symbol out of it. This makes it extremely simple to access environment
 ;; variables, simply type their name! If you prefer PHP-style, you can
 ;; access them through the '$SERVER' function (simply a synonym for 'env').
-;; 
-;; To access any web parameters, files, and cookies use the functions '$GET', '$POST',
+;; <br><br>To access any web parameters, files, and cookies use the functions '$GET', '$POST',
 ;; '$FILES', and '$COOKIES', respectively. See 'Request.lsp' for more information.
-;; 
 ;; <h3>Routes</h3>
-;; Routes are simply FOOP contexts (with the 'Routes.' prefix) that contain two
-;; functions: 'matches?' and 'run'.
-;; 
-;; The listener loops through the available routes and calls 'matches?' on them
+;; <p>Routes are FOOP objects inheriting from the Route class. They should have the 'Route.' prefix.
+;; Currently they only need to support two functions: 'matches?' and 'run'.</p>
+;; <p>The listener loops through the available routes and calls 'matches?' on them
 ;; with no arguments. The route must decide, based on any data available to it,
-;; whether or not it to return a non-nil value from 'matches?'.
-;; 
+;; whether or not it to return a non-nil value from 'matches?'.</p>
 ;; Here, for example, is the 'matches?' function for 'Route.Resource':
 ;; <pre> (define (matches?)
 ;;     (when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
@@ -57,22 +46,37 @@
 ;; There are two default routes: 'Route.Static' and 'Route.Resource'. See the
 ;; documentation on the example-site and in 'config.lsp' for more information on
 ;; what they do.
-;; 
+;; <h3>Resources</h3>
+;; 'Route.Resource' handles URLs that refer to RESTful resources, represented as FOOP objects
+;; deriving from the 'Resource' class. The resources reside in the 'RESOURCES_PATH' as .lsp files.
+;; The URL scheme works in a similar manner to twitter's RESTful API:
+;; <pre>http://mysite.com/<resource>[/<action>][/<id>][.<response_format>][?get paramters...]</pre>
+;; 'resource' maps to a context name in a special way. First 'Resource.' is prepended
+;; to the name, then the underscores are removed and the name is written in title case.
+;; The 'resource' may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore,
+;; and it must begin with a letter.
+;; <br/><pre> my_resource => Resource.MyResource</pre>
+;; The name also maps to a real file located in 'RESOURCES_PATH' by appending ".lsp" to the name:
+;; <br/><pre> my_resource => load file: RESOURCES_PATH/my_resource.lsp</pre>
+;; If 'resource' implements 'action', then that function is called.
+;; Like 'resource', 'action' may only contain letters, numbers, and the underscore.
+;; If no 'action' is specified, then the resource's default function is called instead.
+;; <p>The optional paramters 'id' and 'response_format' are passed in to the function
+;; as parameters (in that order).</p>
+;; <p>'id' may only contain numbers, and 'response_format' may only contain letters.</p>
 ;; <h3>Plugins</h3>
 ;; There are two types of plugins, those in the 'plugins-active' folder, and those
 ;; in the 'plugins-inactive' folder. The ones in the former are loaded when 'listener'
 ;; is called, prior to running the routes. Every .lsp file in the 'plugins-active' folder
 ;; is loaded at that point, so you'll only want your most frequently used files in there.
-;; 
-;; A good example of an active plugin is a custom route. Defining a custom route consists
-;; of two basic steps: creating your route "FOOP class", and adding an instance of
+;; <p>A good example of an active plugin is a custom route. Defining a custom route consists
+;; of two basic steps: creating your 'Route' "subclass", and adding an instance of
 ;; it to 'Dragonfly:dragonfly-routes'. Take a look at how it's done in the source of
-;; 'dragonfly.lsp' for more info.
-;; 
-;; Inactive plugins are simply those that should be loaded on a "need to use" basis.
+;; 'dragonfly.lsp' for more info.</p>
+;; <p>Inactive plugins are simply those that should be loaded on a "need to use" basis.
 ;; Most plugins will probably fall into this category. Use 'Dragonfly:activate-plugin'
 ;; to load them. All plugins are loaded exactly once, no matter how many times
-;; 'activate-plugin' is called on them.
+;; 'activate-plugin' is called on them.</p>
 
 
 ;===============================================================================
@@ -277,8 +281,11 @@
 ; !Setup Default Routes
 ;===============================================================================
 
-; newLISP can't handle calling 'new' outside of MAIN context...
-(context MAIN) (new Class 'Route.Static) (context Route.Static)
+; newLISP can't handle calling 'new' outside of MAIN context, nor does it currently
+; allow switching contexts in a function call. If it does one day, route defintions
+; will be specified through a 'define-route' macro.
+(context MAIN)
+(new Route 'Route.Static) (context Route.Static)
 
 (define (matches?)
 	(set 'chunks (parse QUERY_STRING "?"))
@@ -302,24 +309,8 @@
 	)
 )
 
-; Route.Resource handles URLs that refer to RESTful resources, represented
-; as newLISP contexts. These resources reside in the RESOURCES_PATH as .lsp files.
-; The URL works in a similar manner to twitter's RESTful API:
-; http://mysite.com/<resource_name>[/resource_action][/resource_id][.restponse_format][?get_paramters]
-; <resource_name> maps to a context name in a special way: first "Resource." is prepended
-; to the name, then the underscores are removed and the name is mapped to title case.
-; <resource_name> may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore, and
-; must start with a letter.
-; ex: resource_name => Resource.ResourceName
-; The name also maps to a real file located in RESOURCES_PATH by appending ".lsp" to the name:
-; ex: resource_name => load file: RESOURCES_PATH/resource_name.lsp
-; If <resource_name> implements <resource_action>, then that function is called.
-; <resource_action> follows the same naming rules as <resource_name>.
-; When <resource_action> is called, the optional paramters <resource_id> and <response_format>
-; are passed in.
-; <resource_id> may only contain numbers, and <response_format> may only contain letters.
-; If no <resource_action> is specified, then the resource's default function is called instead.
-(context MAIN) (new Class 'Route.Resource) (context Route.Resource)
+(context MAIN)
+(new Route 'Route.Resource) (context Route.Resource)
 
 (define (matches?)
 	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)

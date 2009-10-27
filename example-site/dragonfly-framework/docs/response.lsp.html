@@ -19,24 +19,27 @@
 <a name="Response_status"></a><h3><font color=#CC0000>Response:status</font></h3>
 <b>syntax: (<font color=#CC0000>Response:status</font>)</b><br/>
 <b>syntax: (<font color=#CC0000>Response:status</font> <em>int-code</em> [<em>str-description</em>])</b><br/>
- <br>In the first syntax...
+ <p>In the first syntax, returns a list containing the current status code and corresponding description.</p>
+ <p>In the second syntax, sets the response status to <em>int-code</em>, using the description from
+ a built-in list. If the description for <em>int-code</em> is not found in the built-in
+ list then an error will be thrown if <em>str-description</em> is not provided.</p>
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="Response_header"></a><h3><font color=#CC0000>Response:header</font></h3>
 <b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em>)</b><br/>
-<b>parameter: </b><em>str-key</em> - the header's name<br/>
+<b>parameter: </b><em>str-key</em> - the header's name<br><br/>
 <b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em> <em>str-value</em>)</b><br/>
 <b>parameter: </b><em>str-key</em> - the header's name<br/>
 <b>parameter: </b><em>str-value</em> - the header's value<br/>
  <br>In the first syntax, returns the header matching <em>str-key</em> or,
- if <em>str-key</em> is nil, all of the headers in a list.
+ if <em>str-key</em> is nil, all of the headers in an association list.
  <br>In the second syntax, sets or updates the header matching <em>str-key</em> or,
  if <em>str-value</em> is nil, deletes the header for <em>str-key</em>.
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="Response_cookie"></a><h3><font color=#CC0000>Response:cookie</font></h3>
 <b>syntax: (<font color=#CC0000>Response:cookie</font> <em>str-key</em>)</b><br/>
-<b>parameter: </b><em>str-key</em> - the cookie's name<br/>
+<b>parameter: </b><em>str-key</em> - the cookie's name<br><br/>
 <b>syntax: (<font color=#CC0000>Response:cookie</font> <em>str-key</em> <em>str-value</em> [<em>int-expires</em> [<em>str-path</em> [<em>str-domain</em> [<em>bool-http-only</em>]]]])</b><br/>
 <b>parameter: </b><em>str-key</em> - the cookie's name<br/>
 <b>parameter: </b><em>str-value</em> - the cookie's value<br/>
@@ -52,13 +55,34 @@
 <br/><br/><center>- &sect; -</center><br/>
 <a name="Response_send-headers"></a><h3><font color=#CC0000>Response:send-headers</font></h3>
 <b>syntax: (<font color=#CC0000>Response:send-headers</font>)</b><br/>
- <br>Actually sends the headers (without buffering them to <tt>Dragonfly:STDOUT</tt>).
- Normally you should never call this yourself!
+ <p>Actually sends the headers (without buffering them to <tt>Dragonfly:STDOUT</tt>).
+ Normally you should never call this yourself!</p>
 
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_redirect"></a><h3><font color=#CC0000>Response:redirect</font></h3>
+<b>syntax: (<font color=#CC0000>Response:redirect</font> <em>str-url</em>)</b><br/>
+<b>parameter: </b><em>str-url</em> - The URL you'd like to send them to<br/>
+ <p>Does an immediate 302 Found redirect and calls <tt>exit</tt>.</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_send-headers-with-status"></a><h3><font color=#CC0000>Response:send-headers-with-status</font></h3>
+<b>syntax: (<font color=#CC0000>Response:send-headers-with-status</font> <em>int-code</em> <em>str-description</em>)</b><br/>
+ <p>Convenience. Combines a call to <tt>Response:status</tt> and <tt>Response:send-headers</tt>.
+ As this calls <tt>send-headers</tt>, you typically do not want to call this yourself!</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_content-type"></a><h3><font color=#CC0000>Response:content-type</font></h3>
+<b>syntax: (<font color=#CC0000>Response:content-type</font> <em>str-value</em>)</b><br/>
+ <p>Convenience for calling <tt>(Response:header "Content-Type" str-value)</tt>.</p>
+ <p>If <em>str-value</em> is nil, returns the current content-type value</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_extension->type"></a><h3><font color=#CC0000>Response:extension->type</font></h3>
+<b>syntax: (<font color=#CC0000>Response:extension->type</font> <em>str-file-extension</em>)</b><br/>
+ <p>Given a file extension (with or without a preceding dot), returns the
+ MIME-type for that extension. Currently only a small number of file extensions
+ are supported by default, see the source in lib/response.lsp for a complete list.</p>
 
 
 
