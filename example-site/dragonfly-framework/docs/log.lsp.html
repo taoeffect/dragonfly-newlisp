@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>log.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>log.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;log.lsp</h2><p>Provides convenient logging facility for all of Dragonfly.</p>
+<b>Author: </b>Greg Slepak<br/>
+ <p>To avoid checking the value of <tt>Dragonfly:LOG_LEVEL</tt> each time something is logged
+ the logging functions that correspond to a lower logging level are disabled
+ when this file is loaded.</p>
+ <p>It is possible to change the <tt>LOG_LEVEL</tt> at runtime, but the way it is done
+ is slightly tricky because <tt>MAIN:load</tt> is overwritten by Dragonfly
+ to provide once-only loading. If you want to dynamically change the
+ log-level (say in a plugin), then you will need to use the remapped <tt>sys-load</tt>
+ function to force a reload of this file:</p>
+ <pre> (context 'DF)
+ (constant 'LOG_LEVEL 'LOG_DEBUG) ; enable debug logging at runtime
+ (sys-load (string DRAGONFLY_ROOT "/lib/log.lsp"))
+ (context MAIN)</pre>
+ There are four log levels defined:
+ <pre> (map set '(LOG_DEBUG LOG_INFO LOG_WARN LOG_ERROR)
+          '(        0        1        2         3))</pre>
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_log-func"></a><h3><font color=#CC0000>Dragonfly:log-func</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:log-func</font> <em>str-level</em> <em>str-msg</em>)</b><br/>
+<b>parameter: </b><em>str-level</em> - a string representing the log level (ex: "[DEBUG]: ")<br/>
+<b>parameter: </b><em>str-msg</em> - a string containing the message<br/>
+ <br/>This function appends to the file specified by <tt>Dragonfly:LOG_FILE_PATH</tt>
+ and prepends date information to the log.
+ <pre> (log-func "[CRAZY!]: " (string user " just did something crazy!"))
+ => Oct 26 01:44:24 [CRAZY!]: johnny-b just did something crazy!</pre>
+ All other log functions call this one. You can override this function
+ at runtime to provide your own logging behavior.
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_log-debug"></a><h3><font color=#CC0000>Dragonfly:log-debug</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:log-debug</font>)</b><br/>
+ <br>String-concats its arguments and calls <tt>log-func</tt> with <em>level</em> set to "[DEBUG]: "
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_log-info"></a><h3><font color=#CC0000>Dragonfly:log-info</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:log-info</font>)</b><br/>
+ <br>String-concats its arguments and calls <tt>log-func</tt> with <em>level</em> set to "[INFO]: "
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_log-warn"></a><h3><font color=#CC0000>Dragonfly:log-warn</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:log-warn</font>)</b><br/>
+ <br>String-concats its arguments and calls <tt>log-func</tt> with <em>level</em> set to "[WARNING]: "
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Dragonfly_log-err"></a><h3><font color=#CC0000>Dragonfly:log-err</font></h3>
+<b>syntax: (<font color=#CC0000>Dragonfly:log-err</font>)</b><br/>
+ <br>String-concats its arguments and calls <tt>log-func</tt> with <em>level</em> set to "[ERROR]: "
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

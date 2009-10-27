@@ -1,27 +1,83 @@
-;;  Copyright (C) <2009> <Marc Hildmann, Greg Slepak>
-;;
-;;  This program is free software: you can redistribute it and/or modify
-;;  it under the terms of the GNU General Public License as published by
-;;  the Free Software Foundation, either version 3 of the License, or
-;;  (at your option) any later version.
-;;
-;;  This program is distributed in the hope that it will be useful,
-;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;  GNU General Public License for more details.
-;;  You should have received a copy of the GNU General Public License
-;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-;;
-;; @module Dragonfly
-;; @author Marc Hildmann <marc.hildmann at gmail.com>, Greg Slepak <greg at taoeffect.com>
+;; @module dragonfly.lsp
+;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
 ;; @version 0.50
-;; 
+;; @author Greg Slepak, Marc Hildmann (Team Dragonfly 2009)
 ;; @location http://code.google.com/p/dragonfly-newlisp/
-;; @description A newLISP web framework for rapid web development
-;; <h4>About Dragonfly web framework</h4>
-;; <p>Dragonfly is a small web framework which is currently under heavy development.
-;; Its's features are a short learning curve, lightweight and fun in programming - 
-;; just like newLISP itself.</p>
+;; <br>This file is the main entry-point of the Dragonfly framework and
+;; contains several important functions, as well as the default route
+;; definitions. The functions here are in the 'Dragonfly' context (alias 'DF'),
+;; which is the context your static files will be evaluated in by default.
+;; Therefore all of the functions here can be called in your templates without
+;; needing to be context-qualified.
+;; <br><br>Dragonfly's design is very simple, you can actually read through its
+;; source in very little time to get a great understanding of exactly how
+;; it works, and to get an idea of what sorts of tricks you can do to
+;; customize it to your liking (remember, newLISP is <extremely> dynamic!).
+;; <h3>The 'listener' function</h3>
+;; The 'listener' function is called in 'index.cgi'. It is the function that
+;; kicks everything off by looping through the available routes, finding a
+;; match, running it, sending the output to the browser, and then exiting.
+;; <br><br>Before all of that, the very *first* thing it does is load the
+;; plugins in the 'dragonfly-framework/plugins-active' folder, giving them
+;; an opportunity to do any special customization that they might require.
+;; <h3>Environment Variables</h3>
+;; At the very top of the 'config.lsp' file there is the following line:
+;; <pre> (dolist (x (env)) (constant (global (sym (upper-case (first x)))) (last x)))</pre>
+;; This line simply loops through every environment variable and makes a
+;; global symbol out of it. This makes it extremely simple to access environment
+;; variables, simply type their name! If you prefer PHP-style, you can
+;; access them through the '$SERVER' function (simply a synonym for 'env').
+;; <br><br>To access any web parameters, files, and cookies use the functions '$GET', '$POST',
+;; '$FILES', and '$COOKIES', respectively. See 'Request.lsp' for more information.
+;; <h3>Routes</h3>
+;; <p>Routes are FOOP objects inheriting from the Route class. They should have the 'Route.' prefix.
+;; Currently they only need to support two functions: 'matches?' and 'run'.</p>
+;; <p>The listener loops through the available routes and calls 'matches?' on them
+;; with no arguments. The route must decide, based on any data available to it,
+;; whether or not it to return a non-nil value from 'matches?'.</p>
+;; Here, for example, is the 'matches?' function for 'Route.Resource':
+;; <pre> (define (matches?)
+;;     (when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
+;;         (set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
+;;         (file? (set 'path (DF:resource-path resource_name)))
+;;     )
+;; )
+;; </pre>
+;; There are two default routes: 'Route.Static' and 'Route.Resource'. See the
+;; documentation on the example-site and in 'config.lsp' for more information on
+;; what they do.
+;; <h3>Resources</h3>
+;; 'Route.Resource' handles URLs that refer to RESTful resources, represented as FOOP objects
+;; deriving from the 'Resource' class. The resources reside in the 'RESOURCES_PATH' as .lsp files.
+;; The URL scheme works in a similar manner to twitter's RESTful API:
+;; <pre>http://mysite.com/<resource>[/<action>][/<id>][.<response_format>][?get paramters...]</pre>
+;; 'resource' maps to a context name in a special way. First 'Resource.' is prepended
+;; to the name, then the underscores are removed and the name is written in title case.
+;; The 'resource' may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore,
+;; and it must begin with a letter.
+;; <br/><pre> my_resource => Resource.MyResource</pre>
+;; The name also maps to a real file located in 'RESOURCES_PATH' by appending ".lsp" to the name:
+;; <br/><pre> my_resource => load file: RESOURCES_PATH/my_resource.lsp</pre>
+;; If 'resource' implements 'action', then that function is called.
+;; Like 'resource', 'action' may only contain letters, numbers, and the underscore.
+;; If no 'action' is specified, then the resource's default function is called instead.
+;; <p>The optional paramters 'id' and 'response_format' are passed in to the function
+;; as parameters (in that order).</p>
+;; <p>'id' may only contain numbers, and 'response_format' may only contain letters.</p>
+;; <h3>Plugins</h3>
+;; There are two types of plugins, those in the 'plugins-active' folder, and those
+;; in the 'plugins-inactive' folder. The ones in the former are loaded when 'listener'
+;; is called, prior to running the routes. Every .lsp file in the 'plugins-active' folder
+;; is loaded at that point, so you'll only want your most frequently used files in there.
+;; <p>A good example of an active plugin is a custom route. Defining a custom route consists
+;; of two basic steps: creating your 'Route' "subclass", and adding an instance of
+;; it to 'Dragonfly:dragonfly-routes'. Take a look at how it's done in the source of
+;; 'dragonfly.lsp' for more info.</p>
+;; <p>Inactive plugins are simply those that should be loaded on a "need to use" basis.
+;; Most plugins will probably fall into this category. Use 'Dragonfly:activate-plugin'
+;; to load them. All plugins are loaded exactly once, no matter how many times
+;; 'activate-plugin' is called on them.</p>
+
 
 ;===============================================================================
 ; !Basic Setup, Global Vars, and Sanity Checks
@@ -54,9 +110,12 @@
 (constant 'DRAGONFLY_MINOR 50)
 (constant 'DRAGONFLY_VERSION (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
-; This is the buffer that contains the content that will get written
-; to STDOUT if no errors are thrown. In the Dragonfly context 'print'
-; and 'println' are overridden to write to this buffer.
+;; @syntax STDOUT
+;; This is the buffer that contains the content that will get written
+;; to STDOUT if no errors are thrown. 'MAIN:print' and 'MAIN:println'
+;; are globally overridden to write to this buffer.
+;; Normally you should never need to modify this variable, however it is
+;; documented for reference's sake.
 (define STDOUT "")
 
 ; you can customize this variable with your own routes, note
@@ -80,66 +139,86 @@
 ; !Public Functions
 ;===============================================================================
 
-;; @syntax (Dragonfly:activate-plugin <plugin-name-1> [<plugin-name-2> ...])
-;; @param <plugin-name-1> The name of the plugin to load, without the ".lsp" extension.
-;; <p>Loads (once only) an inactive plugin(s). Quite often you'll only want some plugins
-;; loaded when 'listener' is called, and only sometimes you'll need to load a
-;; specific plugin. This can speed things up, especially if the plugin is large.</p>
+;; @syntax (Dragonfly:activate-plugin <str-plugin-name> [<str-plugin-name-2> ...])
+;; @param <str-plugin-name> The name of the plugin to load, without the ".lsp" extension.
+;; <br>Loads (once only) a the named plugin from the 'plugins-inactive' folder.
 (define (activate-plugin)
 	(doargs (plugin-name)
 		(load-once (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name ".lsp"))
 	)
 )
 
-;; @syntax (Dragonfly:web-root <path>)
-;; <p>web-root is used to make things work nicely if the site isn't
-;; located at DOCUMENT_ROOT but in a subdirectory of it. Instead
-;; of including a link to "/welcome", you'd use (web-root "welcome")</p>
+;; @syntax (Dragonfly:web-root <str-path>)
+;; @param <str-path> Path relative to the folder containing 'index.cgi'.
+;; <p>This function is quite handy for making working links when your 'index.cgi' file
+;; is not in 'DOCUMENT_ROOT' but a subfolder of it.</p>
+;; @example
+;; ; index.cgi is located in /home/user/site.com/examples-site
+;; ; Users visit http://www.site.com/example-site
+;; (web-root "about") => "/example-site/about"
+;; (web-root "/foo") => "/example-site/foo"
 (define (web-root path)
 	; WEB_ROOT should have a "/" on the end
 	(if (starts-with path "/") (pop path))
 	(string WEB_ROOT path)
 )
 
+;; @syntax (Dragonfly:view-path <str-view-name>)
+;; @param <str-view-name> Name of view in 'VIEWS_PATH', without any extension.
+;; <br>Returns the absolute path to the view as a string, appending 'VIEW_EXTENSION' if necessary.
 (define (view-path view-name)
 	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
+;; @syntax (Dragonfly:partial-path <str-partial-name>)
+;; <br>Just like 'view-path', except for partials in 'PARTIALS_PATH'.
 (define (partial-path partial-name)
 	(string PARTIALS_PATH "/" partial-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
+;; @syntax (Dragonfly:resource-path <str-resource-name>)
+;; <br>Similar to 'view-path', except for resources in 'RESOURCES_PATH'.
+;; Don't include the .lsp extension.
 (define (resource-path resource-name)
 	(string RESOURCES_PATH "/" resource-name ".lsp")
 )
 
 ;; @syntax (Dragonfly:include)
-;; <p>String-concats its arguments to form a path and displays the file inline
-;; without evaluating it as a template.</p>
-;; @see (Dragonfly:display-file)
+;; <br>Like 'display-file' but does not pass the file through 'eval-template'.
 (define (include)
 	(print (read-file (apply string $args)))
 )
 
 ;; @syntax (Dragonfly:display-file)
-;; <p>String-concats its arguments and displays the file
-;; at that path after passing it through 'eval-template'.</p>
+;; <br>String-concats its arguments and displays the file
+;; at that path after passing it through 'eval-template'.
 (define (display-file)
 	(eval-template (read-file (apply string $args)))
 )
 
+;; @syntax (Dragonfly:display-partial <str-partial-name>)
+;; Displays the partial named <str-partial-name> using 'display-file' and 'partial-path'.
 (define (display-partial partialname)
   	(display-file (partial-path partialname))
 )
 
+;; @syntax (Dragonfly:display-view <str-view-name>)
+;; Displays the view named <str-view-name> using 'display-file' and 'view-path'.
 (define (display-view viewname)
 	(display-file (view-path viewname))
 )
 
+;; @syntax (Dragonfly:display-error <int-error-code>)
+;; <br>Sends the <int-error-code> and, if it exists, displays the view named
+;; <int-error-code> using 'display-view'. Otherwise, displays the built-in error
+;; template 'Dragonfly:ERROR_TEMPLATE'.
+;; 
+;; If an error is thrown with 'throw-error', this is automatically called
+;; with an <int-error-code> of 500 (Internal Server Error).
 (define (display-error error-code (clear-stdout true))
 	(Response:status error-code)
 	(Response:content-type Response:html-type)
-	(if clear-stdout (set 'STDOUT ""))
+	(set 'STDOUT "")
 	
 	(unless (display-view (string error-code))
 		(log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
@@ -147,6 +226,11 @@
 	)
 )
 
+;; @syntax (Dragonfly:eval-template <str> [<ctx>])
+;; @param <str> A string containing the template.
+;; @param <ctx> Optional. Represents the context the template is evaluted in. Defaults to Dragonfly.
+;; <br>newLISP code in the template between the 'OPEN_TAG' and 'CLOSE_TAG' (see 'config.lsp') is
+;; evaluated, and the result, along with the text outside of the "code islands" will be sent if no errors occur.
 (define (eval-template str (ctx Dragonfly) , start end block (buf ""))
 	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
 		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
@@ -163,6 +247,11 @@
 	)
 )
 
+;; @syntax (Dragonfly:die)
+;; <br>String-concats its arguments, logs them as an error via 'log-err', and calls
+;; 'throw-error' with the same string.
+;; 
+;; @see Dragonfly:display-error
 (define (die)
 	(let (msg (apply string $args))
 		(log-err msg)
@@ -192,8 +281,11 @@
 ; !Setup Default Routes
 ;===============================================================================
 
-; newLISP can't handle calling 'new' outside of MAIN context...
-(context MAIN) (new Class 'Route.Static) (context Route.Static)
+; newLISP can't handle calling 'new' outside of MAIN context, nor does it currently
+; allow switching contexts in a function call. If it does one day, route defintions
+; will be specified through a 'define-route' macro.
+(context MAIN)
+(new Route 'Route.Static) (context Route.Static)
 
 (define (matches?)
 	(set 'chunks (parse QUERY_STRING "?"))
@@ -209,7 +301,6 @@
 	)
 )
 (define (run)
-	(DF:log-debug 'path " " 'chunk)
 	(replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
 	(if-not ext (set 'ext (regex-captcha {.*\.(\w+)$} path)))
 	(if ext (Response:content-type (Response:extension->type ext)))
@@ -218,24 +309,8 @@
 	)
 )
 
-; Route.Resource handles URLs that refer to RESTful resources, represented
-; as newLISP contexts. These resources reside in the RESOURCES_PATH as .lsp files.
-; The URL works in a similar manner to twitter's RESTful API:
-; http://mysite.com/<resource_name>[/resource_action][/resource_id][.restponse_format][?get_paramters]
-; <resource_name> maps to a context name in a special way: first "Resource." is prepended
-; to the name, then the underscores are removed and the name is mapped to title case.
-; <resource_name> may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore, and
-; must start with a letter.
-; ex: resource_name => Resource.ResourceName
-; The name also maps to a real file located in RESOURCES_PATH by appending ".lsp" to the name:
-; ex: resource_name => load file: RESOURCES_PATH/resource_name.lsp
-; If <resource_name> implements <resource_action>, then that function is called.
-; <resource_action> follows the same naming rules as <resource_name>.
-; When <resource_action> is called, the optional paramters <resource_id> and <response_format>
-; are passed in.
-; <resource_id> may only contain numbers, and <response_format> may only contain letters.
-; If no <resource_action> is specified, then the resource's default function is called instead.
-(context MAIN) (new Class 'Route.Resource) (context Route.Resource)
+(context MAIN)
+(new Route 'Route.Resource) (context Route.Resource)
 
 (define (matches?)
 	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)

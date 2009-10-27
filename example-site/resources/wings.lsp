@@ -2,6 +2,7 @@
 
 (DF:activate-plugin "artfulcode/json")
 
+(new Resource 'Resource.Wings)
 (context 'Resource.Wings)
 
 (set 'my-data
@@ -46,29 +47,29 @@
 
 (define (findWing id response-format)
 
-(DF:activate-plugin "sqlite3")
+	(DF:activate-plugin "sqlite3")
 
-; unfortunately in this situation we can't use NL's default values to do this for us...
-(if-not id (set 'id 0))
+	; unfortunately in this situation we can't use NL's default values to do this for us...
+	(if-not id (set 'id 0))
 
-; uh-oh! No range checking on 'resource-id' ...
-(if (= response-format "json")
-	(begin
-		(Response:content-type Response:json-type)
-		(print (Json:lisp->json (my-data id)))
-	)
-	(begin
+	; uh-oh! No range checking on 'resource-id' ...
+	(if (= response-format "json")
+		(begin
+			(Response:content-type Response:json-type)
+			(print (Json:lisp->json (my-data id)))
+		)
+		(begin
 		
-		(Response:content-type Response:text-type)
-		(sql3:open "../databases/main.sqlite")
-		;(set 'query (string "SELECT * FROM entries WHERE id='"id"'"))
-		(set 'query (string "SELECT * FROM entries WHERE 1"))
-		(print query "\r\n")
-		(print (sql3:sql query))
-		; hmm...doesn't return nil, maybe the path to db is wrong
-		; there is a table entries - i know that!
+			(Response:content-type Response:text-type)
+			(sql3:open "../databases/main.sqlite")
+			;(set 'query (string "SELECT * FROM entries WHERE id='"id"'"))
+			(set 'query (string "SELECT * FROM entries WHERE 1"))
+			(print query "\r\n")
+			(print (sql3:sql query))
+			; hmm...doesn't return nil, maybe the path to db is wrong
+			; there is a table entries - i know that!
+		)
 	)
-)
 
 )
 

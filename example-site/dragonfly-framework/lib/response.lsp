@@ -1,3 +1,4 @@
+;; @module response.lsp
 ;; @author Greg Slepak
 
 (context 'Response)
@@ -6,10 +7,18 @@
 ; !Public API
 ;===============================================================================
 
+;; @syntax (Response:status)
+;; @syntax (Response:status <int-code> [<str-description>])
+;; <p>In the first syntax, returns a list containing the current status code and corresponding description.</p>
+;; <p>In the second syntax, sets the response status to <int-code>, using the description from
+;; a built-in list. If the description for <int-code> is not found in the built-in
+;; list then an error will be thrown if <str-description> is not provided.</p>
 (define (status code description)
 	(if code
 		(begin
 			(unless (assoc code status-codes)
+				(if-not description
+					(throw-error (string "Unknown status code " code ". Please provide a description.")))
 				(push (list code description) status-codes))
 			(setf status-code code)
 		)
@@ -17,16 +26,15 @@
 	)
 )
 
-;; @syntax (Request:header <str-key>)
-;; @param <str-key> the header's name
-;; 
-;; @syntax (Request:header <str-key> <str-value>)
+;; @syntax (Response:header <str-key>)
+;; @param <str-key> the header's name<br>
+;; @syntax (Response:header <str-key> <str-value>)
 ;; @param <str-key> the header's name
 ;; @param <str-value> the header's value
-;; <p>In the first syntax, returns the header matching <str-key> or,
-;; if <str-key> is nil, all of the headers in a list</p>
-;; <p>In the second syntax, sets or updates the header matching <str-key> or,
-;; if <str-value> is nil, deletes the header for <str-key>.</p>
+;; <br>In the first syntax, returns the header matching <str-key> or,
+;; if <str-key> is nil, all of the headers in an association list.
+;; <br>In the second syntax, sets or updates the header matching <str-key> or,
+;; if <str-value> is nil, deletes the header for <str-key>.
 (define (header key)
 	(if (nil? key) headers
 		(empty? $args) (lookup key headers)
@@ -42,10 +50,9 @@
 	)
 )
 
-;; @syntax (Request:cookie <str-key>)
-;; @param <str-key> the cookie's name
-;; 
-;; @syntax (Request:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])
+;; @syntax (Response:cookie <str-key>)
+;; @param <str-key> the cookie's name<br>
+;; @syntax (Response:cookie <str-key> <str-value> [<int-expires> [<str-path> [<str-domain> [<bool-http-only>]]]])
 ;; @param <str-key> the cookie's name
 ;; @param <str-value> the cookie's value
 ;; @param <int-expires> (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie
@@ -53,7 +60,7 @@
 ;; @param <str-domain> (optional) the cookie's domain; default is the current host
 ;; @param <bool-http-only> (optional) whether the cookie may be read by client-side scripts
 ;; <p>In the first syntax, 'cookie' returns the value of the cookie named <str-key> or 'nil'. If
-;; <str-key> is not provided, an association list of all cookie values is returned.</p>
+;; <str-key> is not provided, an association list of all cookie key/value pairs is returned.</p>
 ;; <p>In the second syntax, 'cookie' sets a new cookie. If <str-value> is nil then any existing
 ;; cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
 (define (cookie key)
@@ -72,6 +79,9 @@
 	)
 )
 
+;; @syntax (Response:send-headers)
+;; <p>Actually sends the headers (without buffering them to 'Dragonfly:STDOUT').
+;; Normally you should never call this yourself!</p>
 (define (send-headers)
 	(sys-print "Status: " status-code " " (lookup status-code status-codes) "\r\n")
 	(dolist (header headers) (sys-print (first header) ": " (last header) "\r\n"))
@@ -83,18 +93,27 @@
 ; !Public Convenience Functions and Variables
 ;===============================================================================
 
-(define (redirect path)
-	(header "Location" path)
+;; @syntax (Response:redirect <str-url>)
+;; @param <str-url> The URL you'd like to send them to
+;; <p>Does an immediate 302 Found redirect and calls 'exit'.</p>
+(define (redirect url)
+	(header "Location" url)
 	(status 302)
 	(send-headers)
 	(exit)
 )
 
+;; @syntax (Response:send-headers-with-status <int-code> <str-description>)
+;; <p>Convenience. Combines a call to 'Response:status' and 'Response:send-headers'.
+;; As this calls 'send-headers', you typically do not want to call this yourself!</p>
 (define (send-headers-with-status code description)
 	(status code description)
 	(send-headers)
 )
 
+;; @syntax (Response:content-type <str-value>)
+;; <p>Convenience for calling '(Response:header "Content-Type" str-value)'.</p>
+;; <p>If <str-value> is nil, returns the current content-type value</p>
 (define (content-type value)
 	(if value
 		(header "Content-Type" value)
@@ -102,6 +121,10 @@
 	)
 )
 
+;; @syntax (Response:extension->type <str-file-extension>)
+;; <p>Given a file extension (with or without a preceding dot), returns the
+;; MIME-type for that extension. Currently only a small number of file extensions
+;; are supported by default, see the source in lib/response.lsp for a complete list.</p>
 (define (extension->type file-extension)
 	(if-not (starts-with file-extension ".") (push "." file-extension))
 	(eval (lookup file-extension extension-to-type-map))

@@ -1,21 +1,12 @@
-;; NOTE: it's OK to load this file multiple times
-
-;;  Copyright (C) <2009> <Greg Slepak>
-;;
-;;  This program is free software: you can redistribute it and/or modify
-;;  it under the terms of the GNU General Public License as published by
-;;  the Free Software Foundation, either version 3 of the License, or
-;;  (at your option) any later version.
-;;
-;;  This program is distributed in the hope that it will be useful,
-;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;  GNU General Public License for more details.
-;;  You should have received a copy of the GNU General Public License
-;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-;;
-;; @module Dragonfly
+; NOTE: it's OK to load this file multiple times
+;; @module utils.lsp
 ;; @author Greg Slepak <greg at taoeffect.com>
+;; <p>This file not only provides the functions documented below, but
+;; it also plays a role in globally overriding certain functions in the MAIN context.</p>
+;; <p>The overridden functions include: 'load', 'print', and 'println'.</p>
+;; <p>'load' is overwritten to load a file only once, while 'print' and 'println'
+;; are overwritten to send their output the the 'Dragonfly:STDOUT' buffer, allowing
+;; Dragonfly to ensure pages are displayed properly.</p>
 
 ; protect against situation where one of the load functions is used to
 ; load this file, thereby redefining the function itself while it's running
@@ -47,28 +38,56 @@
 	; If someday newLISP supports switching contexts like this we'll use it
 	(define-macro (define-subclass)
 		(new (args 0 1) (args 0 0))
-		(context (args 0 0))
+		;(context (args 0 0))
 		(dolist (method (rest $args))
 			(setf (method 0 0) (sym $it (args 0 0)))
 			(eval (push 'define method))
 		)
-		(context MAIN)
+		;(context MAIN)
 	)
-
+	
+;; @syntax (regex-captcha <str-regex> <str> [<int-options>] [<int-captcha>])
+;; @param <int-options> options to regex, defaults to 0.
+;; @param <int-captch> which of the regex group captures to return, defaults to 1.
+;; <p>Returns the captured text, or nil if it couldn't be captured.<br/>This is a global function.</p>
+;; <b>example:</b>
+;; <pre> (regex-captcha {^(foo|bar).*} "foobaz") => "foo"
+;; (regex-captcha {^(foo|bar).*} "bazfoo") => nil</pre>
+;; 
 	(define (regex-captcha regex-str str (options 0) (captcha 1))
 		(if (regex regex-str str options)
 			($ captcha)
 		)
 	)
 	
+;; @syntax (load-files-in-dir <str-dir> <regex-match>)
+;; <p>Loads all the files in <str-dir> matching <regex-match>. Does not
+;; traverse subdirectories.<br/>This is a global function.</p>
+;;
 	(define (load-files-in-dir dir regex-match)
 		(dolist (x (directory dir regex-match))
 			(load-once (string dir "/" x))
 		)
 	)
+
+;; @syntax (into-ctx-assoc <ctx> <list-assoc>)
+;; <p>Places the key/value pairs in <list-assoc> into the context <ctx>
+;; to be used as a lookup table.<br/>This is a global function.</p>
+;; <b>example:</b>
+;; <pre> (new Tree 'MyCtx)
+;; (into-ctx-assoc MyCtx '(
+;;     ("key" "value")
+;;     ("apple" "mmmm... good")
+;;     ("organic?" true)
+;; ))</pre>
+;; 
+	(define (into-ctx-assoc ctx assoc-list)
+		(dolist (x assoc-list) (ctx (x 0) (x 1))) ; here dolist is slightly faster than map
+	)
 	
-	; these two functions should be global (define-subclass should not)
-	(global 'load-files-in-dir 'regex-captcha 'load-once)
+	
+	; these functions should be global (define-subclass should not)
+	(global 'load-files-in-dir 'regex-captcha 'load-once 'into-ctx-assoc)
 	
 	; swap these functions for ours and save the originals
 	(constant (global 'sys-load) load)

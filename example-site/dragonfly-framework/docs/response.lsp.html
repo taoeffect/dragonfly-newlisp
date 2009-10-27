@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>response.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>response.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;response.lsp</h2><b>Author: </b>Greg Slepak<br/>
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_status"></a><h3><font color=#CC0000>Response:status</font></h3>
+<b>syntax: (<font color=#CC0000>Response:status</font>)</b><br/>
+<b>syntax: (<font color=#CC0000>Response:status</font> <em>int-code</em> [<em>str-description</em>])</b><br/>
+ <p>In the first syntax, returns a list containing the current status code and corresponding description.</p>
+ <p>In the second syntax, sets the response status to <em>int-code</em>, using the description from
+ a built-in list. If the description for <em>int-code</em> is not found in the built-in
+ list then an error will be thrown if <em>str-description</em> is not provided.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_header"></a><h3><font color=#CC0000>Response:header</font></h3>
+<b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the header's name<br><br/>
+<b>syntax: (<font color=#CC0000>Response:header</font> <em>str-key</em> <em>str-value</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the header's name<br/>
+<b>parameter: </b><em>str-value</em> - the header's value<br/>
+ <br>In the first syntax, returns the header matching <em>str-key</em> or,
+ if <em>str-key</em> is nil, all of the headers in an association list.
+ <br>In the second syntax, sets or updates the header matching <em>str-key</em> or,
+ if <em>str-value</em> is nil, deletes the header for <em>str-key</em>.
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_cookie"></a><h3><font color=#CC0000>Response:cookie</font></h3>
+<b>syntax: (<font color=#CC0000>Response:cookie</font> <em>str-key</em>)</b><br/>
+<b>parameter: </b><em>str-key</em> - the cookie's name<br><br/>
+<b>syntax: (<font color=#CC0000>Response:cookie</font> <em>str-key</em> <em>str-value</em> [<em>int-expires</em> [<em>str-path</em> [<em>str-domain</em> [<em>bool-http-only</em>]]]])</b><br/>
+<b>parameter: </b><em>str-key</em> - the cookie's name<br/>
+<b>parameter: </b><em>str-value</em> - the cookie's value<br/>
+<b>parameter: </b><em>int-expires</em> - (optional) the expiration date of the cookie as a unix timestamp; default is a session cookie<br/>
+<b>parameter: </b><em>str-path</em> - (optional) the cookie's path; default is the current path<br/>
+<b>parameter: </b><em>str-domain</em> - (optional) the cookie's domain; default is the current host<br/>
+<b>parameter: </b><em>bool-http-only</em> - (optional) whether the cookie may be read by client-side scripts<br/>
+ <p>In the first syntax, <tt>cookie</tt> returns the value of the cookie named <em>str-key</em> or <tt>nil</tt>. If
+ <em>str-key</em> is not provided, an association list of all cookie key/value pairs is returned.</p>
+ <p>In the second syntax, <tt>cookie</tt> sets a new cookie. If <em>str-value</em> is nil then any existing
+ cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_send-headers"></a><h3><font color=#CC0000>Response:send-headers</font></h3>
+<b>syntax: (<font color=#CC0000>Response:send-headers</font>)</b><br/>
+ <p>Actually sends the headers (without buffering them to <tt>Dragonfly:STDOUT</tt>).
+ Normally you should never call this yourself!</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_redirect"></a><h3><font color=#CC0000>Response:redirect</font></h3>
+<b>syntax: (<font color=#CC0000>Response:redirect</font> <em>str-url</em>)</b><br/>
+<b>parameter: </b><em>str-url</em> - The URL you'd like to send them to<br/>
+ <p>Does an immediate 302 Found redirect and calls <tt>exit</tt>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_send-headers-with-status"></a><h3><font color=#CC0000>Response:send-headers-with-status</font></h3>
+<b>syntax: (<font color=#CC0000>Response:send-headers-with-status</font> <em>int-code</em> <em>str-description</em>)</b><br/>
+ <p>Convenience. Combines a call to <tt>Response:status</tt> and <tt>Response:send-headers</tt>.
+ As this calls <tt>send-headers</tt>, you typically do not want to call this yourself!</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_content-type"></a><h3><font color=#CC0000>Response:content-type</font></h3>
+<b>syntax: (<font color=#CC0000>Response:content-type</font> <em>str-value</em>)</b><br/>
+ <p>Convenience for calling <tt>(Response:header "Content-Type" str-value)</tt>.</p>
+ <p>If <em>str-value</em> is nil, returns the current content-type value</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Response_extension->type"></a><h3><font color=#CC0000>Response:extension->type</font></h3>
+<b>syntax: (<font color=#CC0000>Response:extension->type</font> <em>str-file-extension</em>)</b><br/>
+ <p>Given a file extension (with or without a preceding dot), returns the
+ MIME-type for that extension. Currently only a small number of file extensions
+ are supported by default, see the source in lib/response.lsp for a complete list.</p>
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

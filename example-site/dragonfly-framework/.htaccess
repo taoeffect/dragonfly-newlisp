@@ -1,6 +1,0 @@
-Options -indexes
-
-<Files ~ "\.lsp$">
-Order allow,deny
-Deny from all
-</Files>

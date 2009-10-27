@@ -1,6 +1,6 @@
 ; Do not modify the two lines below!
 (env "_" "") (delete '_) ; make sure this isn't defined!
-(dolist (pair (env)) (constant (global (sym (first pair))) (last pair)))
+(dolist (x (env)) (constant (global (sym (upper-case (first x)))) (last x)))
 
 ; NOTE: the paths, including folders, shouldn't have slashes on the ends!
 
@@ -30,7 +30,7 @@
 (constant 'PARTIALS_PATH (string DOCUMENT_ROOT "/views/partials"))
 ; setting a default view (sans file extension)
 (constant 'DEFAULT_VIEW "welcome")
-; convenience for using 'display-view', as well as static route matching
+; used by 'display-view' to save you keystrokes and by the static routing.
 (constant 'VIEW_EXTENSION ".html")
 
 ;===============================================================================
@@ -53,7 +53,7 @@
 ; to the path, which is bound to the '_' symbol). If one of them matches a file,
 ; the entire route matches and the file is passed through the template evaluator,
 ; otherwise it will not match and defer to the other handler(s).
-; Note that these expressions can be used to do more than just match URLs...
+; Note that these expressions can be used to do more than just match URLs.
 (constant 'STATIC_TRANSFORMATIONS '(
 	(string DOCUMENT_ROOT "/" _ "/index.html")
 	(begin (set 'viewname _) (string VIEWS_PATH "/" _))
@@ -64,7 +64,7 @@
 ; RESTful Route Configuration
 ;===============================================================================
 
-; set to nil to disable REST handling
+; set to nil to disable the RESTful handler
 (constant 'ENABLE_RESTFUL_HANDLER true)
 ; location of RESTful resources
 (constant 'RESOURCES_PATH (string DOCUMENT_ROOT "/resources"))
