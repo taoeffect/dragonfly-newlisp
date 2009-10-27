@@ -1,7 +1,7 @@
 ;; @module dragonfly.lsp
 ;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
 ;; @version 0.50
-;; @author Greg Slepak, Marc Hildmann (Team Dragonfly 2009)
+;; @author Team Dragonfly 2009
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; <br>This file is the main entry-point of the Dragonfly framework and
 ;; contains several important functions, as well as the default route
