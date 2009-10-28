@@ -291,7 +291,7 @@
 ;; @param <int-timeout> an integer containing the number of microseconds after recalling the request-url
 ;; <p>Writes a simple AJAX-updater, e.g. for displaying the time on a website.</p>
 (define (ajax-updater html-elementid request-url str-params timeout)
-	; check for newLISP as webSERVER_SOFTWARE, then we've to use a ? before request-url, because there's no working .htaccess
+	; check for newLISP as SERVER_SOFTWARE, then we prefix a ? before request-url because there's no working .htaccess
 	(when (find "newLISP" SERVER_SOFTWARE)
 		(if (starts-with request-url "/") (pop request-url))
 		(push "/?" request-url)
