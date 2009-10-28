@@ -17,9 +17,8 @@
 		
 		<h1>Default Routes</h1>
 		<p class="extract">
-		
+			Dragonfly's routes are written in pure newLISP code and have no arbitrary constraints placed on them. They can be as simple or complex as you need them to be. In fact, Dragonfly's routes are so flexible that the defaults will often be all you'll need.
 		</p>
-		
 		<h2>Static Routes</h2>
 		<p>Static Routes in Dragonfly provide two behaviours:</p>
 		<ul>
@@ -49,38 +48,41 @@
 		<p class="info">The resource <b>WINGS</b> has to be available in Your resource directory</p>
 		<h3 class="code">Example of wings.lsp in /resources</h3>
 		<pre class="code">
-;; @author Greg Slepak
-
 (DF:activate-plugin "artfulcode/json")
 
+(new Resource 'Resource.Wings)
 (context 'Resource.Wings)
 
 (set 'my-data
-	'((wings (left right))
-	(wings-condition ("good" "excellent"))
-	(wings-opacity 0.5))
+  '((wings (left right))
+    (wings-condition ("good" "excellent"))
+    (wings-opacity 0.5))
 )
 
-(define (Resource.Wings:Resource.Wings response-format)
-	; defaults to calling show
-	(show response-format)
+(define (Resource.Wings:Resource.Wings id response-format)
+    ; defaults to calling show
+    (show id response-format)
 )
 
-(define (show response-format)
-	(if (= response-format "json")
-		(begin
-			(Response:content-type Response:json-type)
-			(print (Json:lisp->json my-data))
-		)
-		(begin
-			(Response:content-type Response:text-type)
-			(print my-data)
-		)
-	)
+(define (show id response-format)
+    ; in this situation we can't use newLISP's default
+    ; parameter values to do this for us.
+    (if-not id (set 'id 0))
+
+    ; uh-oh! No range checking on 'resource-id' ...
+    (if (= response-format "json")
+        (begin
+            (Response:content-type Response:json-type)
+            (print (Json:lisp->json (my-data id)))
+        )
+        (begin
+            (Response:content-type Response:text-type)
+            (print (my-data id))
+        )
+    )
 )
 
-(context MAIN)			
-		</pre>
+(context MAIN)</pre>
 		<p class="config"><b>Configuration</b><br/>You may enable or disable RESTful handling by setting the constant ENABLE_RESTFUL_HANDLER in config.lsp. Default is set to "true".</p>
 
 		<p class="config"><b>Configuration</b><br/>Set Your resource directory to whatever You want by changing the constant RESOURCES_PATH in config.lsp. Default is set to "/resources".</p>	
