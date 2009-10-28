@@ -39,25 +39,26 @@
 ;;
 
 (define (twitter-search keyword rpp)
-  (set 'xml (get-url (string "http://search.twitter.com/search.atom?rpp="rpp"&q="keyword) ))
-  (xml-type-tags nil nil nil nil) ; no extra tags
-  (set 'sxml (xml-parse xml 31)) ; turn on SXML options
-  (set 'entry-index (ref-all '(entry *) sxml match))
-  (when (empty? entry-index)
-    (println "No entries found")
-  )
-  (println "<div id='twitter_search_results'>")
-  (dolist (idx entry-index)
-	(println "<div class='bubble'><blockquote><p>")    
-	(set 'entry (sxml idx))
-    (println 
-				(lookup 'title entry) 
-				"</p></blockquote>"
-				"<cite><strong>"
-				(lookup '(author name) entry ) "</strong> on " 
-			 	(lookup 'published entry) "</cite></div>")
+	(set 'xml (get-url (string "http://search.twitter.com/search.atom?rpp="rpp"&q="keyword) ))
+	(xml-type-tags nil nil nil nil) ; no extra tags
+	(set 'sxml (xml-parse xml 31)) ; turn on SXML options
+	(set 'entry-index (ref-all '(entry *) sxml match))
+	(when (empty? entry-index)
+		(println "No entries found")
+	)
+	(println "<div id='twitter_search_results'>")
+	(dolist (idx entry-index)
+		(set 'entry (sxml idx))
+		(println "<div class='bubble'><blockquote><p>"
+			(lookup 'title entry) 
+			"</p></blockquote><cite><strong>"
+			(lookup '(author name) entry)
+			"</strong> on " 
+			(lookup 'published entry)
+			"</cite></div>"
+		)
 	)
 	(println "</div>")
 )
 
-(context Dragonfly) "debug"
+(context MAIN)
