@@ -85,30 +85,6 @@
 
 		<p class="config"><b>Configuration</b><br/>Set Your resource directory to whatever You want by changing the constant RESOURCES_PATH in config.lsp. Default is set to "/resources".</p>	
 		
-		
-		<h2>Using views</h2>
-		<p class="extract">A view is simply a web page, or a page fragment, like a header or footer. In fact, views can flexibly be embedded within other views. In that case we call them partials.</p>
-
-		<h3 class="code">How to load a view</h3>
-		<p>Example: open Your favorite text-editor and enter the following:</p>
-		<pre class="code">Hello World</pre>
-		<p>Save the file as "hello" into Your views directory. Now open Your browser and navigate to <a href="http://www.example-site.com/hello">example-site.com/hello</a>. That's it!</p>
-		<p class="info"><b>Information</b><br/>You can put nearly everything into views: (X)HTML, Javascript, newLISP code.</p>
-		<p class="config"><b>Configuration</b><br/>If VIEW_EXTENSION is ".html" for example, then when example-site.com/hello is called Dragonfly will search for a "hello.html" file in the VIEWS_PATH. It also applies to the partials, too.</p>
-
-		<h3 class="code">How to call functions inside a view</h3>
-		<pre class="code">&lt;% (benchmark-result) %&gt;</pre>
-		
-		<p>Put Your function call inside our open and close brackets and there You go! That will display some stats about rendering time and memory consumption.</p>
-		
-		<p class="info"><b>Information</b><br/>You can use all functions from newLISP and Dragonfly. Additionally You may write Your own functions inside a plugin and just put the file into the "plugins-active" directory.</p>
-				
-		<h3 class="code">How to load a partial view</h3>
-		<pre class="code">&lt;% (display-partial "header") %&gt;</pre>
-		
-		<p>This simple argument would load the "header"-partial from the partials directory.</p>
-
-		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

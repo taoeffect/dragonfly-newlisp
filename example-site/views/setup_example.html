@@ -1,0 +1,64 @@
+<% (display-partial "doctype") %>
+<% (display-partial "header") %>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Dragonfly in Non-Root</h1>
+		<p>Say you want to test Dragonfly out by placing the entire
+		directory into the root of your site. As an example the demo site
+		could be located here:</p>
+
+		<pre class="code">/home/user/mysite.com/dragonfly/example-site/</pre>
+
+		<p>And to access it you would use this URL:</p>
+
+		<pre class="code">http://www.mysite.com/dragonfly/example-site/</pre>
+
+		<p>You must make two changes (possible 3) to get it to work with Apache:</p>
+
+		<ol><li>Change this line in .htaccess
+
+			<blockquote>RewriteBase /</blockquote>
+		To:
+			<blockquote>RewriteBase /dragonfly/example-site/</blockquote>
+		</li>
+		<li>Edit config.lsp and change this line:
+
+			<blockquote>(constant (global 'DOCUMENT_ROOT) (env "DOCUMENT_ROOT"))</blockquote>
+		To:
+			<blockquote>(constant (global 'DOCUMENT_ROOT) "/home/user/mysite.com/dragonfly/example-site")</blockquote>
+		</ol>
+
+		<p>A possible third step is required if your newlisp binary is not
+		installed in /usr/bin/newlisp. If it's installed somewhere else
+		(for example: /path/to/bin/newlisp), then you may need to also
+		edit 'index.cgi' file and change the top-line from:</p>
+
+		<blockquote>#!/usr/bin/env newlisp</blockquote>
+		<p>To:</p>
+		<blockquote>#!/path/to/bin/newlisp</blockquote>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

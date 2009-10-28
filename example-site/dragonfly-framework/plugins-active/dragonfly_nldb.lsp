@@ -29,6 +29,8 @@
 
 (context 'Dragonfly)
 
+(constant 'databases-path (string DOCUMENT_ROOT "/databases/"))
+
 ;===============================================================================
 ; !nldb Wrapper for a pure newLISP Database (flat)
 ;===============================================================================

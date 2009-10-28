@@ -1,3 +1,10 @@
+Version 0.50
+
+  * massive rewrite. too many changes to list, if you want to see them look through the mercurial change log:
+	http://code.google.com/p/dragonfly-newlisp/source/list
+	or the updates list (similar to the other link, but with fewer details):
+	http://code.google.com/p/dragonfly-newlisp/updates/list
+
 Version 0.20
 
   * changed license from MIT to GNU (GPL v3)

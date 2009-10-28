@@ -13,7 +13,7 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;
 ;; @module Dragonfly
-;; @author Marc Hildmann <marc.hildmann at gmail.com>
+;; @author Marc Hildmann <marc.hildmann at gmail.com>, Greg Slepak <greg at taoeffect.com>
 ;; @version 0.20
 ;; 
 ;; @location http://code.google.com/p/dragonfly-newlisp/
@@ -28,16 +28,6 @@
 ;===============================================================================
 
 (context 'Dragonfly)
-
-; TODO: these are copied from dragonfly.lsp, and they're probably going to be
-;       moved or deleted further.
-(constant 'databases-path (string DOCUMENT_ROOT"/databases/"))
-
-; init symbols for Dragonfly listener
-(set 'viewname "")
-(set 'action "")
-(set 'params "")
-(set 'selector "")
 
 ;; @syntax (Dragonfly:benchmark-start)
 ;; <p>Sets the start point for benchmarking.</p>
@@ -99,7 +89,6 @@
 	<h2>REQUEST METHOD</h2>"REQUEST_METHOD"
 	<h2>DEFAULT VIEW</h2>"DEFAULT_VIEW"
 	<h2>CURRENT VIEW</h2>"viewname"
-	<h2>VIEW ACTION</h2>"action"
 	<h2>USER-AGENT</h2>"HTTP_USER_AGENT"
 	<h2>Proxy</h2>"HTTP_PROXY"
 	<h2>SERVER</h2>"SERVER_SOFTWARE"
@@ -201,18 +190,18 @@
 ;; <p>Writes the Google Analytics tracking code.</p>
 ;;
 (define (google-analytics analytics-id)
-	(print "
-	<script type=\"text/javascript\">
-		var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
-		document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));
+	(print [text]
+	<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 		</script>
-		<script type=\"text/javascript\">
+		<script type="text/javascript">
 		try {
-			var pageTracker = _gat._getTracker(\""analytics-id"\");
+			var pageTracker = _gat._getTracker("[/text] analytics-id [text]");
 			pageTracker._trackPageview();
 		} catch(err) {}
 	</script>				
-	")
+	[/text])
 )
 
 
@@ -261,18 +250,15 @@
 ;; @param <view> a string containing the view
 ;; <p>Writes a internal link</p>
 ;; 
-(define (link_to link-name view action)
-	
-  	; if Dragonfly runs on newLISP webSERVER_SOFTWARE, we cannot
+(define (link_to link-name view , link-url)
+  	; if Dragonfly runs on newLISP SERVER_SOFTWARE, we cannot
   	; use .htaccess, so we've to write the "?" into the url
     ; else we miss it
-	(if (true? (find "newLISP" SERVER_SOFTWARE))
+	(if (find "newLISP" SERVER_SOFTWARE)
 		(set 'link-url (string "?" view))
 		(set 'link-url (string "/" view))
 	)
-	(if action (write-buffer link-url (string "/" action)))
-	
-  	(print "<a href='"(web-root link-url)"'>"link-name"</a>")
+  	(print "<a href=\"" (web-root link-url) "\">" link-name "</a>")
 )
 
 ;; @syntax (Dragonfly:link_to <link_name> <url>)
@@ -281,9 +267,7 @@
 ;; <p>Writes a standard HTML link</p>
 ;; 
 (define (link_to_external link-name url)
-		
   	(print "<a href='"url"'>"link-name"</a>")
-
 )
 
 ;; @syntax (Dragonfly:link_mailto <link_name> <options>)
@@ -292,7 +276,7 @@
 ;; <p>Writes a standard HTML mailto link</p>
 ;; 
 (define (link_mailto link-name link-url)
-  (print "<a href='mailto:"link-url"'>"link-name"</a>")
+	(print "<a href='mailto:"link-url"'>"link-name"</a>")
 )
 
 
@@ -300,32 +284,37 @@
 ; !AJAX Functions
 ;===============================================================================
 
-;; @syntax (Dragonfly:ajax-updater <html-elementid> <request-url> <params-url> <timeout>)
+;; @syntax (Dragonfly:ajax-updater <html-elementid> <request-url> <str-params> <timeout>)
 ;; @param <html-elementid> a string containing the elementID
 ;; @param <request-url> a string containing the url which is called frequently
-;; @param <params-url> a string containing params which are POSTED against request-url
-;; @param <timeout> an integer containing the number of microseconds after recalling the request-url
+;; @param <str-params> a string containing params which are POSTED against request-url
+;; @param <int-timeout> an integer containing the number of microseconds after recalling the request-url
 ;; <p>Writes a simple AJAX-updater, e.g. for displaying the time on a website.</p>
-;;
-(define (ajax-updater html-elementid request-url params-url timeout)
-	(print "<div id='"html-elementid"'>&nbsp;</div>")
-	(print "<script language='javascript'>")
-	(print "function responseFunction(responseText, responseStatus) {")
-	(print "var response = responseText;")
-	(print "document.getElementById('"html-elementid"').innerHTML = response;")	
-	(print "setTimeout(\"ajax"html-elementid".post('"params-url"');\","timeout");")
-	(print "}")
-	
+(define (ajax-updater html-elementid request-url str-params timeout)
 	; check for newLISP as webSERVER_SOFTWARE, then we've to use a ? before request-url, because there's no working .htaccess
 	(when (find "newLISP" SERVER_SOFTWARE)
 		(if (starts-with request-url "/") (pop request-url))
 		(push "/?" request-url)
 	)
 	(set 'request-url (web-root request-url))
-	(print "var ajax"html-elementid" = new AjaxRequest(\""request-url"\", responseFunction);")
-	
-	(print "ajax"html-elementid".post(\""params-url"\");")
-	(print "</script>")
+	; 'fetcher' is prevented from entering the global scope because
+	; of the surrounding parenthesis. Meaning, this code won't conflict if
+	; it's listed multiple times on the page. The parenthesis play two roles:
+	; to protect it from entering the global scope, and to call the function.
+	(print (format [text]
+		<div id="%s">&nbsp;</div>
+		<script type="text/javascript">
+			(function fetcher() {
+				$.post("%s", "%s",
+					function (data, status) {
+						$("#%s").html(data);
+						setTimeout(fetcher, %d);
+					}
+				);
+			})();
+		</script>
+		[/text] html-elementid request-url str-params html-elementid timeout)
+	)
 )
 
 (context Dragonfly)

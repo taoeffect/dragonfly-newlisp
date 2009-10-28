@@ -281,7 +281,7 @@ body img {
 
 /* Dragonfly User Guide Menu */
 
-#menu {
+.menu {
 		width: 470px;
 		display: block;
 		background: #000000;
@@ -296,22 +296,22 @@ body img {
 		padding-bottom:10px;
 }
 
-#menu dt {
+.menu dt {
 	font-weight: bold;
 	font-size: 13px;
 	color:#00aeef;
 }
 
-#menu dd {
+.menu dd {
 	padding-left:5px;
 	font-weight: normal;
 	font-size: 11px;
 }
 	
-#menu dt { padding:0; margin:8px 0 0 0;}
-#menu a { color: #ffffff; background: none !important;}
-#menu .L, #menu .R {float: left; width: 50%; margin: 0; padding: 0;}
-#menu .R { float: right; }
+.menu dt { padding:0; margin:8px 0 0 0;}
+.menu a { color: #ffffff; background: none !important;}
+.menu .L, .menu .R {float: left; width: 50%; margin: 0; padding: 0;}
+.menu .R { float: right; }
 
 /* Dragonfly Styles */
 
