@@ -2,3 +2,4 @@
 \.DS_Store$
 plugins-active/_config\.lsp$
 test_.+\.lsp$
+\.pxm$

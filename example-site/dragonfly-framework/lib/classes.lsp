@@ -21,5 +21,5 @@
 
 (new Class 'Resource)
 
-; nothing so far.. but it's recommend to "inherit" from it anyway
+; nothing so far.. but it's recommended to "inherit" from it anyway
 ; for future possibilities...
