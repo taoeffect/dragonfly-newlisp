@@ -289,8 +289,8 @@
 
 (define (matches?)
 	(set 'chunks (parse QUERY_STRING "?"))
-	(if (empty? chunks) (push DF:DEFAULT_VIEW chunks))
-	; a "double-set" for STATIC_TRANSFORMATIONS + code readability
+	(if (empty? chunks)
+		(push DF:DEFAULT_VIEW chunks))
 	(set 'path (set 'DF:_ (first chunks)))
 	
 	(if (set 'ext (exists (curry ends-with path) DF:STATIC_TRIGGER_EXTENSIONS))
