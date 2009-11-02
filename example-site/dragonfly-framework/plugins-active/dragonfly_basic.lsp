@@ -284,7 +284,7 @@
 ; !AJAX Functions
 ;===============================================================================
 
-;; @syntax (Dragonfly:ajax-updater <html-elementid> <request-url> <str-params> <timeout>)
+;; @syntax (ajax-updater <html-elementid> <request-url> <str-params> <timeout>)
 ;; @param <html-elementid> a string containing the elementID
 ;; @param <request-url> a string containing the url which is called frequently
 ;; @param <str-params> a string containing params which are POSTED against request-url
@@ -316,5 +316,14 @@
 		[/text] html-elementid request-url str-params html-elementid timeout)
 	)
 )
+
+
+;===============================================================================
+; !RSS Functions
+;===============================================================================
+
+; TODO: implement some functions for RSS parsing here
+
+
 
 (context Dragonfly)
