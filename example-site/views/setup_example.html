@@ -26,30 +26,33 @@
 
 		<pre class="code">http://www.mysite.com/dragonfly/example-site/</pre>
 
-		<p>You must make two changes (possible 3) to get it to work with Apache:</p>
+		<h3 class="code">Step 1 to get it worked with Apache</h3>
+		<p>Change this line in <b>.htaccess</b></p>
 
-		<ol><li>Change this line in .htaccess
+			<pre class="code">RewriteBase /</pre>
+			<p>To:</p>
+			<pre class="code">RewriteBase /dragonfly/example-site/</pre>
 
-			<blockquote>RewriteBase /</blockquote>
-		To:
-			<blockquote>RewriteBase /dragonfly/example-site/</blockquote>
-		</li>
-		<li>Edit config.lsp and change this line:
 
-			<blockquote>(constant (global 'DOCUMENT_ROOT) (env "DOCUMENT_ROOT"))</blockquote>
-		To:
-			<blockquote>(constant (global 'DOCUMENT_ROOT) "/home/user/mysite.com/dragonfly/example-site")</blockquote>
-		</ol>
+		<h3 class="code">Step 2</h3>
 
-		<p>A possible third step is required if your newlisp binary is not
-		installed in /usr/bin/newlisp. If it's installed somewhere else
+		<p>Edit <b>config.lsp</b> and change this line</p>
+
+			<pre class="code">(constant (global 'DOCUMENT_ROOT) (env "DOCUMENT_ROOT"))</pre>
+			<p>To:</p>
+			<pre class="code">(constant (global 'DOCUMENT_ROOT) "/home/user/mysite.com/dragonfly/example-site")</pre>
+
+		<h3 class="code">Step 3 (optional): newLISP outside from /usr/bin/</h3>
+		<p>
+		A possible third step is required if your newlisp binary is NOT
+		installed in <b>/usr/bin/newlisp</b>.<br/><br/>If it's installed somewhere else
 		(for example: /path/to/bin/newlisp), then you may need to also
-		edit 'index.cgi' file and change the top-line from:</p>
+		edit <b>index.cgi</b> file and change the top-line from:</p>
 
-		<blockquote>#!/usr/bin/env newlisp</blockquote>
+		<pre class="code">#!/usr/bin/env newlisp</pre>
 		<p>To:</p>
-		<blockquote>#!/path/to/bin/newlisp</blockquote>
-		
+		<pre class="code">#!/path/to/bin/newlisp</pre>
+
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>
