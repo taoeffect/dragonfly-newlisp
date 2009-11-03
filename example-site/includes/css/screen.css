@@ -188,7 +188,13 @@ body img {
 		font-size:10px;
 		color:#ffffff;
 	}
-
+	
+	#content h3.param {
+		font-family:Courier, mono;
+		font-size:18px;
+		color:#005060;
+	}
+	
 	#content p.info {
 		margin-top:10px;
 		margin-bottom:30px;
