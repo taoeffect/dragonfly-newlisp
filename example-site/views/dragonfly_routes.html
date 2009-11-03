@@ -1,5 +1,7 @@
 <% (display-partial "doctype") %>
-<% (display-partial "header") %>
+<head>
+	<% (display-partial "header") %>
+</head>
 
 <body>
 
@@ -20,21 +22,51 @@
 			Dragonfly's routes are written in pure newLISP code and have no arbitrary constraints placed on them. They can be as simple or complex as you need them to be. In fact, Dragonfly's routes are so flexible that the defaults will often be all you'll need.
 		</p>
 		<h2>Static Routes</h2>
-		<p>Static Routes in Dragonfly provide two behaviours:</p>
+		<p>
+			<span class="code">Route.Static</span> is one of the two default routes that Dragonfly comes with. It offers a flexible method of serving template files to allow for a PHP-like development pattern (except PHP is replaced with newLISP code).
+		</p>
 		<ul>
 			<li>1a) example-site.com/somefile.html</li>
 			<li>1b) example-site.com/foo/</li>
 		</ul>
+		<p>
+			This route is very flexible, and there are only three configuration parameters that may want to adjust in <b>config.lsp</b>:
+		</p>
+		<h3 class="code">ENABLE_STATIC_TEMPLATES</h3>
+		<p>Default value: <b>true</b></p>
+		<p>
+			Setting this value to <b>nil</b> will remove <span class="code">Route.Static</span> from Dragonfly's list of routes. If you disable this and you're using Dragonfly with the Apache web server, be sure to also comment out this line in <b>.htaccess</b>:
+		<pre class="code">RewriteCond %{REQUEST_FILENAME} \.html$</pre>
+		<h3 class="code">STATIC_TRIGGER_EXTENSIONS</h3>
+		<p>Default value: <b>(".html")</b></p>
+		<p>
+			TODO: this
+		</p>
+		<h3 class="code">STATIC_TRANSFORMATIONS</h3>
+		<p>Default value:
+		<pre class="code">(
+    (string DOCUMENT_ROOT "/" _ "/index.html")
+    (begin (set 'viewname _)
+           (string VIEWS_PATH "/" _))
+    (begin (set 'viewname _)
+           (string VIEWS_PATH "/" _ VIEW_EXTENSION))
+)</pre></p>
+		<p>
+			TODO: this
+		</p>
 		
 		<h3 class="code">1a. example-site.com/somefile.html</h3>
-		<p>If somefile.html is an actual file, but the default configuration is set to filter that through the Route.Static that reads in the file and passes it through the template evaluator and then displays it.
+		<p>By default, Dragonfly is setup to process html for <% (link_to "any newLISP code" "dragonfly_views") %> they may contain. This is very similar to how PHP development works.
 		</p>
-		<p class="config"><b>Configuration</b><br/>You may change the constant STATIC_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>
+		<p>
+			
+		</p>
+		<p class="config"><b>CONFIGURATION</b><br/>You may change the constant STATIC_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>
 
 		<h3 class="code">1b. example-site.com/foo/</h3>
 		<p>If "foo" is a folder, then it will be searched for an index file by default. In the config.lsp, the STATIC_TEST_EXTENSIONS is set to ".html". So it will search for an "index.html" inside of the foo folder. If it exists it will pass it through the template evaluator and displays it.
 		</p>
-		<p class="config"><b>Configuration</b><br/>You may change the constant STATIC_TEST_EXTENSIONS in config.lsp to whatever You want. Default is set to ".html".</p>
+		<p class="config"><b>CONFIGURATION</b><br/>You may change the constant STATIC_TEST_EXTENSIONS in config.lsp to whatever You want. Default is set to ".html".</p>
 		
 		
 		<h2>RESTful Routes</h2>
@@ -83,10 +115,11 @@
 )
 
 (context MAIN)</pre>
-		<p class="config"><b>Configuration</b><br/>You may enable or disable RESTful handling by setting the constant ENABLE_RESTFUL_HANDLER in config.lsp. Default is set to "true".</p>
+		<p class="config"><b>CONFIGURATION</b><br/>You may enable or disable RESTful handling by setting the constant ENABLE_RESTFUL_HANDLER in config.lsp. Default is set to "true".</p>
 
-		<p class="config"><b>Configuration</b><br/>Set Your resource directory to whatever You want by changing the constant RESOURCES_PATH in config.lsp. Default is set to "/resources".</p>	
-		
+		<p class="config"><b>CONFIGURATION</b><br/>Set Your resource directory to whatever You want by changing the constant RESOURCES_PATH in config.lsp. Default is set to "/resources".</p>	
+		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_views") %></p>
+		<div class="clear"></div>
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

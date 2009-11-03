@@ -1,8 +1,14 @@
-<% (display-partial "doctype") %>
+<%
+(set 'viewname "Dragonfly API")
+(activate-plugin "dragonfly_api")
+(display-partial "doctype")
+%>
 <head>
-	<% (display-partial "header") %>
+	<%
+	(display-partial "header")
+	(script (web-root "includes/js/jquery.scrollTo-min.js"))
+	%>
 </head>
-
 <body>
 
 <div id="wrap">
@@ -14,19 +20,10 @@
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (title "| runDragonfly.com") %><p>
+			<p><% (title "| Dragonfly web framework") %><p>
 		</div>
-
-		<% (load-database "blog.nldb") %>
-		<% (set 'data (nldb:select-rows 'entries true true 'ID > )) %>
-		<%	
-
-		(dolist (element data)
-			(print "<h3>"(element 1)"</h3>")
-			(print "<p class='author'>"(element 2)" | "(element 4)"</p>")
-			(print "<p>"(element 3)"</p>")
-		)
-		%>		
+		
+		<% (api-browser) %>
 		
 		<div class="line-dotted"></div>
 
@@ -39,3 +36,4 @@
 	
 </div><!-- END WRAP -->
 <% (display-partial "footer") %>
+

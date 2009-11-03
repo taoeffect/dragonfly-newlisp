@@ -4,6 +4,10 @@ Congratulations on choosing Dragonfly!
 
 	newlisp -d 8080 -w . -http
 
-Open Your browser and type localhost:8080 - have FUN!
+Open Your browser and visit http://localhost:8080/ - have FUN!
 
-For installation information see INSTALL.
+For installation information see INSTALL or after running
+the above command visit:
+
+	http://localhost:8080/?dragonfly_welcome
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "If all goes well visit http://localhost:8080 in your browser"
+newlisp -http -d 8080 -w .

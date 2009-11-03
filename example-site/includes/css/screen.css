@@ -140,8 +140,12 @@ body img {
 		width:60px;
 	}
 
-	#content p a { color: #00aeef; text-decoration: none; }
-	#content p a:hover {  text-decoration: underline; }
+	#content p.continue {
+		float: right;
+		font-family: Arial, "MS Trebuchet", sans-serif;
+	}
+
+	#content p a { color: #00aeef; text-decoration: none; border-bottom: 1px dotted #00aeef; }
 		
 	#content .author {
 		color:#00aeef;
@@ -170,12 +174,17 @@ body img {
 
 	/* Code Styling */
 
-	#content pre.code {
+	span.code {
+		font-family:Courier, mono;
+		font-size:12px;
+	}
+
+	#content pre.code, #api-browser pre {
 		width:auto;
 		margin-top:10px;
 		padding:10px;
 		background:#333333;
-		font-family:Courier;
+		font-family:Courier, mono;
 		font-size:10px;
 		color:#ffffff;
 	}
@@ -189,10 +198,14 @@ body img {
 		font-size:12px;
 		color:#000000;
 	}
-	
-	#content p.info b {
+
+	/* removed to allow use of b tag without upper-casing */
+	/*#content p.info b {
 		text-transform:uppercase;
 	}
+	#content p.config b {
+		text-transform:uppercase;
+	}*/
 
 	#content p.config {
 		margin-top:10px;
@@ -202,10 +215,6 @@ body img {
 		background:#d5e9f6;
 		font-size:12px;
 		color:#000000;
-	}
-	
-	#content p.config b {
-		text-transform:uppercase;
 	}
 	
 	#content h3.code {
