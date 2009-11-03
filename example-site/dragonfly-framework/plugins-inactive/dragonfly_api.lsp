@@ -34,11 +34,15 @@
 					function (data) {
 						$("#api-browser").html(data);
 						$("#api-browser a").click(function () {
-							var url = this.href.split('/').pop();
-							var parts = url.split('#');
-							api_browse('../api-docs/'+parts[0],
-								parts.length == 2 ? parts[1] : null);
-							return false;
+							// don't fix external links
+							if ( this.href.indexOf(location.host) != -1 )
+							{
+								var url = this.href.split('/').pop();
+								var parts = url.split('#');
+								api_browse('../api-docs/'+parts[0],
+									parts.length == 2 ? parts[1] : null);
+								return false;
+							}
 						});
 						if (anchor)
 							$.scrollTo("#api-browser a[name='"+anchor+"']", 400);

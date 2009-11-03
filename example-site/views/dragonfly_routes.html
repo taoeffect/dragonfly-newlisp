@@ -38,19 +38,19 @@
 			Setting this value to <b>nil</b> will remove <span class="code">Route.Static</span> from Dragonfly's list of routes. If you disable this and you're using Dragonfly with the Apache web server, be sure to also comment out this line in <b>.htaccess</b>:
 		<pre class="code">RewriteCond %{REQUEST_FILENAME} \.html$</pre>
 		<h3 class="code">STATIC_TRIGGER_EXTENSIONS</h3>
-		<p>Default value: <b>(".html")</b></p>
+		<p>Default value: <b>'(".html")</b></p>
 		<p>
 			TODO: this
 		</p>
 		<h3 class="code">STATIC_TRANSFORMATIONS</h3>
-		<p>Default value:
-		<pre class="code">(
+		<p>Default value:</p>
+		<pre class="code">'(
     (string DOCUMENT_ROOT "/" _ "/index.html")
     (begin (set 'viewname _)
            (string VIEWS_PATH "/" _))
     (begin (set 'viewname _)
            (string VIEWS_PATH "/" _ VIEW_EXTENSION))
-)</pre></p>
+)</pre>
 		<p>
 			TODO: this
 		</p>
