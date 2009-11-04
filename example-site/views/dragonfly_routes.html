@@ -25,9 +25,12 @@
 		<p>
 			<span class="code">Route.Static</span> is one of the two default routes that Dragonfly comes with. It offers a flexible method of serving template files to allow for a PHP-like development pattern (except PHP is replaced with newLISP code).
 		</p>
+		<p>
+			It handles requests such as the following:
+		</p>
 		<ul>
-			<li>1a) example-site.com/somefile.html</li>
-			<li>1b) example-site.com/foo/</li>
+			<li>example-site.com/somefile.html</li>
+			<li>example-site.com/foo/</li>
 		</ul>
 		<p>
 			This route is very flexible, and there are only three configuration parameters that may want to adjust in <b>config.lsp</b>:
@@ -40,7 +43,22 @@
 		<h3 class="param">STATIC_TRIGGER_EXTENSIONS</h3>
 		<p>Default value: <span class="code"><b>'(".html")</b></span></p>
 		<p>
-			TODO: this
+			If the request has one of these file extensions (including the dot)
+			then the route matches if and only if the requested file exists.
+		</p>
+		<p>
+			If the request does not end in one of these extensions then
+			the request the route will attempt to transform it using the
+			<span class="code">STATIC_TRANSFORMATIONS</span> to see if that
+			results in a matching file (see below).
+		</p>
+		<p>
+			Any GET parameters appended to the URL will not obscure Dragonfly's ability to detect the file extension.
+		</p>
+		<p class="config"><b>CONFIGURATION</b><br/>
+			If you modify this list and are using the Apache server,
+			make sure to keep the <b>.htaccess</b> up-to-date with it.
+			See the comment there and in <b>config.lsp</b> for more info.
 		</p>
 		<h3 class="param">STATIC_TRANSFORMATIONS</h3>
 		<p>Default value:</p>
@@ -52,23 +70,28 @@
            (string VIEWS_PATH "/" _ VIEW_EXTENSION))
 )</pre>
 		<p>
-			TODO: this
-		</p>
-		
-		<h3 class="code">1a. example-site.com/somefile.html</h3>
-		<p>By default, Dragonfly is setup to process html for <% (link_to "any newLISP code" "dragonfly_views") %> they may contain. This is very similar to how PHP development works.
+			If the request does not have one of the
+			<span class="code">STATIC_TRIGGER_EXTENSIONS</span>, then
+			<span class="code">Route.Static</span> will attempt to transform
+			it using this list of possible transformations, where the path is bound to the <span class="code">_</span> symbol.
 		</p>
 		<p>
-			
+			As an example, say we have a folder called <span class="code">foo</span> in our site's
+			root, and inside of it is an <span class="code">index.html</span> file. If the user visits the following URL they will be shown the contents of <span class="code">index.html</span>:
 		</p>
-		<p class="config"><b>CONFIGURATION</b><br/>You may change the constant STATIC_EXTENSION in config.lsp to whatever You want. Default is set to ".html".</p>
-
-		<h3 class="code">1b. example-site.com/foo/</h3>
-		<p>If "foo" is a folder, then it will be searched for an index file by default. In the config.lsp, the STATIC_TEST_EXTENSIONS is set to ".html". So it will search for an "index.html" inside of the foo folder. If it exists it will pass it through the template evaluator and displays it.
+		<p>
+			<span class="code">http://example-site.com/foo</span>
 		</p>
-		<p class="config"><b>CONFIGURATION</b><br/>You may change the constant STATIC_TEST_EXTENSIONS in config.lsp to whatever You want. Default is set to ".html".</p>
-		
-		
+		<p>
+			This is because the first transformation resulted in a match:
+		</p>
+<pre class="code">
+(string DOCUMENT_ROOT "/" _ "/index.html")
+=> "/home/www/example-site.com/foo/index.html"
+</pre>
+		<p>
+			Go ahead and <% (link_to "try it!" "foo") %>
+		</p>
 		<h2>RESTful Routes</h2>
 		<p class="extract">Dragonfly supports RESTful resources. This way it's flexible against any kind of request to Your application.</p>
 		<p>When your Dragonfly application receives an incoming HTTP request, say
