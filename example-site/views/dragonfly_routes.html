@@ -23,7 +23,9 @@
 		</p>
 		<h2>Static Routes</h2>
 		<p>
-			<span class="code">Route.Static</span> is one of the two default routes that Dragonfly comes with. It offers a flexible method of serving template files to allow for a PHP-like development pattern (except PHP is replaced with newLISP code).
+			<span class="code">Route.Static</span> is one of the two default routes that Dragonfly comes with. The other route is <span class="code">Route.Resource</span> (<a href="#restful">described below</a>).
+		</p>
+		<p><span class="code">Route.Static</span> offers a flexible method of serving template files to allow for a PHP-like development pattern (except PHP is replaced with newLISP code).
 		</p>
 		<p>
 			It handles requests such as the following:
@@ -92,6 +94,7 @@
 		<p>
 			Go ahead and <% (link_to "try it!" "foo") %>
 		</p>
+		<a name="restful"></a>
 		<h2>RESTful Routes</h2>
 		<p class="extract">Dragonfly supports RESTful resources. This way it's flexible against any kind of request to Your application.</p>
 		<p>When your Dragonfly application receives an incoming HTTP request, say
