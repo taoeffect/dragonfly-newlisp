@@ -352,7 +352,7 @@
 				(replace "&#160;" contenthtml "&nbsp;")
 
 				(println
-					"<span class='atomFeedTitle'><a href='" (lookup '(link @ href) entry) "'>"(lookup 'title entry) "</a></span><br/>"
+					"<span class='atomFeedTitle'><a href='" (lookup '(link @ href) entry) "' rel='nofollow'>"(lookup 'title entry) "</a></span><br/>"
 					"<span class='atomFeedUpdated'>" (date dateseconds 0 "%a %d %b %Y %H:%M:%S") "</span> , <span class='atomFeedAuthor'>" (lookup '(author name) entry) "</span><br/><br/>"
 					contenthtml "<br/>"
 					"<br/>"
