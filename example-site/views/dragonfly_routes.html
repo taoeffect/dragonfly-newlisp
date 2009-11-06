@@ -26,6 +26,10 @@
 			the convention of prepending "Route." to their name to avoid namespace conflicts.
 		</p>
 		<p>
+			They are stored in the <span class="code">DF:dragonfly-routes</span> list
+			where they are asked, one-by-one, whether they wish to handle the current request. The first route to say "yes" gets run.
+		</p>
+		<p>
 			This document describes Dragonfly's two default routes: <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>.
 		</p>
 		<h2>Static Routes</h2>
@@ -118,7 +122,7 @@
 			Dragonfly supports the creation of powerful web applications through
 			the use of clean RESTful routes.
 		</p>
-		<p><span class="code">Route.Resource</span> handles URLs that refer to RESTful resources, also represented as FOOP objects derived from the Resource context. The configuration parameter <span class="code">RESOURCES_PATH</span> specifies the folder containing the resources as .lsp files, one per resource.</p>
+		<p><span class="code">Route.Resource</span> handles URLs that refer to RESTful resources, which are represented as FOOP objects deriving from the <span class="code">Resource</span> context. The configuration parameter <span class="code">RESOURCES_PATH</span> specifies the folder containing the resources as .lsp files, one per resource.</p>
 		<p>The URL scheme works in a similar manner to twitter's RESTful API:</p>
 		<pre class="code">http://mysite.com/<b>resource</b>[/<b>action</b>][/<b>id</b>][.<b>format</b>][?get params..]</pre>
 		
@@ -225,7 +229,7 @@
 				return false;
 			});
 		</script>
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_views") %></p>
+		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_create_routes") %></p>
 		<div class="clear"></div>
 		<div class="line-dotted"></div>
 

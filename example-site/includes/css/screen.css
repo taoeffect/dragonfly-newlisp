@@ -145,7 +145,11 @@ body img {
 		font-family: Arial, "MS Trebuchet", sans-serif;
 	}
 
-	#content p a { color: #00aeef; text-decoration: none; border-bottom: 1px dotted #00aeef; }
+	#content p a, #content li a {
+		color: #00aeef;
+		text-decoration: none;
+		border-bottom: 1px dotted #00aeef;
+	}
 		
 	#content .author {
 		color:#00aeef;
@@ -169,9 +173,9 @@ body img {
 		line-height:17px;
 	}
 
-	#content li a { color: #00aeef; text-decoration: none; }
+/*	#content li a { color: #00aeef; text-decoration: none; }
 	#content li a:hover {  text-decoration: underline; }
-
+*/
 	/* Code Styling */
 
 	span.code {
