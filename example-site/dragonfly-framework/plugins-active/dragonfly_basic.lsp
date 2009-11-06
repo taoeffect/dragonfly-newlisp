@@ -323,6 +323,47 @@
 
 ; TODO: implement some functions for RSS parsing here
 
+;; @syntax (read-atom-feed <feed-url>, <raw-xml>)
+;; @param <feed-url> a string containing the URL to the ATOM feed
+;; @param <raw-xml> BOOLEAN, if true raw XML is send right back and there's no parsing
+
+(define (read-atom-feed feed-url, raw-xml)
+
+	; get feed-url
+	(set 'xml (get-url (string feed-url) ))
+	
+	(if (true? raw-xml)
+		(print xml)
+		(begin
+			(xml-type-tags nil nil nil nil) ; no extra tags
+			(set 'sxml (xml-parse xml 31)) ; turn on SXML options
+			(set 'entry-index (ref-all '(entry *) sxml match))
+
+			(when (empty? entry-index)
+				(println "The feed is empty.")
+			)
+
+			(dolist (idx entry-index)
+				(set 'entry (sxml idx))
+				(set 'dateseconds (parse-date (lookup 'updated entry) "%Y-%m-%dT%H:%M:%SZ")) ; convert string date to seconds
+
+				(set 'contenthtml (lookup 'content entry))
+				(replace "&lt;br/&gt;" contenthtml "<br/>") ; we need to replace some html entities
+				(replace "&#160;" contenthtml "&nbsp;")
+
+				(println
+					"<span class='atomFeedTitle'><a href='" (lookup '(link @ href) entry) "'>"(lookup 'title entry) "</a></span><br/>"
+					"<span class='atomFeedUpdated'>" (date dateseconds 0 "%a %d %b %Y %H:%M:%S") "</span> , <span class='atomFeedAuthor'>" (lookup '(author name) entry) "</span><br/><br/>"
+					contenthtml "<br/>"
+					"<br/>"
+				)
+			)
+		)
+	)
+	
+
+	
+)
 
 
 (context Dragonfly)
