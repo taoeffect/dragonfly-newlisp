@@ -361,6 +361,49 @@
 		)
 	)
 	
+)
+
+
+;; @syntax (read-rss-feed <feed-url>, <raw-xml>)
+;; @param <feed-url> a string containing the URL to the RSS feed
+;; @param <raw-xml> BOOLEAN, if true raw XML is send right back and there's no parsing
+;; <p>Reads an RSS feed from a given URL and displays it. There are three span classes to style Your feed:
+;; rssFeedTitle, rssFeedUpdated and rssFeedAuthor.</p>
+
+(define (read-rss-feed feed-url, raw-xml)
+
+	; get feed-url
+	(set 'xml (get-url (string feed-url) ))
+	
+	(if (true? raw-xml)
+		(print xml)
+		(begin
+			(xml-type-tags nil nil nil nil) ; no extra tags
+			(set 'sxml (xml-parse xml 31)) ; turn on SXML options
+			(set 'item-index (ref-all '(item *) sxml match))
+
+			(when (empty? item-index)
+				(println "The feed is empty.")
+			)
+			
+			(dolist (idx item-index)
+				(set 'item (sxml idx))
+				;(print item)
+				(println
+					"<span class='rssFeedTitle'><a href='" (lookup 'link item) "' rel='nofollow'>"(lookup 'title item) "</a></span><br/>"
+					"<span class='rssFeedUpdated'>" (lookup 'pubDate item) "</span> , <span class='rssFeedAuthor'>" (lookup '(dc @ creator) item) "</span><br/><br/>"
+					(lookup 'description item) "<br/>"
+					
+					; TODO: Problems in parsing media:content - ask the forum
+					;(lookup '(media:content @ url) item) "<br/>"
+					;"<span class='rssFeedCategory'>Categories: " (lookup '(category) item) "</span><br/>"
+					
+					"<br/><br/>"
+				)
+			)
+		)
+	)
+	
 
 	
 )
