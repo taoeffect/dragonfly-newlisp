@@ -188,25 +188,39 @@
 (context MAIN)</pre>
 		<p>Try it out:</p>
 		<div style="margin-top:10px">
-			<div id="wings_resp" style="width:300px; height:40px; border:1px solid gray; padding:4px">
+			<div id="wings_resp" style="width:300px; height:40px; border:1px solid gray; padding:4px; overflow:auto">
 				&nbsp;
 			</div>
-			<form id="wings_form" action="<%=(web-root "wings" true)%>">
+			<form id="wings_form">
 				<p>
 					<select id="response_format">
-					<option value="">format: default (text)</option>
+					<option value="">format: default</option>
 					<option value=".json">format: json</option>
 					</select>
-					<input type="submit" value="Submit">
+					<select id="wings_id">
+						<option value="0">ID: 0</option>
+						<option value="1">ID: 1</option>
+						<option value="2">ID: 2</option>
+						<option value="3">ID: 3 (uh oh..)</option>
+					</select>
+					<input type="button" value="Submit">
 				</p>
 			</form>
 		</div>
 		<script type="text/javascript" charset="utf-8">
 			var form = $('#wings_form');
-			form.find("input[type='submit']").click(function() {
-				var req_url = form.attr('action') + $('#response_format').val();
-				$.post(req_url, {blah:''}, function (data, status) {
-					$('#wings_resp').html(data);
+			form.find("input[type='button']").click(function() {
+				var req_url = "<%=(web-root "wings" true)%>" + form.attr('action');
+				req_url += '/' + $('#wings_id').val();
+				req_url += $('#response_format').val();
+				$.ajax({
+					url: req_url,
+					success: function (data, status) {
+						$('#wings_resp').html(data);
+					},
+					error: function (xmlReq, status, error) {
+						$('#wings_resp').html('Error ' + xmlReq.status + '!');
+					}
 				});
 				return false;
 			});
