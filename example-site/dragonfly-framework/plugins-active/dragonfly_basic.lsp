@@ -391,11 +391,11 @@
 				;(print item)
 				(println
 					"<span class='rssFeedTitle'><a href='" (lookup 'link item) "' rel='nofollow'>"(lookup 'title item) "</a></span><br/>"
-					"<span class='rssFeedUpdated'>" (lookup 'pubDate item) "</span> , <span class='rssFeedAuthor'>" (lookup '(dc @ creator) item) "</span><br/><br/>"
+					"<span class='rssFeedUpdated'>" (lookup 'pubDate item) "</span>&nbsp;<span class='rssFeedAuthor'>" (lookup (sym "dc:creator") item) "</span><br/><br/>"
 					(lookup 'description item) "<br/>"
 					
 					; TODO: Problems in parsing media:content - ask the forum
-					;(lookup '(media:content @ url) item) "<br/>"
+					; (lookup (sym "media:content") item) "<br/>"
 					;"<span class='rssFeedCategory'>Categories: " (lookup '(category) item) "</span><br/>"
 					
 					"<br/><br/>"
