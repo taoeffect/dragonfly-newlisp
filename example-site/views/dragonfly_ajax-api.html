@@ -2,6 +2,8 @@
 (let (path ($POST "path"))
 	; security check! make sure they ain't asking
 	; for something they shouldn't be asking for!
+	(log-info "path: " path)
+	(log-info "our path: " (real-path))
 	(if (and (find "../api-docs/" path) (ends-with path ".html"))
 		(include path)
 		(die "bad path: " path)

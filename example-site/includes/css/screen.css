@@ -175,33 +175,40 @@ body img {
 
 
 	/* API Content */
-
-	#content blockquote {
+	
+	#api-browser {
 		font-size:11px;
-		line-height:15px;
-		margin-top:18px;
+	}
+	
+	#api-browser a {
+		color: rgb(55, 101, 144);
+		text-decoration: none;
 	}
 
-	#content blockquote h3 {
+	#api-browser blockquote, #api-browser p {
+		line-height:15px;
+		font-size: 11px;
+	}
+
+	#api-browser blockquote h3 {
 		font-size:18px;
 		font-weight:bold;
-		margin-top:18px;
 		margin-bottom:8px;
 	}
 
-	#content blockquote p {
-		font-size:11px;
-		font-weight:bold;
-		margin-top:18px;
+	#api-browser blockquote p {
 	}
 
-	#content blockquote tt {
-		font-size:11px;
-		font-weight:bold;
-		color:#00aeef;
-		margin-top:18px;
+	#api-browser blockquote tt {
+		font-family:Courier, mono;
 	}
-
+	
+	#api-browser pre {
+		font-family:Courier, mono;
+		margin-top:10px;
+		padding:10px;
+		font-size:10px;
+	}
 
 	/* Code Styling */
 
@@ -210,7 +217,7 @@ body img {
 		font-size:12px;
 	}
 
-	#content pre.code, #api-browser pre {
+	#content pre.code {
 		width:auto;
 		margin-top:10px;
 		padding:10px;
