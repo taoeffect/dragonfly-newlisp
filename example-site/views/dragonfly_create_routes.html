@@ -1,0 +1,91 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Creating Routes</h1>
+		<p>
+			There are typically three steps necessary to create a route:
+		</p>
+		<ol>
+			<li>Create a .lsp file in the <span class="code">plugins-active</span> directory</li>
+			<li>Make a <a href="http://www.newlisp.org/index.cgi?page=newLISP-FOOP">FOOP</a> subclass of the Route class implementing its methods</li>
+			<li>Add an instance to the <span class="code">DF:dragonfly-routes</span> list</li>
+		</ol>
+		<p>
+			A route has two methods: <span class="code">matches?</span> and <span class="code">run</span>.
+		</p>
+		<p>
+			<span class="code"><b>matches?</b></span> - should return non-nil if the route decides, based on environment variables or anything else, whether it wants to handle this request.
+		</p>
+		<p>
+			<span class="code"><b>run</b></span> - does anything it needs to do and sends a response back to the client.
+		</p>
+		<h3 class="code">Example: Route.StaticSimple</h3>
+		<p>
+			Below is a simplified version of the default route <span class="code">Route.Static</span> called <span class="code">Route.StaticSimple</span>:
+		</p>
+		<pre class="code">
+; File: route_static_simple.lsp
+
+(new Route 'Route.StaticSimple)
+(context Route.StaticSimple)
+
+(define (matches?)
+    (set 'chunks (parse QUERY_STRING "?"))
+    (if (empty? chunks)
+        (push DF:DEFAULT_VIEW chunks))
+    (set 'path (set 'DF:_ (first chunks)))
+    (file? path)
+)
+(define (run)
+    (set 'ext (regex-captcha {.*\.(\w+)$} path))
+    (Response:content-type (Response:extension->type ext))
+    (unless (DF:display-file path)
+        (DF:die "Failed to get: " path)
+    )
+)
+
+; add the route to the end of the list of routes
+(push (Route.StaticSimple) DF:dragonfly-routes -1)</pre>
+		<p>
+			This static route takes requests very literally. For example, take the following request URL:
+		</p>
+		<p>
+			<span class="code">http://example-site.com/index
+		</p>
+		<p>
+			This route will match only if a file (and unfortunately, a directory) called
+			"index" exists in the site's root.
+		</p>
+		<p>
+			If it does, it will attempt to display the file "index" by calling the <span class="code">DF:display-file</span> function with the path to the file.
+		</p>
+		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_views") %></p>
+		<div class="clear"></div>
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
