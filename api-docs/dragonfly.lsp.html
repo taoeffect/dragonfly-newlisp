@@ -120,14 +120,15 @@
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="Dragonfly_web-root"></a><h3><font color=#CC0000>Dragonfly:web-root</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:web-root</font> <em>str-path</em>)</b><br/>
+<b>syntax: (<font color=#CC0000>Dragonfly:web-root</font> <em>str-path</em> <em>bool-question-mark</em>)</b><br/>
 <b>parameter: </b><em>str-path</em> - Path relative to the folder containing <tt>index.cgi</tt>.<br/>
+<b>parameter: </b><em>bool-question-mark</em> - Whether to return a URL with /? prepended.<br/>
  <p>This function is quite handy for making working links when your <tt>index.cgi</tt> file
  is not in <tt>DOCUMENT_ROOT</tt> but a subfolder of it.</p>
 <b>example:</b><blockquote><pre> ; index.cgi is located in /home/user/site.com/examples-site
  ; Users visit http://www.site.com/example-site
  (web-root "about") =&gt; "/example-site/about"
- (web-root "/foo") =&gt; "/example-site/foo"</pre></blockquote>
+ (web-root "/foo" true) =&gt; "/example-site/?foo"</pre></blockquote>
 <br/><br/><center>- &sect; -</center><br/>
 <a name="Dragonfly_view-path"></a><h3><font color=#CC0000>Dragonfly:view-path</font></h3>
 <b>syntax: (<font color=#CC0000>Dragonfly:view-path</font> <em>str-view-name</em>)</b><br/>

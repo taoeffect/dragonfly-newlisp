@@ -148,19 +148,20 @@
 	)
 )
 
-;; @syntax (Dragonfly:web-root <str-path>)
+;; @syntax (Dragonfly:web-root <str-path> <bool-question-mark>)
 ;; @param <str-path> Path relative to the folder containing 'index.cgi'.
+;; @param <bool-question-mark> Whether to return a URL with /? prepended.
 ;; <p>This function is quite handy for making working links when your 'index.cgi' file
 ;; is not in 'DOCUMENT_ROOT' but a subfolder of it.</p>
 ;; @example
 ;; ; index.cgi is located in /home/user/site.com/examples-site
 ;; ; Users visit http://www.site.com/example-site
 ;; (web-root "about") => "/example-site/about"
-;; (web-root "/foo") => "/example-site/foo"
-(define (web-root path)
+;; (web-root "/foo" true) => "/example-site/?foo"
+(define (web-root path question-mark)
 	; WEB_ROOT should have a "/" on the end
 	(if (starts-with path "/") (pop path))
-	(string WEB_ROOT path)
+	(string WEB_ROOT (if question-mark "?" "") path)
 )
 
 ;; @syntax (Dragonfly:view-path <str-view-name>)

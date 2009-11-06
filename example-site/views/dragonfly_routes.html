@@ -21,11 +21,15 @@
 		<p class="extract">
 			Dragonfly's routes are written in pure newLISP code and have no arbitrary constraints placed on them. They can be as simple or complex as you need them to be. In fact, Dragonfly's routes are so flexible that the defaults will often be all you'll need.
 		</p>
-		<h2>Static Routes</h2>
 		<p>
-			<span class="code">Route.Static</span> is one of the two default routes that Dragonfly comes with. The other route is <span class="code">Route.Resource</span> (<a href="#restful">described below</a>).
+			Dragonfly's routes are represented as <a href="http://www.newlisp.org/index.cgi?page=newLISP-FOOP">FOOP objects</a> and use
+			the convention of prepending "Route." to their name to avoid namespace conflicts.
 		</p>
-		<p><span class="code">Route.Static</span> offers a flexible method of serving template files to allow for a PHP-like development pattern (except PHP is replaced with newLISP code).
+		<p>
+			This document describes Dragonfly's two default routes: <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>.
+		</p>
+		<h2>Static Routes</h2>
+		<p><span class="code">Route.Static</span> offers a flexible method for serving template files to allows for a PHP-like development pattern, but without the PHP.
 		</p>
 		<p>
 			It handles requests such as the following:
@@ -35,7 +39,7 @@
 			<li>example-site.com/foo/</li>
 		</ul>
 		<p>
-			This route is very flexible, and there are only three configuration parameters that may want to adjust in <b>config.lsp</b>:
+			This route is very flexible, and there are only three configuration parameters associated with it in <b>config.lsp</b>:
 		</p>
 		<h3 class="param">ENABLE_STATIC_TEMPLATES</h3>
 		<p>Default value: <span class="code"><b>true</b></span></p>
@@ -92,19 +96,60 @@
 => "/home/www/example-site.com/foo/index.html"
 </pre>
 		<p>
-			Go ahead and <% (link_to "try it!" "foo") %>
+			Go ahead and <% (link_to "give it a try!" "foo") %>
+		</p>
+		<p>
+			The page you're currently on was matched by the third transformation:
+		</p>
+<pre class="code">
+(begin (set 'viewname _)
+       (string VIEWS_PATH "/" _ VIEW_EXTENSION))
+</pre>
+		<p>
+			The winning transformation is evaluated twice: the first time to
+			check for a file, and once again if the file exists. This allows
+			you to use transformations for more than just path testing. For example,
+			the third transformation also sets <span class="code">DF:viewname</span>
+			to the name of the view.
 		</p>
 		<a name="restful"></a>
 		<h2>RESTful Routes</h2>
-		<p class="extract">Dragonfly supports RESTful resources. This way it's flexible against any kind of request to Your application.</p>
-		<p>When your Dragonfly application receives an incoming HTTP request, say
+		<p class="extract">
+			Dragonfly supports the creation of powerful web applications through
+			the use of clean RESTful routes.
+		</p>
+		<p><span class="code">Route.Resource</span> handles URLs that refer to RESTful resources, also represented as FOOP objects derived from the Resource context. The configuration parameter <span class="code">RESOURCES_PATH</span> specifies the folder containing the resources as .lsp files, one per resource.</p>
+		<p>The URL scheme works in a similar manner to twitter's RESTful API:</p>
+		<pre class="code">http://mysite.com/<b>resource</b>[/<b>action</b>][/<b>id</b>][.<b>format</b>][?get params..]</pre>
 		
-		<p class="code">GET /wings/show</p>
 		<p>
-		the <b>LISTENER</b> within Dragonfly is the piece of code that dispatches the request to the appropriate spot in your application. In this case, the application would most likely end up running the <b>SHOW</b> action within the <b>WINGS</b> resource, displaying the WINGS.</p>
-
-		<p class="info">The resource <b>WINGS</b> has to be available in Your resource directory</p>
-		<h3 class="code">Example of wings.lsp in /resources</h3>
+			<span class="code"><b>resource</b></span> - maps to a context name in a special way:</p>
+		<ol><li><span class="code">Resource.</span> is prepended to the name</li>
+			<li>Any underscores are removed</li>
+			<li>The name is written in title case</li>
+		</ol>
+		<p>The resource may only have the letters A-Z (lowercase or uppercase), 0-9, the underscore, and it must begin with a letter. For example:
+		</p>
+		<p>
+			<span class="code">my_resource => Resource.MyResource</span>
+		</p>
+		<p>
+			The name also maps to a real file located in <span class="code">RESOURCES_PATH</span> by appending ".lsp" to the name:
+		</p>
+		<p>
+			<span class="code"> my_resource => load file: RESOURCES_PATH/my_resource.lsp</span>
+		</p>
+		<p>
+			<span class="code"><b>action</b></span> (optional) - specifies the function to be called on the resource. Like resource, <span class="code">action</span> may only contain letters, numbers, and the underscore. If no action is specified, then the resource's <a href="http://www.newlisp.org/downloads/newlisp_manual.html#default_function" target="_blank">default function</a> is called instead. Whichever function gets called, the <span class="code">id</span> and <span class="code">format</span> are passed in as parameters (in that order).
+		</p>
+		<p>
+			<span class="code"><b>id</b></span> (optional) - may only contain numbers and can be used to specify a specific object out of a collection.
+		</p>
+		<p>
+			<span class="code"><b>format</b></span> (optional) - may only contain letters and can be used to specify the response format. (i.e. xml, json, etc.)
+		</p>
+		
+		<h3 class="code">Example resource in resources/wings.lsp:</h3>
 		<pre class="code">
 (DF:activate-plugin "artfulcode/json")
 
@@ -141,9 +186,31 @@
 )
 
 (context MAIN)</pre>
-		<p class="config"><b>CONFIGURATION</b><br/>You may enable or disable RESTful handling by setting the constant ENABLE_RESTFUL_HANDLER in config.lsp. Default is set to "true".</p>
-
-		<p class="config"><b>CONFIGURATION</b><br/>Set Your resource directory to whatever You want by changing the constant RESOURCES_PATH in config.lsp. Default is set to "/resources".</p>	
+		<p>Try it out:</p>
+		<div style="margin-top:10px">
+			<div id="wings_resp" style="width:300px; height:40px; border:1px solid gray; padding:4px">
+				&nbsp;
+			</div>
+			<form id="wings_form" action="<%=(web-root "wings" true)%>">
+				<p>
+					<select id="response_format">
+					<option value="">format: default (text)</option>
+					<option value=".json">format: json</option>
+					</select>
+					<input type="submit" value="Submit">
+				</p>
+			</form>
+		</div>
+		<script type="text/javascript" charset="utf-8">
+			var form = $('#wings_form');
+			form.find("input[type='submit']").click(function() {
+				var req_url = form.attr('action') + $('#response_format').val();
+				$.post(req_url, {blah:''}, function (data, status) {
+					$('#wings_resp').html(data);
+				});
+				return false;
+			});
+		</script>
 		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_views") %></p>
 		<div class="clear"></div>
 		<div class="line-dotted"></div>
