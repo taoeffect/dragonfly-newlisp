@@ -173,9 +173,36 @@ body img {
 		line-height:17px;
 	}
 
-/*	#content li a { color: #00aeef; text-decoration: none; }
-	#content li a:hover {  text-decoration: underline; }
-*/
+
+	/* API Content */
+
+	#content blockquote {
+		font-size:11px;
+		line-height:15px;
+		margin-top:18px;
+	}
+
+	#content blockquote h3 {
+		font-size:18px;
+		font-weight:bold;
+		margin-top:18px;
+		margin-bottom:8px;
+	}
+
+	#content blockquote p {
+		font-size:11px;
+		font-weight:bold;
+		margin-top:18px;
+	}
+
+	#content blockquote tt {
+		font-size:11px;
+		font-weight:bold;
+		color:#00aeef;
+		margin-top:18px;
+	}
+
+
 	/* Code Styling */
 
 	span.code {
