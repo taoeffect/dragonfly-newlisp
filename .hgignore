@@ -3,3 +3,4 @@
 plugins-active/_config\.lsp$
 test_.+\.lsp$
 \.pxm$
+~$

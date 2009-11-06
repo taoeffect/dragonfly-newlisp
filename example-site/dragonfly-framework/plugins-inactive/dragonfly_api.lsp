@@ -30,7 +30,7 @@
 		<div id="api-browser">&nbsp</div>
 		<script type="text/javascript">
 			(function api_browse(path, anchor) {
-				$.post("/?dragonfly_ajax-api", "path=" + path,
+				$.post("%s", "path=" + path,
 					function (data) {
 						$("#api-browser").html(data);
 						$("#api-browser a").click(function () {
@@ -50,7 +50,7 @@
 				);
 			})("%s");
 		</script>
-		[/text] path)
+		[/text] (web-root "dragonfly_ajax-api" true) path)
 	)
 )
 
