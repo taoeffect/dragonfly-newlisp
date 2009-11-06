@@ -321,11 +321,11 @@
 ; !RSS Functions
 ;===============================================================================
 
-; TODO: implement some functions for RSS parsing here
-
 ;; @syntax (read-atom-feed <feed-url>, <raw-xml>)
 ;; @param <feed-url> a string containing the URL to the ATOM feed
 ;; @param <raw-xml> BOOLEAN, if true raw XML is send right back and there's no parsing
+;; <p>Reads an atom feed from a given URL and displays it. There are three span classes to style Your feed:
+;; atomFeedTitle, atomFeedUpdated and atomFeedAuthor.</p>
 
 (define (read-atom-feed feed-url, raw-xml)
 
