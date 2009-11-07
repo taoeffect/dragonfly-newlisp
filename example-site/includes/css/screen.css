@@ -8,9 +8,7 @@ a:hover {  text-decoration: underline; }
 
 body {
 	font: 11px "Lucida Grande", Helvetica, Arial, Sans-Serif;
-	background: white !important;
-	/* background: #00D6D9; */
-	padding-left:50px;
+	background: #ffffff;	
 }
 
 body img {
@@ -19,31 +17,33 @@ body img {
 
 .clear {
 	clear:both;
-	margin-top:11px;
-	margin-bottom:11px;
+	background:#ffffff;	
 }
 
 /* Wrap */
 
-#wrap .inner{
+#wrap {
 	width:480px;
-	margin:0 auto;
+	margin: 0px auto;
+	background:#ffffff;	
 }
 
 /* Header */
 
-#header{
-	margin-top: 42px;
+#header {
+	margin-top:15px;
 }
 
 /* Navigation */
 #header ul {
 	width: 480px;
-	margin-top:15px;
+	margin-top:5px;
+	background:#ffffff;
 }
 
 	#header ul li {
-		display: inline;
+		display:inline;		
+		background:#ffffff;
 		font-size:14px;
 		font-weight:bold;
 		padding: 6px;
@@ -87,7 +87,8 @@ body img {
 #content {
 	width: 480px;
 	float: left;
-	margin-top: 5px;
+	background:#ffffff;
+	padding-top:10px;
 }
 
 	#content img {
@@ -295,7 +296,7 @@ body img {
 	#content .title.nomargin,
 	#content-full .title.nomargin {
 		margin: 0;
-		margin-bottom: 20px;
+		margin-bottom: 20px;		
 	}
 	
 /* Mercurial feed styling */
