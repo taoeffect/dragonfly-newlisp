@@ -12,9 +12,9 @@
 ;;  You should have received a copy of the GNU General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;
-;; @module Dragonfly
+;; @module Dragonfly Twitter search plugin
 ;; @author Marc Hildmann <marc.hildmann at gmail.com>
-;; @version 0.20
+;; @version 0.50
 ;; 
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; @description A newLISP web framework for rapid web development
@@ -24,7 +24,7 @@
 ;; just like newLISP itself.</p>
 
 ;===============================================================================
-; !Loading modules and defining new context
+; !Loading plugin into Dragonfly context
 ;===============================================================================
 
 (context 'Dragonfly)
