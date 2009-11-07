@@ -37,10 +37,12 @@
 			<li><a href="http://code.google.com/p/dragonfly-newlisp/downloads/list" target="_blank">Latest stable version</a></li>
 		</ul>
 
-		<h2>The last changes</h2>
-		<p>
-		<% (read-atom-feed "http://code.google.com/feeds/p/dragonfly-newlisp/hgchanges/basic", 5) %>	
-		</p>
+		<h2>The last five changes</h2>
+		<div id="mercurial_changes">
+			<p>
+			<% (read-atom-feed "http://code.google.com/feeds/p/dragonfly-newlisp/hgchanges/basic", 5) %>	
+			</p>
+		</div>
 
 		
 		<div class="line-dotted"></div>

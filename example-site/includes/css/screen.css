@@ -297,7 +297,27 @@ body img {
 		margin: 0;
 		margin-bottom: 20px;
 	}
+	
+/* Mercurial feed styling */
 
+#mercurial_changes p {
+	margin-top:10px;
+	margin-bottom:30px;
+	padding:10px;
+	background:#fff9d8;
+	font-size:10px;
+	color:#000000;
+	border:1px solid #f4e8c7;
+}
+
+#mercurial_changes .atomFeedTitle {
+	font-size:10px;
+}
+
+#mercurial_changes .atomFeedUpdated, .atomFeedAuthor {
+	font-size:10px;
+	font-weight:bold;
+}
 
 /* nice table definitions */
 

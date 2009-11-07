@@ -351,13 +351,12 @@
 
 				(set 'contenthtml (lookup 'content entry))
 				(replace "&lt;br/&gt;" contenthtml "<br/>") ; we need to replace some html entities
-				(replace "&#160;" contenthtml "&nbsp;")
+				(replace "&#160;" contenthtml "")
 
 				(println
 					"<span class='atomFeedTitle'><a href='" (lookup '(link @ href) entry) "' rel='nofollow'>"(lookup 'title entry) "</a></span><br/>"
 					"<span class='atomFeedUpdated'>" (date dateseconds 0 "%a %d %b %Y %H:%M:%S") "</span> , <span class='atomFeedAuthor'>" (lookup '(author name) entry) "</span><br/><br/>"
-					contenthtml "<br/>"
-					"<br/>"
+					contenthtml "<br/><br/>"
 				)
 			)
 		)
