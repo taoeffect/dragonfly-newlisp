@@ -321,13 +321,14 @@
 ; !RSS Functions
 ;===============================================================================
 
-;; @syntax (read-atom-feed <feed-url> <raw-xml>)
+;; @syntax (read-atom-feed <feed-url> <max-items> <raw-xml>)
 ;; @param <feed-url> a string containing the URL to the ATOM feed
+;; @param <max-items> INTEGER, maximum of items you want to show
 ;; @param <raw-xml> BOOLEAN, if true raw XML is send right back and there's no parsing
 ;; <p>Reads an atom feed from a given URL and displays it. There are three span classes to style Your feed:
 ;; atomFeedTitle, atomFeedUpdated and atomFeedAuthor.</p>
 
-(define (read-atom-feed feed-url raw-xml)
+(define (read-atom-feed feed-url, max-items raw-xml)
 
 	; get feed-url
 	(set 'xml (get-url (string feed-url) ))
@@ -342,8 +343,9 @@
 			(when (empty? entry-index)
 				(println "The feed is empty.")
 			)
-
-			(dolist (idx entry-index)
+			
+			(dolist (idx entry-index (= max-items $idx)) 
+				
 				(set 'entry (sxml idx))
 				(set 'dateseconds (parse-date (lookup 'updated entry) "%Y-%m-%dT%H:%M:%SZ")) ; convert string date to seconds
 
@@ -364,13 +366,14 @@
 )
 
 
-;; @syntax (read-rss-feed <feed-url> <raw-xml>)
+;; @syntax (read-rss-feed <feed-url> <max-items> <raw-xml>)
 ;; @param <feed-url> a string containing the URL to the RSS feed
+;; @param <max-items> INTEGER, maximum of items you want to show
 ;; @param <raw-xml> BOOLEAN, if true raw XML is send right back and there's no parsing
 ;; <p>Reads an RSS feed from a given URL and displays it. There are three span classes to style Your feed:
 ;; rssFeedTitle, rssFeedUpdated and rssFeedAuthor.</p>
 
-(define (read-rss-feed feed-url raw-xml)
+(define (read-rss-feed feed-url, max-items raw-xml)
 
 	; get feed-url
 	(set 'xml (get-url (string feed-url) ))
@@ -386,9 +389,9 @@
 				(println "The feed is empty.")
 			)
 			
-			(dolist (idx item-index)
+			(dolist (idx item-index (= max-items $idx))
+				(println $idx)
 				(set 'item (sxml idx))
-				;(print item)
 				(println
 					"<span class='rssFeedTitle'><a href='" (lookup 'link item) "' rel='nofollow'>"(lookup 'title item) "</a></span><br/>"
 					"<span class='rssFeedUpdated'>" (lookup 'pubDate item) "</span>&nbsp;<span class='rssFeedAuthor'>" (lookup (sym "dc:creator") item) "</span><br/><br/>"
