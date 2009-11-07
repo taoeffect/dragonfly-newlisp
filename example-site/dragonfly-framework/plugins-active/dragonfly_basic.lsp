@@ -388,8 +388,8 @@
 				(println "The feed is empty.")
 			)
 			
+			
 			(dolist (idx item-index (= max-items $idx))
-				;(println $idx)
 				(set 'item (sxml idx))
 				(println
 					"<span class='rssFeedTitle'><a href='" (lookup 'link item) "' rel='nofollow'>"(lookup 'title item) "</a></span><br/>"
