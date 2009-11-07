@@ -20,12 +20,36 @@
 		<h1>Templates</h1>
 		<p class="extract">In Dragonfly, templates are files that have newLISP code embedded in them. This code is evaluated server-side, generating a final document that's presented to visitors.</p>
 
-		<h2>The </h2>
-		<p>Example: open Your favorite text-editor and enter the following:</p>
-		<pre class="code">Hello World</pre>
-		<p>Save the file as "hello" into Your views directory. Now open Your browser and navigate to <a href="http://www.example-site.com/hello">example-site.com/hello</a>. That's it!</p>
-		<p class="info"><b>INFORMATION</b><br/>You can put nearly everything into views: (X)HTML, Javascript, newLISP code.</p>
-		<p class="config"><b>CONFIGURATION</b><br/>If VIEW_EXTENSION is ".html" for example, then when example-site.com/hello is called Dragonfly will search for a "hello.html" file in the VIEWS_PATH. It also applies to the partials, too.</p>
+		<h2>The importance of routes</h2>
+		<p>
+			
+		</p>
+		
+		<h2>View configuration</h2>
+		<p>
+			
+		</p>
+		
+		<h3 class="param">VIEWS_PATH</h3>
+		<p>Default value: <span class="code"><b>(string DOCUMENT_ROOT "/views")</b></span></p>
+		<p>
+			The location of views (for use with 'display-view' function).
+		</p>
+		
+		<h3 class="param">PARTIALS_PATH</h3>
+		<p>Default value: <span class="code"><b>(string DOCUMENT_ROOT "/views/partials")</b></span></p>
+		<p>
+			The location of partials (for use with 'display-partial' function).
+		</p>
+		
+		<h3 class="param">DEFAULT_VIEW</h3>
+		<p>Default value: <span class="code"><b>"welcome"</b></span></p>
+		<p>
+			The default view (when a user visits '/') sans file extension.
+		</p>
+		
+		<h3 class="param">VIEW_EXTENSION</h3>
+		<p>Default value: <span class="code"><b>".html"</b></span></p>
 
 		<h2>How to call functions inside a view</h2>
 		<pre class="code">&lt;% (benchmark-result) %&gt;</pre>
