@@ -442,3 +442,32 @@ body img {
 	text-transform:uppercase;
 }
 
+
+/* Twitter  */
+
+#twitter-search {
+	margin-top:10px;
+	margin-bottom:30px;
+	font-size:10px;
+	color:#000000;
+}
+
+#twitter-search .entry {
+	margin-bottom:35px;
+}
+
+#twitter-search .headline {
+	font-size:12px;
+	font-weight:bold;
+}
+
+#twitter-search .published {
+	clear:both;
+	float:left;
+}
+
+#twitter-search .author {
+	float:left;
+	margin-left:5px;
+}
+

@@ -33,32 +33,30 @@
 ; !twitter functions
 ;===============================================================================
 
-;; @syntax (Dragonfly:twitter-search <keyword>)
+;; @syntax (Dragonfly:twitter-search <keyword> <max-items>)
 ;; @param <keyword> string containing the keyword for search
-;; <p>Writes the results of the search in nice speech bubbles.</p>
-;;
+;; @param <max-items> INTEGER, maximum of items you want to show
+;; <p>Writes the results of a Twitter search.</p>
 
-(define (twitter-search keyword rpp)
-	(set 'xml (get-url (string "http://search.twitter.com/search.atom?rpp="rpp"&q="keyword) ))
+(define (twitter-search keyword max-items)
+	(set 'xml (get-url (string "http://search.twitter.com/search.atom?rpp="max-items"&q="keyword) ))
 	(xml-type-tags nil nil nil nil) ; no extra tags
 	(set 'sxml (xml-parse xml 31)) ; turn on SXML options
 	(set 'entry-index (ref-all '(entry *) sxml match))
 	(when (empty? entry-index)
 		(println "No entries found")
 	)
-	(println "<div id='twitter_search_results'>")
 	(dolist (idx entry-index)
 		(set 'entry (sxml idx))
-		(println "<div class='bubble'><blockquote><p>"
-			(lookup 'title entry) 
-			"</p></blockquote><cite><strong>"
-			(lookup '(author name) entry)
-			"</strong> on " 
-			(lookup 'published entry)
-			"</cite></div>"
+		(set 'dateseconds (parse-date (lookup 'published entry) "%Y-%m-%dT%H:%M:%SZ")) ; convert string date to seconds
+		
+		(println
+			"<div class='entry'>"
+			"<div class='headline'>" (lookup 'title entry) "</div><br/>"
+			"<div class='published'>" (date dateseconds 0 "%a %d %b %Y %H:%M:%S") "</div><div class='author'>By&nbsp;" (lookup '(author name) entry) "</div><br/>"
+			"</div>"
 		)
 	)
-	(println "</div>")
 )
 
 (context MAIN)
