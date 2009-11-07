@@ -152,7 +152,83 @@
 		<p>
 			<span class="code"><b>format</b></span> (optional) - may only contain letters and can be used to specify the response format. (i.e. xml, json, etc.)
 		</p>
-		
+		<h2>Something missing...?</h2>
+		<p>
+			If you've done RESTful web programming before, you may be asking right now, "But where are the HTTP verbs GET/POST/PUT??"
+		</p>
+		<p>
+			Dragonfly's built-in RESTful route doesn't use them.
+		</p>
+		<p>
+			There are two reasons for this decision:
+		</p>
+		<ol>
+			<li>newLISP's built-in server doesn't set <span class="code">REQUEST_METHOD</span> (currently)</li>
+			<li>Their use is redundant and confusing</li>
+		</ol>
+		<p>
+			To elaborate on point #2, let's take a look at this table (taken from the Ruby on Rails <a href="http://guides.rubyonrails.org/routing.html">routing guide</a>):
+		</p>
+		<p>
+			<img src="<%=(web-root "includes/images/rails_rest.png")%>">
+		</p>
+		<p>It's not at all clear when a verb should be added to the URL or when an HTTP verb needs to be changed.
+		</p>
+		<p>
+			The problem is that two RESTful abstractions are carelessly mixed with each other: HTTP verbs, and verbs in the URL.</p>
+		<p>Whether the RESTful verb in <span class="code">GET /photos/1/edit</span> is "GET" or "edit" is left to philosophical inquiry.</p>
+		<p>
+			Ironically, the "action" column lists quite clearly which verb is being used:
+		</p>
+		<p>
+			<img src="<%=(web-root "includes/images/rails_rest_fix.png")%>">
+		</p>
+		<p>
+			We can now greatly simplify this table:
+		</p>
+		<br/>
+		<table>
+			<tr class="header">
+				<td>URL</td>
+				<td>controller</td>
+				<td>used for</td>
+			</tr>
+			<tr>
+				<td>/photos</td>
+				<td>Resource.Photos</td>
+				<td>display a list of all images</td>
+			</tr>
+			<tr>
+				<td>/photos/new</td>
+				<td>Resource.Photos</td>
+				<td>return an HTML form for creating a new image</td>
+			</tr>
+			<tr>
+				<td>/photos/create</td>
+				<td>Resource.Photos</td>
+				<td>create a new image</td>
+			</tr>
+			<tr>
+				<td>/photos/show/1</td>
+				<td>Resource.Photos</td>
+				<td>display a specific image</td>
+			</tr>
+			<tr>
+				<td>/photos/edit/1</td>
+				<td>Resource.Photos</td>
+				<td>return an HTML form for editing an image</td>
+			</tr>
+			<tr>
+				<td>/photos/update/1</td>
+				<td>Resource.Photos</td>
+				<td>update a specific image</td>
+			</tr>
+			<tr>
+				<td>/photos/destroy/1</td>
+				<td>Resource.Photos</td>
+				<td>delete a specific image</td>
+			</tr>
+		</table>
 		<h3 class="code">Example resource in resources/wings.lsp:</h3>
 		<pre class="code">
 (DF:activate-plugin "artfulcode/json")
@@ -195,6 +271,7 @@
 			<div id="wings_resp" style="width:300px; height:40px; border:1px solid gray; padding:4px; overflow:auto">
 				&nbsp;
 			</div>
+			<div id="wings_request" style="color:#055; font-size:10px; margin-top:6px; font-weight:bold;">(request will be displayed here...)</div>
 			<form id="wings_form">
 				<p>
 					<select id="response_format">
@@ -214,9 +291,10 @@
 		<script type="text/javascript" charset="utf-8">
 			var form = $('#wings_form');
 			form.find("input[type='button']").click(function() {
-				var req_url = "<%=(web-root "wings" true)%>" + form.attr('action');
+				var req_url = '<%=(web-root "wings" true)%>';
 				req_url += '/' + $('#wings_id').val();
 				req_url += $('#response_format').val();
+				$('#wings_request').html(req_url);
 				$.ajax({
 					url: req_url,
 					success: function (data, status) {

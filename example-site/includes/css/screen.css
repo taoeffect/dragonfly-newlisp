@@ -296,7 +296,10 @@ body img {
 		padding:0;
 		empty-cells:show;
 		border-spacing:0px;
-		background-color:#ffffff;
+		border-right: 1px solid #999;
+		border-bottom: 1px solid #999;
+		border-top: 1px solid #999;
+		background-color:#fff;
 	}
 
 	table th {
@@ -308,13 +311,22 @@ body img {
 		padding-left:10px;
 	}
 
+	table tr.header {
+		background-color: #DDD;
+	}
+	
+	table tr.header td {
+		border-bottom: 1px solid #999;
+		font-weight: bold;
+	}
+	
 	table td {
 		font-size:10px;
 		padding-top:4px;
 		padding-bottom:4px;		
-		padding-left:10px;
-		border-left:1px solid #000000;
-		border-bottom:1px solid #000000;		
+		padding-left:8px;
+		padding-right:8px;
+		border-left: 1px solid #999;
 	}
 
 	.table_foot {
