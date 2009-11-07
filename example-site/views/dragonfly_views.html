@@ -20,16 +20,71 @@
 		<h1>Templates</h1>
 		<p class="extract">In Dragonfly, templates are files that have newLISP code embedded in them. This code is evaluated server-side, generating a final document that's presented to visitors.</p>
 
-		<h2>The importance of routes</h2>
 		<p>
-			
+			Templates can be anything, but usually they're html files with newLISP code embedded in them. When you download Dragonfly, take a look at the files in <span class="code">example-site/views</span>, those are all templates, but they're also referred to as <b>views</b>.
 		</p>
-		
-		<h2>View configuration</h2>
 		<p>
-			
+			The term "view" comes from the V in MVC (<a href="http://en.wikipedia.org/wiki/Model–view–controller">model-view-controller</a>), a paradigm that Dragonfly follows only loosely (notably missing the 'model' aspect).
 		</p>
-		
+		<p>
+			Views are typically used to represent the data of a <i>model</i>, but Dragonfly doesn't really care to enforce this (although you are certainly welcome to). In this document the term 'view' will be used to refer to templates in the directory specified by <span class="code">DF:VIEWS_PATH</span>.
+		</p>
+		<h2>Where routes come into the picture</h2>
+		<p>
+			<span class="code">Route.Static</span> (one of the <%(link_to "default views" "dragonfly_routes")%>) contains, by default, two request transformations for handling views:
+		</p>
+		<pre class="code">
+    (begin (set 'viewname _)
+           (string VIEWS_PATH "/" _))
+    (begin (set 'viewname _)
+           (string VIEWS_PATH "/" _ VIEW_EXTENSION))
+)</pre>
+		<p>
+			The last transformation listed there is responsible for transforming a request to this URL:
+		</p>
+		<p><span class="code">http://rundragonfly.com/dragonfly_views</span></p>
+		<p>Into a request for this file:</p>
+		<p><span class="code">/home/www/rundragonfly.com/views/dragonfly_views.html</span></p>
+		<p>All of the files handled by <span class="code">Route.Static</span> eventually get passed through the function <span class="code">eval-template</span>, which searches for any newLISP code between <span class="code">OPEN_TAG</span> and <span class="code">CLOSE_TAG</span> and evaluates it.</p>
+		<h2>Writing templates</h2>
+		<p>
+			By default, the <span class="code">OPEN_TAG</span> is <span class="code">&lt;%</span> and the <span class="code">CLOSE_TAG</span> is <span class="code">%&gt;</span>. Let's say we want to create an HTML file that displays the current time on the server, we might go about it like this:
+		</p>
+<pre class="code">
+&lt;html&gt;
+&lt;body&gt;
+	The time is: &lt;% (date) %&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+		<p>
+			That, however, will result in a page that says:
+		</p>
+		<div class="resultbox">
+			The time is: 
+		</div>
+		<p>
+			That's because evaluated expressions do not output anything unless they call <span class="code">print</span> or <span class="code">println</span>. We can fix it by rewriting it like so:
+		</p>
+		<pre class="code">The time is: &lt;% (print (date)) %&gt;</pre>
+		<div class="resultbox">
+			The time is: <% (print (date)) %>
+		</div>
+		<p>
+			You can append an equals sign after the <span class="code">OPEN_TAG</span> to achieve the same result in fewer keystrokes:
+		</p>
+		<pre class="code">The time is: &lt;%= (date) %&gt;</pre>
+		<div class="resultbox">
+			The time is: <%= (date) %>
+		</div>
+		<p class="info"><b>INFORMATION</b><br/>You can use all functions from newLISP and Dragonfly (<%(link_to "api" "dragonfly_api")%>), as well as functions provided by <%(link_to "plugins" "dragonfly_plugins")%>.</p>
+		<h2>Configuration</h2>
+		<p>
+			Below is a list of configuration parameters that you'll find in <b>config.lsp</b> related to templates.
+		</p>
+		<h3 class="param">OPEN_TAG</h3>
+		<p>Default value: <span class="code"><b>"&lt;%"</b></span></p>
+		<h3 class="param">CLOSE_TAG</h3>
+		<p>Default value: <span class="code"><b>"%&gt;"</b></span></p>
 		<h3 class="param">VIEWS_PATH</h3>
 		<p>Default value: <span class="code"><b>(string DOCUMENT_ROOT "/views")</b></span></p>
 		<p>
@@ -51,22 +106,8 @@
 		<h3 class="param">VIEW_EXTENSION</h3>
 		<p>Default value: <span class="code"><b>".html"</b></span></p>
 
-		<h2>How to call functions inside a view</h2>
-		<pre class="code">&lt;% (benchmark-result) %&gt;</pre>
-		
-		<p>Put Your function call inside our open and close brackets and there You go! That will display some stats about rendering time and memory consumption.</p>
-		
-		<p class="info"><b>INFORMATION</b><br/>You can use all functions from newLISP and Dragonfly. Additionally You may write Your own functions inside a plugin and just put the file into the "plugins-active" directory.</p>
-				
-		<h2>How to load a partial view</h2>
-		<p>Partials are just like views, there's really no difference. Sometimes it's nice
-			to place your headers and footers in a different folder from your other views, and for
-			those who want this Dragonfly provides explicit support through the 'display-partial' function:</p>
-		<pre class="code">&lt;% (display-partial "header") %&gt;</pre>
-		
-		<p>This simple argument would load the "header"-partial from the partials directory.</p>
-
-		
+		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_plugins") %></p>
+		<div class="clear"></div>
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>
