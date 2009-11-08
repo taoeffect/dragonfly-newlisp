@@ -21,6 +21,18 @@
 		<p class="extract">
 			Dragonfly's routes are written in pure newLISP code and have no arbitrary constraints placed on them. They can be as simple or complex as you need them to be. In fact, Dragonfly's routes are so flexible that the defaults will often be all you'll need.
 		</p>
+		
+		<h2>What is a 'route'?</h2>
+		<p>
+			A <b>route</b>, in an abstract sense, routes a request to its destination.
+		</p>
+		<p>
+			For example, if a request is made for the following URL:
+		</p>
+		<p><span class="code">http://rundragonfly.com/welcome</span></p>
+		<p>
+			Then one of Dragonfly's routes (<span class="code">Route.Static</span>) sends the contents of the <b>welcome.html</b> file to your web browser.
+		</p>
 		<p>
 			Dragonfly's routes are represented as <a href="http://www.newlisp.org/index.cgi?page=newLISP-FOOP">FOOP objects</a> and use
 			the convention of prepending "Route." to their name to avoid namespace conflicts.
@@ -122,7 +134,7 @@
 			Dragonfly supports the creation of powerful web applications through
 			the use of clean RESTful routes.
 		</p>
-		<p><span class="code">Route.Resource</span> handles URLs that refer to RESTful resources, which are represented as FOOP objects deriving from the <span class="code">Resource</span> context. The configuration parameter <span class="code">RESOURCES_PATH</span> specifies the folder containing the resources as .lsp files, one per resource.</p>
+		<p><span class="code">Route.Resource</span> handles URLs that refer to <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">RESTful</a> resources, which are represented as FOOP objects deriving from the <span class="code">Resource</span> context. The configuration parameter <span class="code">RESOURCES_PATH</span> specifies the folder containing the resources as .lsp files, one per resource.</p>
 		<p>The URL scheme works in a similar manner to twitter's RESTful API:</p>
 		<pre class="code">http://mysite.com/<b>resource</b>[/<b>action</b>][/<b>id</b>][.<b>format</b>][?get params..]</pre>
 		
@@ -152,83 +164,7 @@
 		<p>
 			<span class="code"><b>format</b></span> (optional) - may only contain letters and can be used to specify the response format. (i.e. xml, json, etc.)
 		</p>
-		<h2>Something missing...?</h2>
-		<p>
-			If you've done RESTful web programming before, you may be asking right now, "But where are the HTTP verbs GET/POST/PUT??"
-		</p>
-		<p>
-			Dragonfly's built-in RESTful route doesn't use them.
-		</p>
-		<p>
-			There are two reasons for this decision:
-		</p>
-		<ol>
-			<li>newLISP's built-in server doesn't set <span class="code">REQUEST_METHOD</span> (currently)</li>
-			<li>Their use is redundant and can lead to confusion</li>
-		</ol>
-		<p>
-			To elaborate on point #2, let's take a look at this table (taken from the Ruby on Rails <a href="http://guides.rubyonrails.org/routing.html">routing guide</a>):
-		</p>
-		<p>
-			<img src="<%=(web-root "includes/images/rails_rest.png")%>">
-		</p>
-		<p>It's not at all clear when a verb should be added to the URL or when an HTTP verb needs to be changed.
-		</p>
-		<p>
-			The problem is that two RESTful abstractions are carelessly mixed with each other: HTTP verbs, and verbs in the URL.</p>
-		<p>Whether the RESTful verb in <span class="code">GET /photos/1/edit</span> is "GET" or "edit" is left to philosophical inquiry.</p>
-		<p>
-			Ironically, the "action" column lists quite clearly which verb is being used:
-		</p>
-		<p>
-			<img src="<%=(web-root "includes/images/rails_rest_fix.png")%>">
-		</p>
-		<p>
-			We can now greatly simplify this table:
-		</p>
-		<br/>
-		<table>
-			<tr class="header">
-				<td>URL</td>
-				<td>controller</td>
-				<td>used for</td>
-			</tr>
-			<tr>
-				<td>/photos</td>
-				<td>Resource.Photos</td>
-				<td>display a list of all images</td>
-			</tr>
-			<tr>
-				<td>/photos/new</td>
-				<td>Resource.Photos</td>
-				<td>return an HTML form for creating a new image</td>
-			</tr>
-			<tr>
-				<td>/photos/create</td>
-				<td>Resource.Photos</td>
-				<td>create a new image</td>
-			</tr>
-			<tr>
-				<td>/photos/show/1</td>
-				<td>Resource.Photos</td>
-				<td>display a specific image</td>
-			</tr>
-			<tr>
-				<td>/photos/edit/1</td>
-				<td>Resource.Photos</td>
-				<td>return an HTML form for editing an image</td>
-			</tr>
-			<tr>
-				<td>/photos/update/1</td>
-				<td>Resource.Photos</td>
-				<td>update a specific image</td>
-			</tr>
-			<tr>
-				<td>/photos/destroy/1</td>
-				<td>Resource.Photos</td>
-				<td>delete a specific image</td>
-			</tr>
-		</table>
+		
 		<h3 class="code">Example resource in resources/wings.lsp:</h3>
 		<pre class="code">
 (DF:activate-plugin "artfulcode/json")
@@ -307,6 +243,120 @@
 				return false;
 			});
 		</script>
+		
+		<h3>
+			Q: Where are the HTTP verbs GET/POST/PUT?
+		</h3>
+		<p>
+			Dragonfly's built-in RESTful route doesn't use them.
+		</p>
+		<p>
+			There are two reasons for this decision:
+		</p>
+		<ol>
+			<li>newLISP's built-in server doesn't set <span class="code">REQUEST_METHOD</span> (currently)</li>
+			<li>Their use is redundant and can lead to confusion</li>
+		</ol>
+		<p>
+			To elaborate on point #2, let's take a look at this table (taken from the Ruby on Rails <a href="http://guides.rubyonrails.org/routing.html">routing guide</a>):
+		</p>
+		<p>
+			<img src="<%=(web-root "includes/images/rails_rest.png")%>">
+		</p>
+		<p>It's not at all clear when a verb should be added to the URL or when an HTTP verb needs to be changed.
+		</p>
+		<p>
+			The problem is that two RESTful abstractions are carelessly mixed with each other: HTTP verbs, and verbs in the URL.</p>
+		<p>Whether the RESTful verb in <span class="code">GET /photos/1/edit</span> is "GET" or "edit" is left to philosophical inquiry.</p>
+		<p>
+			Ironically, the "action" column lists quite clearly which verb is being used:
+		</p>
+		<p>
+			<img src="<%=(web-root "includes/images/rails_rest_fix.png")%>">
+		</p>
+		<p>
+			We can now greatly simplify this table:
+		</p>
+		<br/>
+		<table>
+			<tr class="header">
+				<td>URL</td>
+				<td>controller</td>
+				<td>used for</td>
+			</tr>
+			<tr>
+				<td>/photos</td>
+				<td>Resource.Photos</td>
+				<td>display a list of all images</td>
+			</tr>
+			<tr>
+				<td>/photos/new</td>
+				<td>Resource.Photos</td>
+				<td>return an HTML form for creating a new image</td>
+			</tr>
+			<tr>
+				<td>/photos/create</td>
+				<td>Resource.Photos</td>
+				<td>create a new image</td>
+			</tr>
+			<tr>
+				<td>/photos/show/1</td>
+				<td>Resource.Photos</td>
+				<td>display a specific image</td>
+			</tr>
+			<tr>
+				<td>/photos/edit/1</td>
+				<td>Resource.Photos</td>
+				<td>return an HTML form for editing an image</td>
+			</tr>
+			<tr>
+				<td>/photos/update/1</td>
+				<td>Resource.Photos</td>
+				<td>update a specific image</td>
+			</tr>
+			<tr>
+				<td>/photos/destroy/1</td>
+				<td>Resource.Photos</td>
+				<td>delete a specific image</td>
+			</tr>
+		</table>
+		<h3>
+			Q: What about nested resources?
+		</h3>
+		<p>
+			<span class="code">Route.Resource</span> is designed to support the creation of clean and efficient APIs (like <a href="http://apiwiki.twitter.com/Twitter-API-Documentation">twitter's</a>). Therefore it does not support nesting because:
+		</p>
+		<h4>1. Nested resources are often unnecessary</h4>
+		<p>
+			You <i>could</i> get comment #5 out of thread #6 in forum #3 like this:
+		</p>
+		<p><span class="code">/forums/3/threads/6/comments/5</span></p>
+		<p>
+			But that is a convoluted method of going about it. Implementing a <i>generic</i> system to support that is possible, but it would be complex and limiting. It's far simpler, faster, and clearer to do this instead:
+		</p>
+		<p><span class="code">/comments/5?forum=3&thread=6</span></p>
+		<p>
+			Or by passing those parameters in via POST so that the URL is simply:
+		</p>
+		<p><span class="code">/comments/5</span></p>
+		<p>
+			Or, if you need it, <%(link_to "implement" "dragonfly_create_routes")%> your own specialized route to support such nesting.
+		</p>
+		<h4>2. Can lead to poor design and confusion</h4>
+		<p>
+			This is especially true for implementing some sort of API. Consider the following nested URL (taken from the Rails routing guide):
+		</p>
+		<p><span class="code">/magazines/1/ads/1/edit</span></p>
+		<p>
+			Ignoring that this request can be rewritten to take a different form (as shown above), consider the situation where both resources <span class="code">magazines</span> and <span class="code">ads</span> take GET parameters and a request such as the following is made:
+		</p>
+		<p><span class="code">/magazines/1/ads/1/edit?cat=5</span></p>
+		<p>
+			How can you tell whether <span class="code">cat=5</span> refers to a category of magazines or ads? Of course there's no way to know by looking at the URL, you'd have to check the API. But what if <i>both</i> magazines and ads use <span class="code">cat</span> to refer to their own internal categories? Then you have a real problem.
+		</p>
+		<p>
+			Because of situations such as these, as well as the complexities of supporting nested resources in a generic fashion, Dragonfly does not encourage this sort of design pattern by supporting it out-of-the-box. However, if you need such behavior, <%(link_to "create it" "dragonfly_create_routes")%>, it's easy to do. :-)
+		</p>
 		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_create_routes") %></p>
 		<div class="clear"></div>
 		<div class="line-dotted"></div>
