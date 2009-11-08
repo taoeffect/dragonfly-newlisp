@@ -20,7 +20,9 @@
 		<h1>Reading feeds from other websites</h1>
 		<p class="extract">Dragonfly provides some simple functions for reading atom feeds (RSS will follow). The name Atom applies to a pair of related standards. The Atom Syndication Format is an XML language used for web feeds, while the Atom Publishing Protocol (AtomPub or APP) is a simple HTTP-based protocol for creating and updating web resources. (source: wikipedia.org)
 		</p>
-		
+		<p>
+			There are two functions in <b>plugins-active/dragonfly_basic.lsp</b> for reading feeds: <span class="code">read-atom-feed</span> and <span class="code">read-rss-feed</span>. They can be used to read feeds server-side. If you want to load a feed on the client's side, use AJAX and Javascript instead for faster page loads and to offload work from the server.
+		</p>
 		<h2>How to load an atom feed</h2>
 		<p>Example: open your view and enter the following:</p>
 		<pre class="code">&lt;% (read-atom-feed "http://example-site.com/atomfeed.xml") %&gt;</pre>
