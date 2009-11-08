@@ -45,7 +45,7 @@
 			This document describes Dragonfly's two default routes: <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>.
 		</p>
 		<h2>Static Routes</h2>
-		<p><span class="code">Route.Static</span> offers a flexible method for serving template files to allows for a PHP-like development pattern, but without the PHP.
+		<p><span class="code">Route.Static</span> offers a flexible method for serving template files to allow for a PHP-like development pattern, but without the PHP.
 		</p>
 		<p>
 			It handles requests such as the following:
@@ -70,7 +70,7 @@
 		</p>
 		<p>
 			If the request does not end in one of these extensions then
-			the request the route will attempt to transform it using the
+			the route will attempt to transform it using the
 			<span class="code">STATIC_TRANSFORMATIONS</span> to see if that
 			results in a matching file (see below).
 		</p>
@@ -99,7 +99,7 @@
 		</p>
 		<p>
 			As an example, say we have a folder called <span class="code">foo</span> in our site's
-			root, and inside of it is an <span class="code">index.html</span> file. If the user visits the following URL they will be shown the contents of <span class="code">index.html</span>:
+			root, and inside of it is an <span class="code">index.html</span> file. If the user visits the following URL they will be shown the contents of <span class="code">foo/index.html</span>:
 		</p>
 		<p>
 			<span class="code">http://example-site.com/foo</span>
@@ -227,7 +227,7 @@
 		<script type="text/javascript" charset="utf-8">
 			var form = $('#wings_form');
 			form.find("input[type='button']").click(function() {
-				var req_url = '<%=(web-root "wings" true)%>';
+				var req_url = '<%=(web-root "wings" (find "newLISP" SERVER_SOFTWARE))%>';
 				req_url += '/' + $('#wings_id').val();
 				req_url += $('#response_format').val();
 				$('#wings_request').html(req_url);
