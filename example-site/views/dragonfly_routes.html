@@ -355,7 +355,12 @@
 			How can you tell whether <span class="code">cat=5</span> refers to a category of magazines or ads? Of course there's no way to know by looking at the URL, you'd have to check the API. But what if <i>both</i> magazines and ads use <span class="code">cat</span> to refer to their own internal categories? Then you have a real problem.
 		</p>
 		<p>
-			Because of situations such as these, as well as the complexities of supporting nested resources in a generic fashion, Dragonfly does not encourage this sort of design pattern by supporting it out-of-the-box. However, if you need such behavior, <%(link_to "create it" "dragonfly_create_routes")%>, it's easy to do. :-)
+			Also, nested URLs, especially long ones, are a convoluted way of getting what you want. Traversing them results in extra levels of indirection that is ultimately unnecessary and can be inefficient:
+		</p>
+		<p class="quote"><i>Think about it. If you only want to view a specific comment, you shouldn’t have to specify the account, person, and note for the comment in the URL.</i>
+			<span>-- <a href="http://weblog.jamisbuck.org/2007/2/5/nesting-resources">Jamis Buck</a></span></p>
+		<p>
+			Because of these considerations, as well as the complexities of supporting nested resources in a generic fashion, Dragonfly does not encourage this sort of design pattern by supporting it out-of-the-box. However, if you need such behavior, <%(link_to "create it" "dragonfly_create_routes")%>, it's easy to do. :-)
 		</p>
 		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_create_routes") %></p>
 		<div class="clear"></div>

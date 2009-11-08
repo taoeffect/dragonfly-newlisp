@@ -158,6 +158,17 @@ body img {
 		text-decoration: none;
 		border-bottom: 1px dotted #00aeef;
 	}
+	
+	#content p.quote {
+		margin-left: 20px;
+		margin-right: 20px;
+		font-size:11px;
+		
+	}
+	
+	#content p.quote span {
+		display: block;
+	}
 		
 	#content .author {
 		color:#00aeef;
