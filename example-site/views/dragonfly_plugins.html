@@ -18,12 +18,28 @@
 		</div>
 		
 		<h1>Plugins</h1>
-		<p class="extract">blah blah</p>
+		<p class="extract">You can extend and modify Dragonfly's behavior through the use of plugins.</p>
 
 		<p>
-			blah blah.
+			There are two types of plugins, those in the <b>plugins-active</b> folder, and those in the <b>plugins-inactive</b> folder. The ones in the former are loaded when <span class="code">listener</span> is called, prior to running the routes. Every .lsp file in the <b>plugins-active</b> folder is loaded at that point, so you'll only want your most frequently used files in there.
+			
 		</p>
 
+		<h2>Active Plugins</h2>
+		<p>
+			A good example of an active plugin is a <%(link_to "custom route" "dragonfly_create_routes")%>. A small library of frequently used functions would also be something that makes sense to turn into an "always active" plugin.
+		</p>
+		<h2>Inactive Plugins</h2>
+		<p>
+			Inactive plugins are simply those that should be loaded on a "need to use" basis. Most plugins will probably fall into this category. Use <span class="code">DF:activate-plugin</span> to load them. All plugins are loaded exactly once, no matter how many times <span class="code">activate-plugin</span> is called on them.
+		</p>
+		<h2>Getting Plugins</h2>
+		<p>
+			Modules make for excellent plugins! There's a <a href="http://www.newlisp.org/modules/">list</a> of available modules on newLISP's site. Watch this space for Dragonfly specific plugins as they become available.
+		</p>
+		<p>
+			If you have a plugin you'd like to contribute, let us know on the <a href="http://newlispfanclub.alh.net/forum/">newLISP forums</a>!
+		</p>
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>
