@@ -20,24 +20,23 @@
 		<img src="<%=(web-root "includes/images/dragonfly_header_2.jpg")%>" class="border" alt="Dragonfly" title="Dragonfly" width="474"/>
 		
 		<h1>Dragonfly Source Code</h1>
-		<p class="extract">Dragonfly is hosted on Google Code. You got two options for getting Dragonfly up and running:
+		<p class="extract">Dragonfly is <a href="http://code.google.com/p/dragonfly-newlisp/">hosted on Google Code</a>. You have two options for getting its source:
 		</p>
 		
-		<h2>No 1. Get the latest, bleeding edge version (Mercurial repository)</h2>
+		<h3>No 1. Grab the latest stable version</h3>
 		<ul>
-			<li>Make sure You're able to run the hg command (Mercurial)</li>
-			<li>Open Your shell</li>
-			<li>Enter this command</li>
-			<li>hg clone https://dragonfly-newlisp.googlecode.com/hg/ dragonfly-newlisp</li>
-		</ul>
-
-		<h2>No 2. Get the latest stable version</h2>
-		<ul>
-			<li>Open Your browser and download the ZIP archive from this address</li>
+			<li>Download the latest ZIP archive from here:</li>
 			<li><a href="http://code.google.com/p/dragonfly-newlisp/downloads/list" target="_blank">Latest stable version</a></li>
 		</ul>
+		
+		<h3>No 2. Bleeding edge repository from Mercurial</h3>
+		<ul>
+			<li>Make sure you have <a href="http://mercurial.selenic.com/">Mercurial</a> installed</li>
+			<li>Run this command (one line):</li>
+			<li><span class="code">hg clone https://dragonfly-newlisp.googlecode.com/hg/ dragonfly-newlisp</span></li>
+		</ul>
 
-		<h2>The last five changes</h2>
+		<h3>The last five changes from the repository:</h3>
 		<div id="mercurial_changes">
 			<p>
 			<% (read-atom-feed "http://code.google.com/feeds/p/dragonfly-newlisp/hgchanges/basic", 5) %>	
