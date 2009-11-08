@@ -1,0 +1,59 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Reading feeds from other websites</h1>
+		<p class="extract">Dragonfly provides some simple functions for reading atom feeds (RSS will follow). The name Atom applies to a pair of related standards. The Atom Syndication Format is an XML language used for web feeds, while the Atom Publishing Protocol (AtomPub or APP) is a simple HTTP-based protocol for creating and updating web resources. (source: wikipedia.org)
+		</p>
+		
+		<h2>How to load an atom feed</h2>
+		<p>Example: open your view and enter the following:</p>
+		<pre class="code">&lt;% (read-atom-feed "http://www.example-site.com/atomfeed.xml") &gt;%</pre>
+		<p class="info"><b>INFORMATION</b><br/>If you want to see the raw XML, then just put "<b>, true</b>" after the feed-URL. See the example below.</p>
+		<pre class="code">&lt;% (read-atom-feed "http://www.example-site.com/atomfeed.xml", true) &gt;%</pre>
+		<br/>		
+
+		<h2>How to load an RSS feed</h2>
+		<p>Example: open your view and enter the following:</p>
+		<pre class="code">&lt;% (read-rss-feed "http://www.example-site.com/rssfeed.xml") &gt;%</pre>
+		<p class="info"><b>INFORMATION</b><br/>If you want to see the raw XML, then just put "<b>, true</b>" after the feed-URL. See the example below.</p>
+		<pre class="code">&lt;% (read-rss-feed "http://www.example-site.com/rssfeed.xml", true) &gt;%</pre>
+		<br/>		
+
+		<h2>NYTimes.com (RSS)</h2>
+		<p>
+		<% (read-rss-feed "http://www.nytimes.com/services/xml/rss/nyt/GlobalHome.xml", 5) %>
+		</p>
+
+		<h2>newLISP news (RSS)</h2>
+		<p>
+		<% (read-rss-feed "http://www.newlisp.org/rss.cgi", 3) %>
+		</p>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
