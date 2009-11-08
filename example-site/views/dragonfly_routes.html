@@ -231,6 +231,7 @@
 				req_url += '/' + $('#wings_id').val();
 				req_url += $('#response_format').val();
 				$('#wings_request').html(req_url);
+				$('#wings_resp').html('loading...');
 				$.ajax({
 					url: req_url,
 					success: function (data, status) {
