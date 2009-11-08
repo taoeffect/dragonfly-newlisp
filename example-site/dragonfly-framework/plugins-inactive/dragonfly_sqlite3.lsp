@@ -23,6 +23,8 @@
 ;; Its's features are a short learning curve, lightweight and fun in programming - 
 ;; just like newLISP itself.</p>
 
+(module "sqlite3.lsp")
+
 ;===============================================================================
 ; !Defining new context
 ;===============================================================================

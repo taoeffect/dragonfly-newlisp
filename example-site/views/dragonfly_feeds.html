@@ -23,26 +23,26 @@
 		
 		<h2>How to load an atom feed</h2>
 		<p>Example: open your view and enter the following:</p>
-		<pre class="code">&lt;% (read-atom-feed "http://www.example-site.com/atomfeed.xml") &gt;%</pre>
-		<p class="info"><b>INFORMATION</b><br/>If you want to see the raw XML, then just put "<b>, true</b>" after the feed-URL. See the example below.</p>
-		<pre class="code">&lt;% (read-atom-feed "http://www.example-site.com/atomfeed.xml", true) &gt;%</pre>
+		<pre class="code">&lt;% (read-atom-feed "http://example-site.com/atomfeed.xml") %&gt;</pre>
+		<p>If you want to see the raw XML, then pass in <b>true</b> as the second parameter:</p>
+		<pre class="code">&lt;% (read-atom-feed "http://example-site.com/atomfeed.xml" true) %&gt;</pre>
 		<br/>		
 
 		<h2>How to load an RSS feed</h2>
 		<p>Example: open your view and enter the following:</p>
-		<pre class="code">&lt;% (read-rss-feed "http://www.example-site.com/rssfeed.xml") &gt;%</pre>
-		<p class="info"><b>INFORMATION</b><br/>If you want to see the raw XML, then just put "<b>, true</b>" after the feed-URL. See the example below.</p>
-		<pre class="code">&lt;% (read-rss-feed "http://www.example-site.com/rssfeed.xml", true) &gt;%</pre>
+		<pre class="code">&lt;% (read-rss-feed "http://example-site.com/rssfeed.xml") %&gt;</pre>
+		<p>If you want to see the raw XML, pass in <b>true</b> as the second parameter:</p>
+		<pre class="code">&lt;% (read-rss-feed "http://example-site.com/rssfeed.xml" true) %&gt;</pre>
 		<br/>		
 
 		<h2>NYTimes.com (RSS)</h2>
 		<p>
-		<% (read-rss-feed "http://www.nytimes.com/services/xml/rss/nyt/GlobalHome.xml", 5) %>
+		<% (read-rss-feed "http://www.nytimes.com/services/xml/rss/nyt/GlobalHome.xml" 3) %>
 		</p>
 
 		<h2>newLISP news (RSS)</h2>
 		<p>
-		<% (read-rss-feed "http://www.newlisp.org/rss.cgi", 3) %>
+		<% (read-rss-feed "http://www.newlisp.org/rss.cgi" 3) %>
 		</p>
 		
 		<div class="line-dotted"></div>

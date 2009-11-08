@@ -328,7 +328,7 @@
 ;; <p>Reads an atom feed from a given URL and displays it. There are three span classes to style Your feed:
 ;; atomFeedTitle, atomFeedUpdated and atomFeedAuthor.</p>
 
-(define (read-atom-feed feed-url, max-items raw-xml)
+(define (read-atom-feed feed-url max-items raw-xml)
 
 	; get feed-url
 	(set 'xml (get-url (string feed-url) ))
@@ -372,7 +372,7 @@
 ;; <p>Reads an RSS feed from a given URL and displays it. There are three span classes to style Your feed:
 ;; rssFeedTitle, rssFeedUpdated and rssFeedAuthor.</p>
 
-(define (read-rss-feed feed-url, max-items raw-xml)
+(define (read-rss-feed feed-url max-items raw-xml)
 
 	; get feed-url
 	(set 'xml (get-url (string feed-url) ))
