@@ -40,7 +40,7 @@
 			Below is a simplified version of the default route <span class="code">Route.Static</span> called <span class="code">Route.StaticSimple</span>:
 		</p>
 		<pre class="code">
-; File: route_static_simple.lsp
+; File: plugins-active/route_static_simple.lsp
 
 (new Route 'Route.StaticSimple)
 (context Route.StaticSimple)
@@ -49,8 +49,7 @@
     (set 'chunks (parse QUERY_STRING "?"))
     (if (empty? chunks)
         (push DF:DEFAULT_VIEW chunks))
-    (set 'path (set 'DF:_ (first chunks)))
-    (file? path)
+    (file? (set 'path (first chunks)))
 )
 (define (run)
     (set 'ext (regex-captcha {.*\.(\w+)$} path))
