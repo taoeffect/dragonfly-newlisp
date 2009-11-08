@@ -1,0 +1,84 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Builtin Plugins</h1>
+		
+		<p>
+			So what functions are available to you? Dragonfly has a <%(link_to "core set" "dragonfly_api")%> of contexts and functions that are always available (in the lib folder). Its plugins (located in <span class="code">dragonfly-framework/plugins-[in]active</span>) provide additional functionality:
+		</p>
+
+		<h2>Dragonfly's example-site functions</h2>
+		<p>
+			These include all of the files in the plugins folders that begin with <span class="code">dragonfly_</span>. They are used by this website to various conveniences and demos. Some of their functionality includes:
+		</p>
+		<ul>
+			<li>Creating links between views</li>
+			<li>Examples for using:
+				<ul><li>twitter</li>
+					<li>sqlite3</li>
+					<li>parsing feeds</li>
+					<li>AJAX with jQuery</li>
+				</ul>
+			</li>
+		</ul>
+		<h2>Artful Code Modules</h2>
+		<p>
+			Dragonfly includes several of Jeff Ober's <a href="http://static.artfulcode.net/newlisp/">Artful Code modules</a>, including functions for:
+		</p>
+		<ul>
+			<li>Session management</li>
+			<li>JSON parsing and creation from newLISP lists</li>
+			<li>Various utility functions for web-based programming</li>
+			<li>Generating HTTP requests</li>
+		</ul>
+		<p>
+			Have a look in the <span class="code">plugins-inactive/artfulcode</span> folder to see the included ones. Documentation for all of Jeff's modules can be found <a href="http://static.artfulcode.net/newlisp/">here</a>.
+		</p>
+		<h2>Misc</h2>
+		<p>
+			Additional plugins include:
+			<ul>
+				<li>nldb.lsp - a simple list-based database by <a href="http://unbalanced-parentheses.nfshost.com/">cormullion</a></li>
+				<li>path.lsp - a FOOP class for manipulating file paths</li>
+			</ul>
+		</p>
+		<h2>More Plugins</h2>
+		<p>
+			Modules make for excellent plugins! There's a <a href="http://www.newlisp.org/modules/">list</a> of available modules on newLISP's site. The newLISP distribution comes with a bunch of them, including functions for cryptography, SMTP, databases, and more!
+		</p>
+		<p>Watch this space for Dragonfly specific plugins as they become available.
+		</p>
+		<p>
+			If you have a plugin you'd like to contribute, let us know on the <a href="http://newlispfanclub.alh.net/forum/">newLISP forums</a>!
+		</p>
+		
+		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_api") %></p>
+		<div class="clear"></div>
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
