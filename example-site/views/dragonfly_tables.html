@@ -18,6 +18,10 @@
 		</div>
 		
 		<h1>Using newLISP Database</h1>
+		<% (DF:activate-plugin "nldb") %>
+		<% (DF:activate-plugin "dragonfly_nldb") %>
+		<% (DF:activate-plugin "dragonfly_tables") %>
+		<% (DF:activate-plugin "dragonfly_forms") %>
 		<% (use-database "blog.nldb") %>
 		<% 
 			(if (= Dragonfly:action "save")
