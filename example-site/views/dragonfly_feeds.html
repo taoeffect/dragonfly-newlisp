@@ -23,19 +23,19 @@
 		<p>
 			There are two functions in <b>plugins-active/dragonfly_basic.lsp</b> for reading feeds: <span class="code">read-atom-feed</span> and <span class="code">read-rss-feed</span>. They can be used to read feeds server-side. If you want to load a feed on the client's side, use AJAX and Javascript instead for faster page loads and to offload work from the server.
 		</p>
-		<h2>How to load an atom feed</h2>
-		<p>Example: open your view and enter the following:</p>
-		<pre class="code">&lt;% (read-atom-feed "http://example-site.com/atomfeed.xml") %&gt;</pre>
-		<p>If you want to see the raw XML, then pass in <b>true</b> as the second parameter:</p>
-		<pre class="code">&lt;% (read-atom-feed "http://example-site.com/atomfeed.xml" true) %&gt;</pre>
-		<br/>		
-
-		<h2>How to load an RSS feed</h2>
-		<p>Example: open your view and enter the following:</p>
-		<pre class="code">&lt;% (read-rss-feed "http://example-site.com/rssfeed.xml") %&gt;</pre>
-		<p>If you want to see the raw XML, pass in <b>true</b> as the second parameter:</p>
-		<pre class="code">&lt;% (read-rss-feed "http://example-site.com/rssfeed.xml" true) %&gt;</pre>
-		<br/>		
+		<h2>Example: displaying an atom feed</h2>
+		<p>The following will display all of the entries from the atom feed as HTML:</p>
+		<pre class="code">&lt;% (read-atom-feed "http://website.com/atomfeed.xml") %&gt;</pre>
+		<p>
+			If you'd like to limit the number of entries shown:
+		</p>
+		<pre class="code">&lt;% (read-atom-feed "http://website.com/atomfeed.xml" 3) %&gt;</pre>
+		<p>If you want to see the raw XML without limiting the number of entries:</p>
+		<pre class="code">&lt;% (read-atom-feed "http://website.com/atomfeed.xml" nil true) %&gt;</pre>
+		
+		<p>
+			The <span class="code">read-rss-feed</span> function works in the same manner. These functions are used to display the feeds below:
+		</p>
 
 		<h2>NYTimes.com (RSS)</h2>
 		<p>
