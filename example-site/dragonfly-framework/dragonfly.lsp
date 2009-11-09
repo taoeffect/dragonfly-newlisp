@@ -371,7 +371,7 @@
 <title><%= (join (map string (Response:status)) " ") %></title>
 </head><body>
 <h1><%= (last (Response:status)) %></h1>
-<p>The requested URL /<%= QUERY_STRING %> resulted in error <%= (join (map string (Response:status)) " ") %>.</p>
+<p>The requested URL <%= (web-root QUERY_STRING (find "newLISP" SERVER_SOFTWARE)) %> resulted in error <%= (join (map string (Response:status)) " ") %>.</p> 
 <p>Additionally, a 404 Not Found
 error was encountered while trying to use an ErrorDocument to handle the request.</p>
 </body></html>
