@@ -305,15 +305,31 @@
 		<div id="%s">&nbsp;</div>
 		<script type="text/javascript">
 			(function fetcher() {
-				$.post("%s", "%s",
-					function (data, status) {
-						$("#%s").html(data);
+				var id = '#' + '%s';
+				var load_text = 'loading...';
+				setTimeout(function() {
+					if (load_text)
+						$(id).html(load_text);
+				}, 500);
+				$.ajax({
+					url: "%s",
+					data: "%s",
+					type: "POST",
+					timeout: 10000,
+					success: function (data, status) {
+						load_text = null;
+						$(id).html(data);
+						setTimeout(fetcher, %d);
+					},
+					error: function (xmlReq, status, error) {
+						load_text = null;
+						$(id).html(status + ' (' +  error + ') loading: ' + this.url);
 						setTimeout(fetcher, %d);
 					}
-				);
+				});
 			})();
 		</script>
-		[/text] html-elementid request-url str-params html-elementid timeout)
+		[/text] html-elementid html-elementid request-url str-params timeout timeout)
 	)
 )
 
