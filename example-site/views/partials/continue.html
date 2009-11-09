@@ -1,0 +1,16 @@
+<p class="continue"><a id="continue_link" href="">CONTINUE &raquo;</a></p>
+<div class="clear"></div>
+
+<script type="text/javascript" charset="utf-8">
+	$('#continue_link').attr('href', function () {
+		var viewpath = "<%=(web-root viewname (find {newLISP} SERVER_SOFTWARE))%>";
+		var ourlink = $("#user_guide_menu dd > a[href='"+viewpath+"']:first");
+		var nextlink = ourlink.parent().nextAll('dd:first').children('a:first').not(ourlink);
+		// if there's a next link in the current column return its href
+		// otherwise return the first link from the next nav column over
+		if ( nextlink.length !== 0 )
+			return nextlink.attr('href');
+		else
+			return ourlink.parent().parent().next().find('dd a:first').attr('href');
+	});
+</script>

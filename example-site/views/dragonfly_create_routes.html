@@ -74,8 +74,9 @@
 		<p>
 			If it does, it will attempt to display the file "index" by calling the <span class="code">DF:display-file</span> function with the path to the file.
 		</p>
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_views") %></p>
-		<div class="clear"></div>
+		
+		<% (display-partial "continue") %>
+		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

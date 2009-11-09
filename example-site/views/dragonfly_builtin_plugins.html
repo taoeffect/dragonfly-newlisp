@@ -51,13 +51,11 @@
 			Have a look in the <span class="code">plugins-inactive/artfulcode</span> folder to see the included ones. Documentation for all of Jeff's modules can be found <a href="http://static.artfulcode.net/newlisp/">here</a>.
 		</p>
 		<h2>Misc</h2>
-		<p>
-			Additional plugins include:
-			<ul>
-				<li>nldb.lsp - a simple list-based database by <a href="http://unbalanced-parentheses.nfshost.com/">cormullion</a></li>
-				<li>path.lsp - a FOOP class for manipulating file paths</li>
-			</ul>
-		</p>
+		<p>Additional plugins include:</p>
+		<ul>
+			<li>nldb.lsp - a simple list-based database by <a href="http://unbalanced-parentheses.nfshost.com/">cormullion</a></li>
+			<li>path.lsp - a FOOP class for manipulating file paths</li>
+		</ul>
 		<h2>More Plugins</h2>
 		<p>
 			Modules make for excellent plugins! There's a <a href="http://www.newlisp.org/modules/">list</a> of available modules on newLISP's site. The newLISP distribution comes with a bunch of them, including functions for cryptography, SMTP, databases, and more!
@@ -68,8 +66,8 @@
 			If you have a plugin you'd like to contribute, let us know on the <a href="http://newlispfanclub.alh.net/forum/">newLISP forums</a>!
 		</p>
 		
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_api") %></p>
-		<div class="clear"></div>
+		<% (display-partial "continue") %>
+		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

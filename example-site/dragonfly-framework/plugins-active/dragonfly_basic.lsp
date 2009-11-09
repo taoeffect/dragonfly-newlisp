@@ -123,7 +123,7 @@
 ;; <p>Writes a title including the current navigation entry.</p>
 ;; 
 (define (title websitename)
-  (print (string (title-case (replace "_" viewname " ")) " " websitename  ))
+  (print (string (title-case (replace "_" (copy viewname) " ")) " " websitename  ))
 )
 
 ;; @syntax (Dragonfly:css <css-media> <css-location>)
@@ -310,7 +310,7 @@
 				setTimeout(function() {
 					if (load_text)
 						$(id).html(load_text);
-				}, 500);
+				}, 1000);
 				$.ajax({
 					url: "%s",
 					data: "%s",

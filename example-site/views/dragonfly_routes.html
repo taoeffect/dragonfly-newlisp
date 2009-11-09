@@ -230,15 +230,15 @@
 				var req_url = '<%=(web-root "wings" (find "newLISP" SERVER_SOFTWARE))%>';
 				req_url += '/' + $('#wings_id').val();
 				req_url += $('#response_format').val();
-				$('#wings_request').html(req_url);
-				$('#wings_resp').html('loading...');
+				$('#wings_request').text(req_url);
+				$('#wings_resp').text('loading...');
 				$.ajax({
 					url: req_url,
 					success: function (data, status) {
-						$('#wings_resp').html(data);
+						$('#wings_resp').text(data);
 					},
 					error: function (xmlReq, status, error) {
-						$('#wings_resp').html('Error ' + xmlReq.status + '!');
+						$('#wings_resp').text('Error ' + xmlReq.status + '!');
 					}
 				});
 				return false;
@@ -363,8 +363,9 @@
 		<p>
 			Because of these considerations, as well as the complexities of supporting nested resources in a generic fashion, Dragonfly does not encourage this sort of design pattern by supporting it out-of-the-box. However, if you need such behavior, you've got everything you need to <%(link_to "create it" "dragonfly_create_routes")%>. :-)
 		</p>
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_create_routes") %></p>
-		<div class="clear"></div>
+		
+		<% (display-partial "continue") %>
+		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

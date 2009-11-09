@@ -78,8 +78,9 @@ $ newlisp -http -w . -d 8080</pre>
 
 		<h3 class="code">Step 3: That's it!</h3>
 		<p>You're ready to run Dragonfly!</p>
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_routes") %></p>
-		<div class="clear"></div>
+		
+		<% (display-partial "continue") %>
+		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>

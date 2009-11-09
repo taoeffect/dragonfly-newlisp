@@ -4,7 +4,7 @@
 	<li><% (link_to "Welcome" "welcome") %></li>
 	<li>
 		<a href="#" class="menu_toggle">User Guide</a> 
-		<div class="menu clearfix" style="display:none;">
+		<div id="user_guide_menu" class="menu clearfix" style="display:none;">
 			<dl class="L">
 				<dt>Getting started</dt>
 				<dd><% (link_to  "Setting up Dragonfly" "dragonfly_welcome") %></dd>
@@ -14,7 +14,8 @@
 				<dd><% (link_to  "Creating your own routes" "dragonfly_create_routes") %></dd>
 				
 				<dt>Templates</dt>
-				<dd><% (link_to  "Creating templates and views" "dragonfly_views") %></dd>
+				<dd><% (link_to  "Creating templates and views" "dragonfly_templates") %></dd>
+				<dd><% (link_to  "Handling errors using templates" "dragonfly_errors") %></dd>
 				
 				<dt>Plugins</dt>
 				<dd><% (link_to  "Using and creating plugins" "dragonfly_plugins") %></dd>

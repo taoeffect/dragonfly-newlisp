@@ -41,9 +41,9 @@
 		<p>
 			The last transformation listed there is responsible for transforming a request to this URL:
 		</p>
-		<p><span class="code">http://rundragonfly.com/dragonfly_views</span></p>
+		<p><span class="code">http://rundragonfly.com/dragonfly_templates</span></p>
 		<p>Into a request for this file:</p>
-		<p><span class="code">/home/www/rundragonfly.com/views/dragonfly_views.html</span></p>
+		<p><span class="code">/home/www/rundragonfly.com/views/dragonfly_templates.html</span></p>
 		<p>All of the files handled by <span class="code">Route.Static</span> eventually get passed through the function <span class="code">eval-template</span>, which searches for any newLISP code between <span class="code">OPEN_TAG</span> and <span class="code">CLOSE_TAG</span> and evaluates it.</p>
 		<h2>Writing templates</h2>
 		<p>
@@ -107,8 +107,9 @@
 		<p>
 			Used by one of the transformations in <span class="code">Route.Static</span> so that a request to <span class="code">/welcome</span> loads the file <span class="code">/views/welcome.html</span>.
 		</p>
-		<p class="continue"><% (link_to "CONTINUE &raquo;" "dragonfly_plugins") %></p>
-		<div class="clear"></div>
+		
+		<% (display-partial "continue") %>
+		
 		<div class="line-dotted"></div>
 
 		<% (benchmark-result) %>
