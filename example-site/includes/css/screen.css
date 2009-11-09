@@ -127,7 +127,17 @@ body img {
 		margin-top: 10px;
 		background-color: #EEE;
 	}
-
+	
+	#content div#demo-error {
+		border: 1px solid #999;
+		margin: 15px 0px;
+		padding: 15px;
+	}
+	
+	#content div#demo-error h1 {
+		font-size: 16px;
+	}
+	
 	/* Paragraph styles */
 	
 	#content p {

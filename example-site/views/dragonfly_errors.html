@@ -18,12 +18,68 @@
 		</div>
 		
 		<h1>Handling Errors</h1>
-		<p class="extract">blah blah blah</p>
-
 		<p>
-			blahbity blah blah blah
+			What happens when a user visits the following link?
 		</p>
+		<p>
+			<a href="<%=(setf *link* (web-root "bar" (find "newLISP" SERVER_SOFTWARE)))%>"><%=(string "http://" HTTP_HOST *link*)%></a>
+		</p>
+		<p>
+			Go ahead and click it. I can wait.
+		</p>
+		<p>Back already?</p>
+		<p>
+			That was an error 404 page, the page that's displayed when all routes failed to match.
+		</p>
+		<h3>Generating Errors</h3>
+		<p>
+			Dragonfly uses the <span class="code">DF:display-error</span> function to show these pages. You can too! Here's a quick example of how to use it:
+		</p>
+		<pre class="code">(display-error 500)</pre>
+		<p>
+			Pretty simple huh?
+		</p>
+		<h3>The <span class="code" style="font-size:inherit">ERROR_TEMPLATE</span></h3>
+		<p>
+			By default Dragonfly does not show that fancy page you just saw, instead it stores a default (and boring) error template in the symbol <span class="code">DF:ERROR_TEMPLATE</span>, which it will use to display all errors if it can't find an alternative:
+		</p>
+		<div id="demo-error">
+			<%
+				(Response:status 404)
+				(eval-template ERROR_TEMPLATE)
+			    (Response:status 200)
+			%>
+		</div>
+		<p>
+			How do you specify an alternative?
+		</p>
+		<h3>Custom Error Templates</h3>
+		<p>
+			Dragonfly will check inside <span class="code">VIEW_PATHS</span> to see if a view with the error number exists. In other words, a call to <span class="code">(display-error 500)</span> results in a check for:
+		</p>
+		<pre class="code">(file? (Dragonfly:view-path "500"))</pre>
+		<p>
+			If it exists, it will be displayed instead of <span class="code">ERROR_TEMPLATE</span>.
+		</p>
+		<p>
+			Want to see the 500 template this site uses?
+		</p>
+		<p><a href="<%=(web-root "wings/3" (find "newLISP" SERVER_SOFTWARE))%>">I thought you'd never ask.</a></p>
 		
+		<h3>Checking the <span class="code" style="font-size:inherit">dragonfly.log</span></h3>
+		
+		<p>
+			Dragonfly defines an error handler <span class="code">DF:error-handler</span>, that's called whenever an error is generated (for example, by a call to <span class="code">throw-error</span>). You can specify your own handler with a <%(link_to "plugin" "dragonfly_plugins")%>.
+		</p>
+		<p>
+			The default handler makes use of Dragonfly's logging functions to log the stack-trace to the file specified by <span class="code">LOG_FILE_PATH</span> in <b>config.lsp</b>, and then it will call <span class="code">(display-error 500)</span>.
+		</p>
+		<p>
+			If you don't want to publicly show the stack trace in your error 500 template, you don't have to. Just remember to check the log for it. You'll probably also want to setup a <a href="http://en.wikipedia.org/wiki/Cron">cron</a> script roll over the log every now and then to prevent it from getting too large.
+		</p>
+		<p>
+			Dragonfly's logging facilities are defined <b>dragonfly-framework/lib/log.lsp</b>, check <%(link_to "the api" "dragonfly_api")%> for more info.
+		</p>
 		
 		<% (display-partial "continue") %>
 		

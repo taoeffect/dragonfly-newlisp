@@ -305,11 +305,11 @@
 		<div id="%s">&nbsp;</div>
 		<script type="text/javascript">
 			(function fetcher() {
-				var id = '#' + '%s';
+				var div = $('#' + '%s');
 				var load_text = 'loading...';
 				setTimeout(function() {
 					if (load_text)
-						$(id).html(load_text);
+						div.html(load_text);
 				}, 1000);
 				$.ajax({
 					url: "%s",
@@ -318,12 +318,12 @@
 					timeout: 10000,
 					success: function (data, status) {
 						load_text = null;
-						$(id).html(data);
+						div.html(data);
 						setTimeout(fetcher, %d);
 					},
 					error: function (xmlReq, status, error) {
 						load_text = null;
-						$(id).html('error code: ' + xmlReq.status + '<br/>' +
+						div.html('error code: ' + xmlReq.status + '<br/>' +
 					 	           'error message: ' + error + '<br/>' +
 						           'attempting to load: ' + this.url);
 						setTimeout(fetcher, %d);
