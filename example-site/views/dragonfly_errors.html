@@ -41,7 +41,9 @@
 		</p>
 		<h3>The <span class="code" style="font-size:inherit">ERROR_TEMPLATE</span></h3>
 		<p>
-			By default Dragonfly does not show that fancy page you just saw, instead it stores a default (and boring) error template in the symbol <span class="code">DF:ERROR_TEMPLATE</span>, which it will use to display all errors if it can't find an alternative:
+			By default Dragonfly does not show that fancy page you just saw, instead it stores a default (and boring) error template in the symbol <span class="code">DF:ERROR_TEMPLATE</span>, which it will use to display all errors unless it can find an alternative.
+		</p>
+		<p>For example, if this page didn't exist and no alternative 404 page was found, here's what you'd see::
 		</p>
 		<div id="demo-error">
 			<%
