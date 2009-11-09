@@ -323,7 +323,9 @@
 					},
 					error: function (xmlReq, status, error) {
 						load_text = null;
-						$(id).html(status + ' (' +  error + ') loading: ' + this.url);
+						$(id).html('error code: ' + xmlReq.status + '<br/>' +
+					 	           'error message: ' + error + '<br/>' +
+						           'attempting to load: ' + this.url);
 						setTimeout(fetcher, %d);
 					}
 				});
