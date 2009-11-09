@@ -30,7 +30,7 @@
   <div class="dialog">
     <h1>We're sorry, but something went wrong.</h1>
     <p>We've been notified about this issue and we'll take a look at it shortly.</p>
-	<p>Start over <a href="./">here</a> or <a href="javascript:history.back();">go back</a>.</p>
+	<p>Start over <a href="<%=(web-root)%>">here</a> or <a href="javascript:history.back();">go back</a>.</p>
 	<div class="backtrace">
 		<%=(join (parse (last (last-error)) "\n") "<br/>")%>
 	</div>
