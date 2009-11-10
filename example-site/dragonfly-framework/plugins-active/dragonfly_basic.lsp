@@ -409,15 +409,17 @@
 			
 			(dolist (idx item-index (= max-items $idx))
 				(set 'item (sxml idx))
+				
+				(set 'vectors (ref-all '(url *) item match))
+				(set 'imageurl (map last (map 'item vectors)))
+				
 				(println
 					"<span class='rssFeedTitle'><a href='" (lookup 'link item) "' rel='nofollow'>"(lookup 'title item) "</a></span><br/>"
 					"<span class='rssFeedUpdated'>" (lookup 'pubDate item) "</span>&nbsp;<span class='rssFeedAuthor'>" (lookup (sym "dc:creator") item) "</span><br/><br/>"
 					(lookup 'description item) "<br/>"
-					
-					; TODO: Problems in parsing media:content - ask the forum
-					; (lookup (sym "media:content") item) "<br/>"
-					;"<span class='rssFeedCategory'>Categories: " (lookup '(category) item) "</span><br/>"
-					
+					;TODO: display image
+					;"<span class='rssImage'><img src='" imageurl "' /></span>"
+					;"<span class='rssFeedCategory'>Categories: " (lookup '(category) item) "</span><br/>"					
 					"<br/><br/>"
 				)
 			)
