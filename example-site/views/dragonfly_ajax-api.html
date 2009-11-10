@@ -1,8 +1,10 @@
 <% 
+(activate-plugin "dragonfly_api")
+
 (let (path ($POST "path"))
 	; security check! make sure they ain't asking
 	; for something they shouldn't be asking for!
-	(if (and (find "../api-docs/" path) (ends-with path ".html"))
+	(if (and (find dragonfly-api-directory path) (ends-with path ".html"))
 		(include path)
 		(die "bad path: " path)
 	)

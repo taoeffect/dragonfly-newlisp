@@ -24,13 +24,10 @@
 ;; just like newLISP itself.</p>
 
 (context 'Dragonfly)
-; TODO: Why are the API docs outside the example site or dragonfly-framework folder?
-; Because on some hosts it'll not be possible to write outside a public folder
-; Example:
-; example-site sits in /public
-; api-docs has to sit in / but the root is not writable
-; 
-(define (api-browser (path "../api-docs/index.html"))
+
+(set 'dragonfly-api-directory "dragonfly-api")
+
+(define (api-browser)
 	(print (format [text]
 		<div id="api-browser">&nbsp</div>
 		<script type="text/javascript">
@@ -44,7 +41,7 @@
 							{
 								var url = this.href.split('/').pop();
 								var parts = url.split('#');
-								api_browse('../api-docs/'+parts[0],
+								api_browse('%s/'+parts[0],
 									parts.length == 2 ? parts[1] : null);
 								return false;
 							}
@@ -53,9 +50,9 @@
 							$.scrollTo("#api-browser a[name='"+anchor+"']", 400);
 					}
 				);
-			})("%s");
+			})("%s/index.html");
 		</script>
-		[/text] (web-root "dragonfly_ajax-api" true) path)
+		[/text] (web-root "dragonfly_ajax-api" true) dragonfly-api-directory dragonfly-api-directory)
 	)
 )
 
