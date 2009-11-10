@@ -24,7 +24,12 @@
 ;; just like newLISP itself.</p>
 
 (context 'Dragonfly)
-
+; TODO: Why are the API docs outside the example site or dragonfly-framework folder?
+; Because on some hosts it'll not be possible to write outside a public folder
+; Example:
+; example-site sits in /public
+; api-docs has to sit in / but the root is not writable
+; 
 (define (api-browser (path "../api-docs/index.html"))
 	(print (format [text]
 		<div id="api-browser">&nbsp</div>
