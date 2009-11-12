@@ -57,7 +57,7 @@
 	(set 'microtime-end (time-of-day))
 	(set 'execution-time-milliseconds (- microtime-end microtime-start))
 	(set 'execution-time-seconds (div execution-time-milliseconds 1000))
-	(println "<div id='dragonfly_benchmark'>Rendered in "execution-time-milliseconds" milliseconds. Used "mem_total_usage" KB of memory.<br/><div id='dragonfly_logo'><a href='http://code.google.com/p/dragonfly-newlisp/'>&mdash;()o Dragonfly <span class='dragonfly_uppercase'>web framework "DRAGONFLY_VERSION"</span></a></div></div>")
+	(println "<div id='dragonfly_benchmark'>Rendered in "execution-time-milliseconds" milliseconds. Used "mem_total_usage" KB of memory, "mem_cells_kilobytes" KB for Lisp Cells.<br/><div id='dragonfly_logo'><a href='http://code.google.com/p/dragonfly-newlisp/'>&mdash;()o Dragonfly <span class='dragonfly_uppercase'>web framework "DRAGONFLY_VERSION"</span></a></div></div>")
 	
 )
 
