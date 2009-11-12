@@ -102,14 +102,14 @@
 		<li>Memory used by Lisp Cells: "mem_cells_kilobytes" KB</li>
 		<li>Maximum number of Lisp cells constant: "(sys-info 1)"</li>
 		<li>Maximum memory used by Lisp cells constant: "mem_cells-constant_megabytes" MB</li>
-		<li>Number of symbols (32 bytes per symbol): "(sys-info 2)"</li>
+		<li>Number of symbols (28 bytes per symbol): "(sys-info 2)"</li>
 		<li>Memory used by symbols: "mem_symbols_kilobytes" KB</li>
 		<li>Evaluation/recursion level: "(sys-info 3)"</li>
 		<li>Environment stack level: "(sys-info 4)"</li>
 		<li>Maximum call stack constant: "(sys-info 5)"</li>
-		<li>Pid of running newLISP process: "(sys-info 6)"</li>
-		<li>Version number as an integer constant: "(sys-info 7)"</li>
-		<li>Operating system constant: "(sys-info 8)"</li>
+		<li>Pid of running newLISP process: "(sys-info 7)"</li>
+		<li>Version number as an integer constant: "(sys-info -2)"</li>
+		<li>Operating system constant: "(sys-info -1)"</li>
 		<li>Used symbols in Dragonfly: <div style=\"width: 474px;\">"(symbols 'Dragonfly)"</div></li>
 		<li>Last system error: "(sys-error)"</li>
 	</ul>
