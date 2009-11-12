@@ -17,6 +17,9 @@
 			<p><% (title "| Dragonfly web framework") %><p>
 		</div>
 		
+		; TODO for weekend
+		; Update this tutorial
+		; 
 		<h1>Using newLISP Database</h1>
 		<% (DF:activate-plugin "nldb") %>
 		<% (DF:activate-plugin "dragonfly_nldb") %>
@@ -30,7 +33,9 @@
 		%>
 		<% (create-table "blog.nldb" 'entries (list "ID" "Headline" "Text" "Author")) %>
 		<% (table_open (nldb:list-columns entries)) %>
-		<% (set 'query (nldb:select-rows 'entries true true)) %>
+		<%
+		(set 'query (nldb:select-rows 'entries true true))
+		%>
 		<% (map Dragonfly:table_data query) %>
 		<% (table_close) %>
 		<br/><br/>
