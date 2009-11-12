@@ -290,7 +290,7 @@
 (new Route 'Route.Static) (context Route.Static)
 
 (define (matches?)
-	(set 'chunks (parse QUERY_STRING "?"))
+	(set 'chunks (parse QUERY_STRING "\?&" 0))
 	(if (empty? chunks)
 		(push DF:DEFAULT_VIEW chunks))
 	(set 'path (set 'DF:_ (first chunks)))
