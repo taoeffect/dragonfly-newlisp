@@ -12,7 +12,7 @@
 (command-event (fn (s , request)
 	(regex NEWLISP_REDIRECTION_EXTRACT_PATH s 0x10000)
 	(set 'request $1)
-	(if (and request (not (file? request)))
+	(if (and request (or (not (file? request)) (directory? request)))
 		(replace NEWLISP_REDIRECTION_REWRITE s
 			(string $1 " /?" $2 (if $3 "&" "")) 0x10000
 		)
