@@ -26,7 +26,7 @@ the 'example-site' directory, or whatever contains your
 	
 Or, if you're on Windows:
 
-	newlisp "dragonfly-framework/newlisp-redirection.lsp" -c -http -d 8080 -w .
+	newlisp dragonfly-framework/newlisp-redirection.lsp -http -d 8080 -w .
 
 +=================+
  APACHE AS SERVER 

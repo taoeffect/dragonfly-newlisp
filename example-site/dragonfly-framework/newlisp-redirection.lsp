@@ -9,7 +9,7 @@
 (set 'NEWLISP_REDIRECTION_EXTRACT_PATH (regex-comp {\w+\s+/([^\s]+)}))
 (set 'NEWLISP_REDIRECTION_REWRITE (regex-comp {^(\w+)\s+/([^\?]+)(\?)?}))
 
-(define (command-event-handler s , request)
+(command-event (fn (s , request)
 	(regex NEWLISP_REDIRECTION_EXTRACT_PATH s 0x10000)
 	(set 'request $1)
 	(if (and request (not (file? request)))
@@ -18,6 +18,4 @@
 		)
 	)
 	s
-)
-
-(command-event command-event-handler)
+))
