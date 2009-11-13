@@ -1,4 +1,11 @@
 #!/bin/bash
 
+NEWLISP_REDIRECTION="./dragonfly-framework/newlisp-redirection.lsp"
+
+if [ ! -f $NEWLISP_REDIRECTION ] ; then
+	echo "ERROR: cannot find file: $NEWLISP_REDIRECTION"
+	exit 1
+fi
+
 echo "If all goes well visit http://localhost:8080 in your browser"
-newlisp -http -d 8080 -w .
+newlisp "$NEWLISP_REDIRECTION" -c -http -d 8080 -w . $*

@@ -73,7 +73,7 @@
   (set 'mem_cells-constant_kilobytes (/ mem_cells-constant_bytes 1024))
   (set 'mem_cells-constant_megabytes (/ mem_cells-constant_kilobytes 1024))
 
-  (set 'mem_symbols_bytes (* (sys-info 2) 32))
+  (set 'mem_symbols_bytes (* (sys-info 2) 28))
   (set 'mem_symbols_kilobytes (/ mem_symbols_bytes 1024))
 
   (set 'mem_total_usage (+ mem_cells_kilobytes mem_symbols_kilobytes))
@@ -81,17 +81,16 @@
   (println "
 	<div id='dragonfly_debug'>
 	<h1>Dragonfly DEBUG information</h1><br/>
-	<h2>HOST</h2>" HTTP_HOST "
-	<h2>DOCUMENT ROOT</h2>"DOCUMENT_ROOT"
-	<h2>DRAGONFLY ROOT</h2>"DRAGONFLY_ROOT"
-	<h2>Windows Programfiles</h2>"PROGRAMFILES"
-	<h2>QUERY</h2>"QUERY_STRING"
+	<h2>HTTP_HOST</h2>"HTTP_HOST "
+	<h2>DOCUMENT_ROOT</h2>"DOCUMENT_ROOT"
+	<h2>DRAGONFLY_ROOT</h2>"DRAGONFLY_ROOT"
+	<h2>QUERY_STRING</h2>"QUERY_STRING"
 	<h2>REQUEST METHOD</h2>"REQUEST_METHOD"
-	<h2>DEFAULT VIEW</h2>"DEFAULT_VIEW"
-	<h2>CURRENT VIEW</h2>"viewname"
-	<h2>USER-AGENT</h2>"HTTP_USER_AGENT"
-	<h2>Proxy</h2>"HTTP_PROXY"
-	<h2>SERVER</h2>"SERVER_SOFTWARE"
+	<h2>DEFAULT_VIEW</h2>"DEFAULT_VIEW"
+	<h2>DF:viewname</h2>"viewname"
+	<h2>HTTP_USER_AGENT</h2>"HTTP_USER_AGENT"
+	<h2>HTTP_PROXY</h2>"HTTP_PROXY"
+	<h2>SERVER_SOFTWARE</h2>"SERVER_SOFTWARE"
 	<h2>$GET</h2>"($GET)"
 	<h2>$POST</h2>"($POST)"
 	<h2>$SERVER</h2>"(string {<table>} (join (map (fn (x) (string {<tr><td>} (x 0) {</td><td>} (x 1) "</td></tr>")) ($SERVER))) "</table>")"
@@ -250,15 +249,8 @@
 ;; @param <view> a string containing the view
 ;; <p>Writes a internal link</p>
 ;; 
-(define (link_to link-name view , link-url)
-  	; if Dragonfly runs on newLISP SERVER_SOFTWARE, we cannot
-  	; use .htaccess, so we've to write the "?" into the url
-    ; else we miss it
-	(if (find "newLISP" SERVER_SOFTWARE)
-		(set 'link-url (string "?" view))
-		(set 'link-url (string "/" view))
-	)
-  	(print "<a href=\"" (web-root link-url) "\">" link-name "</a>")
+(define (link_to link-name view)
+  	(print {<a href="} (web-root view) {">} link-name "</a>")
 )
 
 ;; @syntax (Dragonfly:link_to <link_name> <url>)
@@ -291,11 +283,6 @@
 ;; @param <int-timeout> an integer containing the number of microseconds after recalling the request-url
 ;; <p>Writes a simple AJAX-updater, e.g. for displaying the time on a website.</p>
 (define (ajax-updater html-elementid request-url str-params timeout)
-	; check for newLISP as SERVER_SOFTWARE, then we prefix a ? before request-url because there's no working .htaccess
-	(when (find "newLISP" SERVER_SOFTWARE)
-		(if (starts-with request-url "/") (pop request-url))
-		(push "/?" request-url)
-	)
 	(set 'request-url (web-root request-url))
 	; 'fetcher' is prevented from entering the global scope because
 	; of the surrounding parenthesis. Meaning, this code won't conflict if

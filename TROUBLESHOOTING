@@ -22,7 +22,11 @@ Make sure you're running the newlisp command from within
 the 'example-site' directory, or whatever contains your
 'index.cgi' file. This is the command to run:
 
-	newlisp -w . -http -d 8080
+	./newlispServer
+	
+Or, if you're on Windows:
+
+	newlisp "dragonfly-framework/newlisp-redirection.lsp" -c -http -d 8080 -w .
 
 +=================+
  APACHE AS SERVER 

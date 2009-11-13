@@ -2,12 +2,17 @@ Congratulations on choosing Dragonfly!
 
 'cd' into the example-site folder and run this command:
 
-	newlisp -d 8080 -w . -http
+	./newlispServer
+
+If you're on Windows open that file and run the command that's
+inside of it manually instead, i.e.:
+
+	newlisp "dragonfly-framework/newlisp-redirection.lsp" -c -http -d 8080 -w .
 
 Open Your browser and visit http://localhost:8080/ - have FUN!
 
 For installation information see INSTALL or after running
 the above command visit:
 
-	http://localhost:8080/?dragonfly_welcome
+	http://localhost:8080/dragonfly_welcome
 

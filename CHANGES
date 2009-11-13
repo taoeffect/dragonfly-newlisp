@@ -1,3 +1,8 @@
+Version 0.51
+
+  * added redirection script when running the built-in newLISP server
+  * changed recommendations to run ./newlispServer
+
 Version 0.50
 
   * massive rewrite. too many changes to list, if you want to see them look through the mercurial change log:

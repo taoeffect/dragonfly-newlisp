@@ -16,10 +16,10 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;
 ;;
-;; Start this application on your localhost OS X
+;; To test this locally:
 ;; 
-;; newlisp -http -d PORT -w /Users/USERNAME/Sites/DIRECTORY &
-;; e.g. newlisp -http -d 8080 -w /Users/marc/Sites/dragonfly-web-framework &
+;; $ cd /path/to/example-site
+;; $ ./newlispServer
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

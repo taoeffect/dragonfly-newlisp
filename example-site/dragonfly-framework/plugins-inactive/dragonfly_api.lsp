@@ -52,7 +52,7 @@
 				);
 			})("%s/index.html");
 		</script>
-		[/text] (web-root "dragonfly_ajax-api" true) dragonfly-api-directory dragonfly-api-directory)
+		[/text] (web-root "dragonfly_ajax-api") dragonfly-api-directory dragonfly-api-directory)
 	)
 )
 

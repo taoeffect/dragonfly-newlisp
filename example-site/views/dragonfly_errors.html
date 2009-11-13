@@ -22,7 +22,7 @@
 			What happens when a user visits the following link?
 		</p>
 		<p>
-			<a href="<%=(setf *link* (web-root "bar" (find "newLISP" SERVER_SOFTWARE)))%>"><%=(string "http://" HTTP_HOST *link*)%></a>
+			<a href="<%=(web-root "bar")%>"><%=(string "http://" HTTP_HOST (web-root "bar"))%></a>
 		</p>
 		<p>
 			Go ahead and click it. I can wait.
@@ -63,7 +63,7 @@
 		<p>
 			If it exists, it will be displayed instead of <span class="code">ERROR_TEMPLATE</span>.
 		</p>
-		<p>To see this site's 500 page, click <a href="<%=(web-root "wings/3" (find "newLISP" SERVER_SOFTWARE))%>">here</a>.</p>
+		<p>To see this site's 500 page, click <a href="<%=(web-root "wings/3")%>">here</a>.</p>
 		
 		<h3>Checking the <span class="code" style="font-size:inherit">dragonfly.log</span></h3>
 		

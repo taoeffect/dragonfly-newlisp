@@ -227,7 +227,7 @@
 		<script type="text/javascript" charset="utf-8">
 			var form = $('#wings_form');
 			form.find("input[type='button']").click(function() {
-				var req_url = '<%=(web-root "wings" (find "newLISP" SERVER_SOFTWARE))%>';
+				var req_url = '<%=(web-root "wings")%>';
 				req_url += '/' + $('#wings_id').val();
 				req_url += $('#response_format').val();
 				$('#wings_request').text(req_url);
