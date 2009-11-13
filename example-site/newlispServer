@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 NEWLISP_REDIRECTION="./dragonfly-framework/newlisp-redirection.lsp"
 
