@@ -24,9 +24,7 @@ the 'example-site' directory, or whatever contains your
 
 	./newlispServer
 	
-Or, if you're on Windows:
-
-	newlisp dragonfly-framework/newlisp-redirection.lsp -http -d 8080 -w .
+On Windows double-click on 'newlispServerWin' instead.
 
 +=================+
  APACHE AS SERVER 

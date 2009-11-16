@@ -123,9 +123,8 @@ body img {
 	
 	#content div.resultbox {
 		padding:10px;
-		border:1px solid #DDD;
+		border:1px solid #CCC;
 		margin-top: 10px;
-		background-color: #EEE;
 	}
 	
 	#content div#demo-error {
