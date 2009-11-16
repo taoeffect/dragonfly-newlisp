@@ -122,7 +122,7 @@
 ;; <p>Writes a title including the current navigation entry.</p>
 ;; 
 (define (title websitename)
-  (print (string (title-case (replace "_" (copy viewname) " ")) " " websitename  ))
+  (println (string (title-case (replace "_" (copy viewname) " ")) " " websitename  ))
 )
 
 ;; @syntax (Dragonfly:css <css-media> <css-location>)
@@ -131,7 +131,7 @@
 ;; <p>Writes a standard stylesheet HTML tag.</p>
 ;; 
 (define (css css-media css-location)
-  (print "<link rel='stylesheet' type='text/css' media='"css-media"' href='"css-location"' />")
+  (println "<link rel='stylesheet' type='text/css' media='"css-media"' href='"css-location"' />")
 )
 
 ;; @syntax (Dragonfly:meta <meta-name> <meta-content>)
@@ -140,7 +140,7 @@
 ;; <p>Writes a standard meta HTML tag.</p>
 ;; 
 (define (meta meta-name meta-content)
-  (print "<meta name='"meta-name"' content='"meta-content"' />")
+  (println "<meta name='"meta-name"' content='"meta-content"' />")
 )
 
 ;; @syntax (Dragonfly:rss <rss-title> <rss-location>)
@@ -149,7 +149,7 @@
 ;; <p>Writes a standard RSS HTML tag.</p>
 ;; 
 (define (rss rss-title rss-location)
-  (print "<link rel='alternate' type='application/rss+xml' title='"rss-title"' href='"rss-location"' />")
+  (println "<link rel='alternate' type='application/rss+xml' title='"rss-title"' href='"rss-location"' />")
 )
 
 ;; @syntax (Dragonfly:script <script-location>)
@@ -157,7 +157,7 @@
 ;; <p>Writes a standard script HTML tag.</p>
 ;; 
 (define (script script-location)
-  (print "<script type='text/javascript' src='"script-location"'></script>")
+  (println "<script type='text/javascript' src='"script-location"'></script>")
 )
 
 ;; @syntax (Dragonfly:autoload-css css-media css-screen css-iphone)
@@ -236,7 +236,7 @@
 ;; <p>Writes a standard HTML image.</p>
 ;; 
 (define (image image-name image-url, image-options)
-  (print "<img src='"image-url"' alt='"image-name"' title='"image-name"' border='0' "image-options" />")
+  (println "<img src='"image-url"' alt='"image-name"' title='"image-name"' border='0' "image-options" />")
 )
 
 

@@ -77,7 +77,7 @@
 (define (parse-query query)
 	(when (starts-with query "?") (pop query))
 	(push "&" query)
-	(find-all REGEX_QUERY query (list $1 (url-decode $2)) 0x10000)
+	(find-all REGEX_QUERY query (list (url-decode $1) (url-decode $2)) 0x10000)
 )
 
 (define (regex-captcha regex-str str (options 0) (captcha 1))
@@ -115,13 +115,24 @@
 	)
 )
 
+(define (add-keyvalue-to-ctx key value ctx)
+	; support PHP-like multi-params
+	(if (ends-with key "[]")
+		(if (list? (ctx key))
+			(push value (ctx key) -1)
+			(ctx key (list value))
+		)
+		(ctx key value)
+	)
+)
+
 ;===============================================================================
 ; !$GET
 ;===============================================================================
 
 (when QUERY_STRING
 	(dolist (pair (parse-query QUERY_STRING))
-		($GET (first pair) (last pair))
+		(add-keyvalue-to-ctx (first pair) (last pair) $GET)
 	)
 )
 
@@ -137,7 +148,7 @@
 		(handle-multipart-data)
 		(and (read-buffer (device) temp MAX_POST_LENGTH) temp)
 		(dolist (pair (parse-query temp))
-			($POST (first pair) (last pair))
+			(add-keyvalue-to-ctx (first pair) (last pair) $POST)
 		)
 	)
 ;)

@@ -4,10 +4,7 @@ Congratulations on choosing Dragonfly!
 
 	./newlispServer
 
-If you're on Windows open that file and run the command that's
-inside of it manually instead, i.e.:
-
-	newlisp dragonfly-framework/newlisp-redirection.lsp -http -d 8080 -w .
+On Windows double-click on 'newlispServerWin' instead.
 
 Open Your browser and visit http://localhost:8080/ - have FUN!
 

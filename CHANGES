@@ -2,6 +2,10 @@ Version 0.51
 
   * added redirection script when running the built-in newLISP server
   * changed recommendations to run ./newlispServer
+  * added newlispServerWin.bat file provided by m35
+  * support for PHP-like multi-params by appending [] to the var name
+  * added documentation for $GET/$POST/$FILES and multiparams to guide
+  * updated the RSS feed on the example-site for 0.50
 
 Version 0.50
 
