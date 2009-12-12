@@ -13,13 +13,11 @@
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
+(new Class 'Resource) ; nothing so far, but inherit for future compatibility
 (new Class 'Route)
-(context 'Route)
+
+(context Route)
 (define (matches?) nil)
 (define (run) nil)
-(context 'MAIN)
 
-(new Class 'Resource)
-
-; nothing so far.. but it's recommended to "inherit" from it anyway
-; for future possibilities...
+(context MAIN)

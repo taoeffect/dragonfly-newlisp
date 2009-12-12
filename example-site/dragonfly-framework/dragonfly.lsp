@@ -287,7 +287,10 @@
 ; allow switching contexts in a function call. If it does one day, route defintions
 ; will be specified through a 'define-route' macro.
 (context MAIN)
-(new Route 'Route.Static) (context Route.Static)
+(new Route 'Route.Static) 
+(new Route 'Route.Resource)
+
+(context Route.Static)
 
 (define (matches?)
 	(set 'chunks (parse QUERY_STRING {[\?&]} 0))
@@ -311,8 +314,7 @@
 	)
 )
 
-(context MAIN)
-(new Route 'Route.Resource) (context Route.Resource)
+(context Route.Resource)
 
 (define (matches?)
 	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
