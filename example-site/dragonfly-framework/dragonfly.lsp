@@ -107,7 +107,7 @@
 
 ; These are some of the few constants that we'll have outside of env
 (constant 'DRAGONFLY_MAJOR 0)
-(constant 'DRAGONFLY_MINOR 51)
+(constant 'DRAGONFLY_MINOR 60)
 (constant 'DRAGONFLY_VERSION (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
 ;; @syntax STDOUT
