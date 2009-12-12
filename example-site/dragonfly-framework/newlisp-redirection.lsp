@@ -9,6 +9,11 @@
 (set 'NEWLISP_REDIRECTION_EXTRACT_PATH (regex-comp {\w+\s+/([^\s]+)}))
 (set 'NEWLISP_REDIRECTION_REWRITE (regex-comp {^(\w+)\s+/([^\?]+)(\?)?}))
 
+; on windows newlisp will complain if this directory doesn't exist
+(when (and (= (ostype) "Win32") (not (directory? "/tmp")))
+	(make-dir "/tmp")
+)
+
 (command-event (fn (s , request)
 	(regex NEWLISP_REDIRECTION_EXTRACT_PATH s 0x10000)
 	(set 'request $1)
