@@ -10,7 +10,7 @@
 (set 'NEWLISP_REDIRECTION_REWRITE (regex-comp {^(\w+)\s+/([^\?]+)(\?)?}))
 
 ; on windows newlisp will complain if this directory doesn't exist
-(when (and (= (ostype) "Win32") (not (directory? "/tmp")))
+(when (and (= ostype "Win32") (not (directory? "/tmp")))
 	(make-dir "/tmp")
 )
 
