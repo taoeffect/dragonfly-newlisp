@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>database_sqlite3.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>database_sqlite3.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;Sqlite3</h2><p>SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.</p>
+<b>Version: </b>1.1<br/>
+<b>Author: </b>Greg Slepak <br/>
+<b>Location: </b><a href="http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt">http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt</a><br/>
+ <h3>Features not found in newLISP's sqlite3.lsp:</h3>
+ <ul>
+ <li>Multiple connections</li>
+ <li>Multiple active SQL statements</li>
+ <li>Supports reuse of SQL statements through parameter rebinding</li>
+ <li>Supports BLOB data-type as per <tt>DF.DB</tt> and <tt>DF.BLOB</tt> specification</li>
+ <li>Conforms to generic <tt>DF.DB</tt> interface</li>
+ <li>Grabs integers directly through 64-bit function</li>
+ <li>Can go through results row-by-row</li>
+ <li>Allows specification of custom sqlite3 library page with <tt>SQLITE3_LIBRARY_PATH</tt></li>
+ <li>Uses the latest Sqlite3 library functions if they are available</li>
+ <li>Better error handling</li>
+ </ul>
+ <h3>Requirements</h3>
+ See module <a href="http://www.taoeffect.com/newlisp/database.lsp.html">DF.DB</a> for requirements.
+ <h3>Version history</h3>
+ <b>1.1</b> &bull; support for <tt>DF.BLOB</tt><br/>
+ <b>1.0</b> &bull; initial release
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_Sqlite3"></a><h3><font color=#CC0000>Sqlite3</font></h3>
+<b>syntax: Sqlite3</b><br/>
+ <p>Represents a connection to an SQLite3 database. Create one like so:</p>
+ <pre>(instantiate Sqlite3 [<em>str-filepath</em> [<em>flags</em> [<em>vfs-module</em>]]])</pre>
+ <p>If <em>str-filepath</em> is specified a connected instance will be returned or <tt>nil</tt>
+ upon failure to connect. If they are not specified then an unconnected instance
+ will be returned.</p>
+ <p><b>see:</b> documentation for <tt>Sqlite3:open</tt> for an explanation of the parameters.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Sqlite3_open"></a><h3><font color=#CC0000>Sqlite3:open</font></h3>
+<b>syntax: (<font color=#CC0000>Sqlite3:open</font> <em>str-filepath</em> [<em>flags</em> [<em>vfs-module</em>]])</b><br/>
+ <p><em>str-filepath</em> specifies the path to the sqlite3 database, but it can also be
+ ":memory:" to indicate an in-memory database.</p>
+ <p><em>flags</em> and <em>vfs-module</em> are optional parameters as defined in the sqlite
+ reference <a href="http://www.sqlite.org/c3ref/open.html">documentation</a> for
+ <tt>sqlite3_open_v2</tt>. Your installation of sqlite3 may need to be updated for this to be available.</p>
+ <p>For return values see <tt>DF.DB:open</tt>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="Sqlite3_set-timeout"></a><h3><font color=#CC0000>Sqlite3:set-timeout</font></h3>
+<b>syntax: (<font color=#CC0000>Sqlite3:set-timeout</font> <em>int-ms</em>)</b><br/>
+ <p>Sets the sqlite3's busy timeout for this connection in milliseconds.</p>
+ <p>By default the timeout is set to 30 seconds.</p>
+<p><b>return: </b>nil or non-nil on success</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

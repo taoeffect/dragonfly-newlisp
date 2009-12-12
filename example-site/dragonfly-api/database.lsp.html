@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>database.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>database.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;DF.DB, DF.SQL, DF.BLOB</h2><p>Generic database access interface for <a href="http://www.rundragonfly.com">Dragonfly</a> using Objective newLISP</p>
+<b>Version: </b>1.1<br/>
+<b>Author: </b>Greg Slepak<br/>
+<b>Location: </b><a href="http://www.taoeffect.com/newlisp/database.lsp.txt">http://www.taoeffect.com/newlisp/database.lsp.txt</a><br/>
+ <p>The purpose of this module is to standardize the interface to
+ access databases. This will allow you, for the most part, to write your code once
+ and easily switch the type of database that you're using.</p>
+ <p>To accomplish this, the interface introduces three Objective newLISP classes:
+ <tt>DF.DB</tt>, <tt>DF.SQL</tt>, and <tt>DF.BLOB</tt>.</p>
+ <h3>DF.DB</h3>
+ A <tt>DF.DB</tt> object represents a database connection. Using it you connect to
+ the database and execute SQL queries.
+ <h3>DF.SQL</h3>
+ A <tt>DF.SQL</tt> object is a wrapper around an SQL statement, is retrieved through one of
+ two functions: <tt>DF.DB:execute-query</tt> and the lower-level <tt>DF.DB:preprare-sql</tt>.
+ <p>It is used to retrieve rows from the result set of a query one-by-one.</p>
+ <h3>DF.BLOB</h3>
+ <tt>DF.BLOB</tt> is used to insert and retrieve (possibly large) binary data into databases.
+ It is needed for two reasons:
+ <ol>
+ <li>newLISP uses strings to buffer and store binary data, and that's already used to store text.</li>
+ <li>BLOBs can be very large, so by storing them in a context we avoid excessive copying.</li>
+ </ol>
+ <p>Unlike the other two classes, <tt>DF.BLOB</tt> provides a basic working implementation for <tt>DF.SQL</tt> subclasses
+ to use. You may of course subclass it if your database requires additional functionality. It requires
+ special usage considerations, see its documentation below.</p>
+ <h3>Example</h3>
+ <pre>
+ (push-autorelease-pool) ; we<tt>re going to be using DF.BLOB</tt>s.
+ (setf db (instantiate Sqlite3 ":memory:"))
+ (if-not db (throw-error "couldn't open db"))
+ (db:execute-update "CREATE TABLE fish (id INTEGER PRIMARY KEY, name TEXT, weight REAL, blah BLOB)")
+ (db:execute-update "INSERT INTO fish (name,weight) VALUES (?,?)" '("flipper" 234.123))
+ (db:execute-update "INSERT INTO fish (name,weight) VALUES (?1,?2)" '(("?1" "catfish") ("?2" 100.3)))
+ (db:execute-update "INSERT INTO fish (blah) VALUES (?)" (list (DF.BLOB (dup "\000" 10))))
+ (db:execute-update "INSERT INTO fish (blah) VALUES (:cat)" (list (list ":cat" (DF.BLOB (dup "\000" 10)))))
+ (setf sql (db:execute-query "SELECT * FROM fish"))
+ (do-while (list? row)
+     (push-autorelease-pool) ; "in case" we end up fetching a lot of large blobs
+     (setf row (sql:next-row))
+     (println "row: " row)
+     (pop-autorelease-pool)
+ )
+ (deallocate sql)
+ (deallocate db)
+ (pop-autorelease-pool) ; deallocate the blobs we created</pre>
+ <h3>Requirements</h3>
+ <ul>
+ <li>Dragonfly newLISP Web Framework (see note below)</li>
+ <li>newLISP 10.1.9 or higher is <b>strongly recommended</b>, but any version after 10.1 should work.</li>
+ <li>Objective newLISP 1.0</li>
+ <li>Libraries for a supported database</li>
+ </ul><br/>
+ <a href="http://www.rundragonfly.com">Dragonfly</a> is only required for its logging functions. You can easily implement your own
+ versions of <tt>DF:log-err</tt>, <tt>DF:log-debug</tt>, and the other functions found in Dragonfly&apos;s <tt>log.lsp</tt>.
+ <h3>Version history</h3>
+ <b>1.1</b> &bull; <tt>DF.BLOB</tt> added<br/>
+ <b>1.0</b> &bull; initial release
+
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_DF.DB"></a><h3><font color=#CC0000>DF.DB</font></h3>
+<b>syntax: DF.DB</b><br/>
+ <p>Represents a database connection. You create a DF.DB object
+ like so:</p>
+ <pre>(instantiate <em>DF.DB-Subclass</em> [<em>connection</em> [<em>args...</em>]])</pre>
+ <p>What type should be represented by <em>connection</em> is undefined, but
+ it&apos;s recommended that subclasses use strings. If <em>connection</em> is specified
+ the a connected instance must be returned (or <tt>nil</tt> upon failure).</p>
+ <p>The possibly optional <em>args...</em> are specific to which subclass you're using. See its
+ corresponding documentation.</p>
+ <p>Instances must have code in their <tt>dealloc</tt> method so that they can properly cleanup their resources
+ (e.g. shutdown connection) if deallocated with <tt>deallocate</tt>.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_open"></a><h3><font color=#CC0000>DF.DB:open</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:open</font> <em>connection</em>)</b><br/>
+ <p>Returns <tt>true</tt> if the connection was opened successfully, <tt>nil</tt>
+ if there was an error opening the connection, or throws an exception
+ if already connected.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_close"></a><h3><font color=#CC0000>DF.DB:close</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:close</font>)</b><br/>
+ <p>Returns <tt>true</tt> if the connection was closed successfully or was
+ already closed, or <tt>nil</tt> if there was an error closing the connection.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_prepare-sql"></a><h3><font color=#CC0000>DF.DB:prepare-sql</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:prepare-sql</font> <em>str-sql</em>)</b><br/>
+<b>parameter: </b><em>str-sql</em> - A single SQL statement. Does not need to end in ';'<br/>
+ <p>Returns a <tt>DF.SQL</tt> object upon success, <tt>nil</tt> on failure, or throws
+ an exception if not connected.</p>
+ <p><b>important:</b> If your SQL statement contains placeholders (to be
+ bound later using <tt>DF.SQL:bind-params</tt>) you may not mix and match placeholder styles!
+ Pick one placeholder style and stick with it for the entire statement.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_execute-update"></a><h3><font color=#CC0000>DF.DB:execute-update</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:execute-update</font> <em>str-sql</em> [<em>list-params</em>])</b><br/>
+<b>parameter: </b><em>str-sql</em> - A single SQL statement. Does not need to end in ';'<br/>
+<b>parameter: </b><em>list-params</em> - A list of parameters to bind to a parameterized query<br/>
+ <p>Same as <tt>DF.DB:execute-query</tt> but returns <tt>true</tt> instead of a <tt>DF.SQL</tt> object upon success.
+ Useful for SQL such as "UPDATE" and "INSERT".</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_execute-query"></a><h3><font color=#CC0000>DF.DB:execute-query</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:execute-query</font> <em>str-sql</em> [<em>list-params</em>])</b><br/>
+<b>parameter: </b><em>str-sql</em> - A single SQL statement. Does not need to end in ';'<br/>
+<b>parameter: </b><em>list-params</em> - A list of parameters to bind to a parameterized query<br/>
+ <p>A short-hand for <tt>DF.DB:prepare-sql</tt> and <tt>DF.SQL:bind-params</tt>. Returns
+ a <tt>DF.SQL</tt> object upon success, <tt>nil</tt> on failure, or throws an exception if
+ not connected.</p>
+ <p><b>see:</b> documentation for <tt>DF.SQL:bind-params</tt> for more info on <em>list-params</em>.
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_rows-for-query"></a><h3><font color=#CC0000>DF.DB:rows-for-query</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:rows-for-query</font> <em>str-sql</em> [<em>list-params</em>])</b><br/>
+ <p>Same as <tt>DF.DB:execute-query</tt> but retrieves all of the rows and returns them as a list of results.</p>
+ <p><b>important:</b> If any columns contain BLOB types, you <b><i>must</i></b> have
+ an autorelease pool allocated prior to calling this function!</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_rowid"></a><h3><font color=#CC0000>DF.DB:rowid</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:rowid</font>)</b><br/>
+ <p>Returns the row id for the last row that was inserted or throws an
+ exception if not connected.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_changes"></a><h3><font color=#CC0000>DF.DB:changes</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:changes</font>)</b><br/>
+ <p>Returns how many rows were affected by the last INSERT/UPDATE, or throws
+ an exception of not connected</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_version"></a><h3><font color=#CC0000>DF.DB:version</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:version</font>)</b><br/>
+ <p>Returns the version number of the database library being used as an integer.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_table-exists?"></a><h3><font color=#CC0000>DF.DB:table-exists?</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:table-exists?</font> <em>table-name</em>)</b><br/>
+ <p>Returns nil or non-nil depending on whether the table named <tt>table-name</tt> exists,
+ or throws an exception if not connected.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_connected?"></a><h3><font color=#CC0000>DF.DB:connected?</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:connected?</font>)</b><br/>
+<p><b>return: </b>nil or non-nil depending on whether this <tt>DF.DB</tt> object has an active connection.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.DB_last-error"></a><h3><font color=#CC0000>DF.DB:last-error</font></h3>
+<b>syntax: (<font color=#CC0000>DF.DB:last-error</font>)</b><br/>
+<p><b>return: </b>a list of two elements: the most recent error code and a description string.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_DF.SQL"></a><h3><font color=#CC0000>DF.SQL</font></h3>
+<b>syntax: DF.SQL</b><br/>
+ <p>Represents a prepared statement. It is used to bind values to a statement's parameters
+ and retrieve the results of a query.</p>
+ <p>You do not create a DF.SQL instance yourself but obtain one through <tt>DF.DB:prepare-sql</tt>.
+ However, if you've obtained an instance then you are responsible for freeing its memory
+ and closing its connection when you're finished with it.</p>
+ <p>Subclasses should make sure that their <tt>dealloc</tt> method calls <tt>DF.SQL:close</tt> so that
+ statements can be freed and closed in one function call using <tt>deallocate</tt>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.SQL_bind-params"></a><h3><font color=#CC0000>DF.SQL:bind-params</font></h3>
+<b>syntax: (<font color=#CC0000>DF.SQL:bind-params</font> <em>list-params</em>)</b><br/>
+ <p>Binds the placeholders of this SQL statement to the values in <em>list-params</em>.</p>
+ <p><em>list-params</em> may be simply a list of values, or an association list of key/value
+ pairs, depending on the placeholder pattern used in the SQL. Placeholder styles
+ <b>may not</b> be mixed per SQL statement.</p>
+ <p>Values may be any of newLISP's primitives. To specify a BLOB wrap your string
+ in a <tt>DF.BLOB</tt>:</p>
+ <b>example:</b>
+ <pre>
+ ; "weight" is a REAL and "blah" is a BLOB
+ (push-autorelease-pool) ; create our autorelease pool since we're using DF.BLOB
+ (setf sql (db:prepare-sql "INSERT INTO fish (weight,blah) VALUES (?,?)"))
+ (sql:bind-params (list 1043.3 (DF.BLOB (dup "\000" 5))))
+ (println (sql:next-row))
+ (deallocate sql)
+ (pop-autorelease-pool)
+ </pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.SQL_next-row"></a><h3><font color=#CC0000>DF.SQL:next-row</font></h3>
+<b>syntax: (<font color=#CC0000>DF.SQL:next-row</font>)</b><br/>
+ <p>Returns a row as a list from the result set of a statement, <tt>true</tt> if
+ there are no more rows to return, or <tt>nil</tt> if there was an error.</p>
+ <b>example:</b>
+ <pre> (push-autorelease-pool) ; only necessary if there's a BLOB column
+ (while (list? (setf row (sql:next-row)))
+ 	(println "row: " row)
+ )
+ (pop-autorelease-pool) ; free any blobs</pre>
+ <p><b>important:</b> If any columns contain BLOB types, you <b><i>must</i></b> have
+ an autorelease pool allocated prior to calling this function!</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.SQL_reset"></a><h3><font color=#CC0000>DF.SQL:reset</font></h3>
+<b>syntax: (<font color=#CC0000>DF.SQL:reset</font>)</b><br/>
+ <p>Resets the statement so that it can be re-used without preparing another
+ statement (which is more efficient). After reseting a statement you typically
+ use <tt>DF.SQL:bind-params</tt> to bind new values and then <tt>DF.SQL:next-row</tt>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.SQL_close"></a><h3><font color=#CC0000>DF.SQL:close</font></h3>
+<b>syntax: (<font color=#CC0000>DF.SQL:close</font>)</b><br/>
+ <p>Releases the resources used by the SQL statement represented by this object.
+ You cannot use it anymore after calling this method, the only thing left to do
+ is to <tt>deallocate</tt> it, and since sublasses of <tt>DF.SQL</tt> must call <tt>close</tt> in
+ their <tt>dealloc</tt> methods, it&apos;s often simpler to call <tt>deallocate</tt> on the object instead.</p>
+ <p>Returns <tt>true</tt> upon success, <tt>nil</tt> on failure or if already closed.</p>
+
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="DF.BLOB_DF.BLOB"></a><h3><font color=#CC0000>DF.BLOB:DF.BLOB</font></h3>
+<b>syntax: (<font color=#CC0000>DF.BLOB:DF.BLOB</font> <em>str-blob</em>)</b><br/>
+ <p>An object wrapper around a blob of data represented by <em>str-blob</em>, used
+ for efficient passing of possibly large binary data.</p>
+ <p>Unlike most other <tt>ObjNL</tt> classes, you typically create an instance
+ by simply calling its constructor instead of calling <tt>instantiate</tt> yourself.
+ It will then <tt>instantiate</tt> and <tt>autorelease</tt> a <tt>DF.BLOB</tt> instance containing the data
+ in <tt>DF.BLOB:blob</tt>.</p>
+ <p><b>important:</b> An autorelease pool <b>must</b> be in place when using the
+ constructor to instantiate a blob!</p>
+ <p><b>see:</b> the introduction to this document for example usage.</p>
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

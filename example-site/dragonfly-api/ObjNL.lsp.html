@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ObjNL.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>ObjNL.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;ObjNL.lsp</h2><p>Objective newLISP - Real Object Oriented Programming for newLISP</p>
+<b>Version: </b>1.0<br/>
+<b>Author: </b>Greg Slepak<br/>
+<b>Location: </b><a href="http://www.taoeffect.com/newlisp/ObjNL.lsp.txt">http://www.taoeffect.com/newlisp/ObjNL.lsp.txt</a><br/>
+ <h3>Introductory Guide</h3>
+ The <a href="http://www.taoeffect.com/blog/2009/12/introducing-objective-newlisp/">official&nbsp;guide</a>  is highly recommended reading if you are planning on using Objective newLISP.
+ <h3>What is Objective newLISP?</h3>
+ Objective newLISP is a new and exciting way of doing <b>real</b>
+ object oriented programming in newLISP where instances are passed
+ by reference and can easily hold references to other objects while
+ maintaining their own mutable state.
+ <p>It supports most of the object oriented concepts you'll find
+ in other languages. It supports inheritance, interfaces (aka protocols),
+ as well as class and instance variables.</p>
+ <p>Objects are passed <i>by reference</i>, so there's no problem with passing
+ an object through multiple user-defined functions and modifying it.</p>
+ <p>Accessing instance variables no longer requires a function call plus a
+ list traversal. Simply access the symbol directly.</p>
+ <p>Objective newLISP also enhances newLISP by providing convenient and safe
+ macros for deep reference access.</p>
+ <p>With Objective newLISP it is possible to take full advantage of everything
+ object-oriented programming has to offer.</p>
+ <h3>Conventions</h3>
+ There are very few conventions in ObjNL, but there are some:
+ <ul>
+ <li>Classes should be written in camel-case and begin with a capital letter.</li>
+ <li>ObjNL reserves the @ character for itself to prefix symbols of special meaning.
+ You should avoid prefixing your symbols with it if possible.</li>
+ </ul>
+ <h3>Requirements</h3>
+ newLISP 10.1.9 or higher is <b>strongly recommended</b>, but any version after 10.1 should work.
+ <h3>Version history</h3>
+ <b>1.0</b> &bull; initial release
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_ObjNL"></a><h3><font color=#CC0000>ObjNL</font></h3>
+<b>syntax: ObjNL</b><br/>
+ <p><tt>ObjNL</tt> is the root class for Objective newLISP. All other classes ultimately
+ inherit from it. It defines several instance and class variables:</p>
+ <ul>
+ <li><tt>@self</tt> to refer to the current object (be it an instance or class).</li>
+ <li><tt>@self-sym</tt> is the symbol that represents the <tt>@self</tt> context.</li>
+ <li><tt>@class</tt> is the context representing the class this object belongs to.</li>
+ <li><tt>@super</tt> refers to the super-class of this object.</li>
+ <li><tt>@interfaces</tt> a list of interfaces that this object conforms to.</li>
+ <li><tt>@rc</tt> an integer representing the retain count of this object.</li>
+ </ul>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="ObjNL_ObjNL"></a><h3><font color=#CC0000>ObjNL:ObjNL</font></h3>
+<b>syntax: (<font color=#CC0000>ObjNL:ObjNL</font>)</b><br/>
+ <p>The constructor is the default function. It is called by <tt>instantiate</tt>.</p>
+ <p>The default implementation simply returns <tt>true</tt>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="ObjNL_dealloc"></a><h3><font color=#CC0000>ObjNL:dealloc</font></h3>
+<b>syntax: (<font color=#CC0000>ObjNL:dealloc</font>)</b><br/>
+ <p>Called by <tt>deallocate</tt> to give the object an opportunity to release resources and objects.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="ObjNL_equals"></a><h3><font color=#CC0000>ObjNL:equals</font></h3>
+<b>syntax: (<font color=#CC0000>ObjNL:equals</font> <em>ctx-obj</em>)</b><br/>
+ <p>Provides a method for classes to define what it means for objects to be equal.</p>
+ <p>The default implementation returns <tt>true</tt> if two objects are the same instance.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_new-class"></a><h3><font color=#CC0000>new-class</font></h3>
+<b>syntax: (<font color=#CC0000>new-class</font> <em>sym-class</em> [<em>ctx-super</em> [<em>list-interfaces</em>]])</b><br/>
+<b>parameter: </b><em>sym-class</em> - The name of the class<br/>
+<b>parameter: </b><em>ctx-super</em> - The superclass, accessible through <tt>@super</tt><br/>
+<b>parameter: </b><em>list-interfaces</em> - Any contexts to "mixin", accessible through <tt>@interfaces</tt><br/>
+<p><b>return: </b>The context of the new class created.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_instantiate"></a><h3><font color=#CC0000>instantiate</font></h3>
+<b>syntax: (<font color=#CC0000>instantiate</font> <em>ctx-class</em> [<em>arg-1</em> ...])</b><br/>
+ <p>Returns a new instance of <em>ctx-class</em> by calling its
+ constructor and passing in any arguments. If the constructor
+ returns nil then the instance is deallocated and nil is returned.</p>
+ <p>The returned object <b>must</b> be deallocated using the <tt>deallocate</tt>
+ function.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_add-interface"></a><h3><font color=#CC0000>add-interface</font></h3>
+<b>syntax: (<font color=#CC0000>add-interface</font> <em>ctx-iface</em> <em>ctx-obj</em>)</b><br/>
+ <p>Uses the function <tt>new</tt> to add <em>ctx-iface</em> to the object and
+ adds the interface to <em>ctx-obj</em>s <tt>@interfaces</tt>.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_deallocate"></a><h3><font color=#CC0000>deallocate</font></h3>
+<b>syntax: (<font color=#CC0000>deallocate</font> <em>ctx-obj</em>)</b><br/>
+ <p>Calls the objects <tt>dealloc</tt> method and then <tt>delete</tt>&apos;s the object.</p>
+ <p><b>NOTE:</b> On versions of newLISP prior to 10.1.9 this is a fairly slow
+ operation, make sure to use at least version 10.1.9 with Objective newLISP.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_implements?"></a><h3><font color=#CC0000>implements?</font></h3>
+<b>syntax: (<font color=#CC0000>implements?</font> <em>ctx-interface</em> <em>ctx-obj</em>)</b><br/>
+<p><b>return: </b>true or nil as to whether this <em>ctx-obj</em> implements <em>ctx-interface</em>.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_retain"></a><h3><font color=#CC0000>retain</font></h3>
+<b>syntax: (<font color=#CC0000>retain</font> <em>ctx-obj</em>)</b><br/>
+ <p>Increment's <em>ctx-obj</em>&apos;s retain count and returns the object.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_release"></a><h3><font color=#CC0000>release</font></h3>
+<b>syntax: (<font color=#CC0000>release</font> <em>ctx-obj</em>)</b><br/>
+ <p>Decrement's <em>ctx-obj</em>&apos;s retain count. Deallocates the object if the retain count hits zero.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_autorelease"></a><h3><font color=#CC0000>autorelease</font></h3>
+<b>syntax: (<font color=#CC0000>autorelease</font> <em>ctx-obj</em>)</b><br/>
+ <p>Adds <em>ctx-obj</em> to the current <tt>MAIN:@autorelease</tt> pool and returns the object.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_push-autorelease-pool"></a><h3><font color=#CC0000>push-autorelease-pool</font></h3>
+<b>syntax: (<font color=#CC0000>push-autorelease-pool</font>)</b><br/>
+ <p>Pushes a new autorelease pool onto the <tt>MAIN:@autorelease</tt> stack.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_pop-autorelease-pool"></a><h3><font color=#CC0000>pop-autorelease-pool</font></h3>
+<b>syntax: (<font color=#CC0000>pop-autorelease-pool</font>)</b><br/>
+ <p>Pops the current <tt>MAIN:@autorelease</tt> pool and releases the objects in it.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_."></a><h3><font color=#CC0000>.</font></h3>
+<b>syntax: (<font color=#CC0000>.</font> <em>obj</em> <em>field-1</em> [<em>field-2</em> [<em>field-n</em>]])</b><br/>
+ <p>The dot macro is used for "deep value access":</p>
+ <b>example:</b>
+ <pre>
+ (new-class 'Foo)
+ (new-class 'Bar)
+ (context Bar)
+ (define (Bar:Bar f)
+ 	(setf foo f)
+ 	true ; -> do not deallocate us if 'f' is nil
+ )
+ (context Foo)
+ (define (Foo:Foo b)
+ 	(setf bar b)
+ 	true ; -> do not deallocate us if 'b' is nil
+ )
+ (context MAIN)
+ (setf f (instantiate Foo (instantiate Bar)))
+ (set (.& f bar foo) f) ; => Foo#1
+ (. f bar foo bar)      ; => Bar#1</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_.&"></a><h3><font color=#CC0000>.&</font></h3>
+<b>syntax: (<font color=#CC0000>.&</font> <em>obj</em> <em>field-1</em> [<em>field-2</em> [<em>field-n</em>]])</b><br/>
+ <p>The dot-reference macro is similar to the dot macro, except it returns the
+ context-qualified symbol for the final field instead of its value ("deep symbol access").
+ This allows you to combine it with <tt>set</tt>.</p>
+<b>see: </b>'.' macro for example usage.<br/>
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

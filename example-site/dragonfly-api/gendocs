@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# place ObjNL.lsp at the bottom
+newlispdoc ../dragonfly-framework/dragonfly.lsp `find -E ../dragonfly-framework/lib -regex "[./a-z_-]+lsp" | xargs` ../dragonfly-framework/lib/ObjNL.lsp
+
+# we link to DF.DB etc from the guide on included plugins

@@ -85,7 +85,6 @@
 		(dolist (x assoc-list) (ctx (x 0) (x 1))) ; here dolist is slightly faster than map
 	)
 	
-	
 	; these functions should be global (define-subclass should not)
 	(global 'load-files-in-dir 'regex-captcha 'load-once 'into-ctx-assoc)
 	
@@ -96,5 +95,12 @@
 	(constant 'print Dragonfly:print)
 	(constant (global 'sys-println) println)
 	(constant 'println Dragonfly:println)
+	
+	; some other useful globals (primarily used by database.lsp)
+	(constant (global 'NEWLISP64) (not (zero? (& (sys-info -1) 256))))
+	; cache the function for getting a pointer
+	(constant (global 'get-ptr) (if NEWLISP64 get-long get-int))
+	; used to indicate that a method *must* be overwritten
+	(constant (global 'throw-not-implemented) (fn()(throw-error "not defined by subclass!")))
 )
 

@@ -213,7 +213,7 @@ body img {
 		text-decoration: none;
 	}
 
-	#api-browser blockquote, #api-browser p {
+	#api-browser blockquote, #api-browser p, #api-browser ul li, #api-browser ol li {
 		line-height:15px;
 		font-size: 11px;
 	}
