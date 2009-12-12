@@ -2,6 +2,7 @@ Version 0.6
 
   * added DF.DB and ObjNL
   * updated documentation
+  * create /tmp on windows if necessary
 
 Version 0.51
 
