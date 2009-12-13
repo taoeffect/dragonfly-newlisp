@@ -88,6 +88,9 @@
 
 ; DF is a convenient shorthand to the Dragonfly context
 (constant (global 'DF) Dragonfly)
+(constant (global 'DRAGONFLY_MAJOR) 0)
+(constant (global 'DRAGONFLY_MINOR) 60)
+(constant (global 'DRAGONFLY_VERSION) (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
 ; make sure these two are defined
 (if-not DOCUMENT_ROOT (throw-error "Environment variable DOCUMENT_ROOT missing!"))
@@ -104,11 +107,6 @@
 ;===============================================================================
 ; !Public Constants and Variables
 ;===============================================================================
-
-; These are some of the few constants that we'll have outside of env
-(constant 'DRAGONFLY_MAJOR 0)
-(constant 'DRAGONFLY_MINOR 60)
-(constant 'DRAGONFLY_VERSION (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
 ;; @syntax STDOUT
 ;; This is the buffer that contains the content that will get written
