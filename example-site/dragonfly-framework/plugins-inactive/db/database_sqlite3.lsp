@@ -1,6 +1,6 @@
 ;; @module Sqlite3
 ;; @description SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.
-;; @version 1.1
+;; @version 1.1.1
 ;; @author Greg Slepak 
 ;; @location http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt
 ;; <h3>Features not found in newLISP's sqlite3.lsp:</h3>
@@ -19,8 +19,9 @@
 ;; <h3>Requirements</h3>
 ;; See module @link http://www.taoeffect.com/newlisp/database.lsp.html DF.DB for requirements.
 ;; <h3>Version history</h3>
-;; <b>1.1</b> &bull; support for 'DF.BLOB'<br/>
-;; <b>1.0</b> &bull; initial release
+;; <b>1.1.1</b> &bull; improved readability in error logging, fixed binding of integers on 32-bit newlisp builds<br/>
+;; <b>1.1.0</b> &bull; support for 'DF.BLOB'<br/>
+;; <b>1.0.0</b> &bull; initial release
 
 (DF:activate-plugin "db/database")
 
@@ -101,7 +102,9 @@
 			(set 'error-msg nil)
 			(set 'error-msg (get-string error-msg))
 		)
-		(DF:log-err action " => " (last-error))
+		(setf action (string action))
+		(replace (string @self ":") action "") ; make it more readable
+		(DF:log-err "[" @self "] " action " => " (last-error))
 		nil ; indicate failure
 	)
 )
@@ -267,7 +270,7 @@
 	"sqlite3_column_count"   "sqlite3_finalize"      "sqlite3_bind_parameter_index"
 	"sqlite3_column_name"    "sqlite3_reset"         "sqlite3_transfer_bindings"  
 	"sqlite3_column_type"    "sqlite3_errmsg"        "sqlite3_step"
-	"sqlite3_bind_int64"     "sqlite3_column_int64"      
+	"sqlite3_bind_int64"     "sqlite3_column_int64"      "sqlite3_bind_int"
 	"sqlite3_bind_double"    "sqlite3_column_double"     
 	"sqlite3_bind_null"      "sqlite3_column_text"       
 	"sqlite3_bind_text"      "sqlite3_column_blob"       
@@ -289,14 +292,11 @@
 ;---------------------------------------------------------------
 
 (define (Sqlite3.SQL:Sqlite3.SQL _db _stmt _sql)
-	; the Sqlite3 db context (or sub-context)
-	(set 'db _db)
-	; the sqlite3_stmt pointer
-	(set 'stmt _stmt)
-	; the original SQL (in case of SQLITE_SCHEMA)
-	(set 'sql _sql)
-	; the number of columns in this table
-	(set 'num-cols (sqlite3_column_count stmt))
+	(set 'db       _db                         ; the Sqlite3 db context (or sub-context)
+	     'stmt     _stmt                       ; the sqlite3_stmt pointer
+	     'sql      _sql                        ; the original SQL (in case of SQLITE_SCHEMA)
+	     'num-cols (sqlite3_column_count stmt) ; the number of columns in this table
+	)
 	; the column types
 	(dotimes (idx num-cols)
 		; idx is a double so we use 'int' to convert it
@@ -354,9 +354,19 @@
 ; !Sqlite3.SQL - Binding
 ;---------------------------------------------------------------
 
+(define (bind-int64)
+	(failable (sqlite3_bind_int64 stmt idx value))
+)
+
+(define (bind-int32)
+	(failable (sqlite3_bind_int stmt idx value))
+)
+
+(setf bind-int (if NEWLISP64 bind-int64 bind-int32))
+
 (define (bind-param-at-index stmt value idx)
 	(cond
-		((integer? value) (failable (sqlite3_bind_int64 stmt idx value)))
+		((integer? value) (bind-int))
 		((string? value) (failable (sqlite3_bind_text stmt idx value (length value) -1)))
 		((float? value) (failable (sqlite3_bind_double stmt idx value)))
 		((nil? value) (failable (sqlite3_bind_null stmt idx)))

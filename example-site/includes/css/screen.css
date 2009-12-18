@@ -217,6 +217,10 @@ body img {
 		line-height:15px;
 		font-size: 11px;
 	}
+	
+	#api-browser blockquote em {
+		font-style: italic;
+	}
 
 	#api-browser blockquote h3 {
 		font-size:18px;

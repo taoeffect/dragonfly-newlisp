@@ -14,12 +14,46 @@
 ; This may also speed up the loading of this file the second time around.
 (unless load-once
 	
+	(setf load-once.lp '()) ; empty load path initially
+	(new Tree 'load-once.loaded)
+	
+;; @syntax (add-to-load-path <str-path-1> <str-path-2> ...)
+;; <p>Dragonfly overrides the built-in function 'load' so that files
+;; are loaded only once. In addition it supports the concept of "load paths"
+;; which can be added using this function. This means that you no longer need
+;; to modify third-party code that contains 'load' calls to files located in
+;; different locations. Simply add a new load path instead.</p>
+;; <b>example:</b>
+;; <pre> ; the old way
+;; (load "MyClass.lsp") ;=> ERROR! MyClass.lsp doesn't exist here!
+;; ; we must rewrite the file to point to the new location of MyClass.lsp:
+;; (load "../../myfolder/MyClass.lsp")
+;; ; -------------------------------
+;; ; New way, using add-to-load-path
+;; ; -------------------------------
+;; (add-to-load-path "../../myfolder")
+;; ; no need to update any source files, it just works.</pre>
+;; <b>warning:</b> Use this function sparingly as name-conflicts could
+;; result in the wrong file being loaded!
+	(define (add-to-load-path)
+		(doargs (path)
+			(setf load-once.lp (unique (push (real-path path) load-once.lp)))
+		)
+	)
+	
 	(define (load-once)
 		; check if the last argument is a context (to behave like 'load' does)
-		(let (ctx (let (_ctx (last $args)) (if (context? _ctx) _ctx MAIN)))
-			(doargs (file)
-				(unless (or (context? file) (find file load-once.loaded))
-					(push file load-once.loaded)
+		(let (ctx (let (_ctx (last $args)) (if (context? _ctx) _ctx MAIN)) filename nil)
+			(doargs (file (context? file))
+				(setf filename file)
+				(dolist (lp load-once.lp (file? file))
+					(setf file (string lp "/" filename))
+				)
+				(unless (setf file (real-path file))
+					(throw-error (string "cannot load file: " filename))
+				)
+				(when (not (load-once.loaded file))
+					(load-once.loaded file true)
 					(sys-load file ctx)
 				)
 			)
@@ -69,6 +103,19 @@
 			(load-once (string dir "/" x))
 		)
 	)
+	
+;; @syntax (wrap-func <func> <lambda>)
+;; <p>Replaces <func> with <lambda>. Inside of <lambda> use 'wrapped-func' to refer
+;; to the original function. This can be very handy for "aspect oriented programming".</p>
+;; <b>example:</b>
+;; <pre> (wrap-func db:execute-update
+;;     (fn () (unless (apply wrapped-func $args)
+;;         (throw-error (string "execute-update failed: " $args)))))</pre>
+	(define-macro (wrap-func func-sym wrapper , wrapped-func)
+		(setf wrapped-func (sym (string func-sym "|wrapped#" (inc wrap-func.counter))))
+		(set wrapped-func (eval func-sym))
+		(set func-sym (eval (expand wrapper 'wrapped-func)))
+	)
 
 ;; @syntax (into-ctx-assoc <ctx> <list-assoc>)
 ;; <p>Places the key/value pairs in <list-assoc> into the context <ctx>
@@ -82,11 +129,14 @@
 ;; ))</pre>
 ;; 
 	(define (into-ctx-assoc ctx assoc-list)
-		(dolist (x assoc-list) (ctx (x 0) (x 1))) ; here dolist is slightly faster than map
+		; dolist is slightly faster than map
+		(dolist (x assoc-list) (ctx (first x) (last x)))
 	)
 	
 	; these functions should be global (define-subclass should not)
-	(global 'load-files-in-dir 'regex-captcha 'load-once 'into-ctx-assoc)
+	(global 'load-files-in-dir 'regex-captcha 'load-once
+		'wrap-func 'into-ctx-assoc 'add-to-load-path
+	)
 	
 	; swap these functions for ours and save the originals
 	(constant (global 'sys-load) load)
@@ -96,11 +146,14 @@
 	(constant (global 'sys-println) println)
 	(constant 'println Dragonfly:println)
 	
-	; some other useful globals (primarily used by database.lsp)
+;; @syntax NEWLISP64
+;; <p>A constant that is 'true' if we're running the 64-bit version of newLISP.</p>
 	(constant (global 'NEWLISP64) (not (zero? (& (sys-info -1) 256))))
-	; cache the function for getting a pointer
+;; @syntax (get-ptr <symbol>)
+;; <p>Alias for 'get-long' on 64-bit systems, and 'get-int' on 32-bit systems.</p>
 	(constant (global 'get-ptr) (if NEWLISP64 get-long get-int))
-	; used to indicate that a method *must* be overwritten
+;; @syntax (throw-not-implemented)
+;; <p>Used to indicate that an ObjNL method *must* be overwritten.</p>
 	(constant (global 'throw-not-implemented) (fn()(throw-error "not defined by subclass!")))
 )
 

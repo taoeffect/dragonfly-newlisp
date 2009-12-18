@@ -20,6 +20,26 @@
  Dragonfly to ensure pages are displayed properly.</p>
 
 <br/><br/><center>- &sect; -</center><br/>
+<a name="_add-to-load-path"></a><h3><font color=#CC0000>add-to-load-path</font></h3>
+<b>syntax: (<font color=#CC0000>add-to-load-path</font> <em>str-path-1</em> <em>str-path-2</em> ...)</b><br/>
+ <p>Dragonfly overrides the built-in function <tt>load</tt> so that files
+ are loaded only once. In addition it supports the concept of "load paths"
+ which can be added using this function. This means that you no longer need
+ to modify third-party code that contains <tt>load</tt> calls to files located in
+ different locations. Simply add a new load path instead.</p>
+ <b>example:</b>
+ <pre> ; the old way
+ (load "MyClass.lsp") ;=> ERROR! MyClass.lsp doesn't exist here!
+ ; we must rewrite the file to point to the new location of MyClass.lsp:
+ (load "../../myfolder/MyClass.lsp")
+ ; -------------------------------
+ ; New way, using add-to-load-path
+ ; -------------------------------
+ (add-to-load-path "../../myfolder")
+ ; no need to update any source files, it just works.</pre>
+ <b>warning:</b> Use this function sparingly as name-conflicts could
+ result in the wrong file being loaded!
+<br/><br/><center>- &sect; -</center><br/>
 <a name="_regex-captcha"></a><h3><font color=#CC0000>regex-captcha</font></h3>
 <b>syntax: (<font color=#CC0000>regex-captcha</font> <em>str-regex</em> <em>str</em> [<em>int-options</em>] [<em>int-captcha</em>])</b><br/>
 <b>parameter: </b><em>int-options</em> - options to regex, defaults to 0.<br/>
@@ -36,6 +56,16 @@
  traverse subdirectories.<br/>This is a global function.</p>
 <br/><br/>
 <br/><br/><center>- &sect; -</center><br/>
+<a name="_wrap-func"></a><h3><font color=#CC0000>wrap-func</font></h3>
+<b>syntax: (<font color=#CC0000>wrap-func</font> <em>func</em> <em>lambda</em>)</b><br/>
+ <p>Replaces <em>func</em> with <em>lambda</em>. Inside of <em>lambda</em> use <tt>wrapped-func</tt> to refer
+ to the original function. This can be very handy for "aspect oriented programming".</p>
+ <b>example:</b>
+ <pre> (wrap-func db:execute-update
+     (fn () (unless (apply wrapped-func $args)
+         (throw-error (string "execute-update failed: " $args)))))</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
 <a name="_into-ctx-assoc"></a><h3><font color=#CC0000>into-ctx-assoc</font></h3>
 <b>syntax: (<font color=#CC0000>into-ctx-assoc</font> <em>ctx</em> <em>list-assoc</em>)</b><br/>
  <p>Places the key/value pairs in <em>list-assoc</em> into the context <em>ctx</em>
@@ -48,6 +78,19 @@
      ("organic?" true)
  ))</pre>
 <br/><br/>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_NEWLISP64"></a><h3><font color=#CC0000>NEWLISP64</font></h3>
+<b>syntax: NEWLISP64</b><br/>
+ <p>A constant that is <tt>true</tt> if we're running the 64-bit version of newLISP.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_get-ptr"></a><h3><font color=#CC0000>get-ptr</font></h3>
+<b>syntax: (<font color=#CC0000>get-ptr</font> <em>symbol</em>)</b><br/>
+ <p>Alias for <tt>get-long</tt> on 64-bit systems, and <tt>get-int</tt> on 32-bit systems.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_throw-not-implemented"></a><h3><font color=#CC0000>throw-not-implemented</font></h3>
+<b>syntax: (<font color=#CC0000>throw-not-implemented</font>)</b><br/>
+ <p>Used to indicate that an ObjNL method *must* be overwritten.</p>
+
 
 <br/><br/><center>- &part; -</center><br/>
 <center><font face='Arial' size='-2' color='#444444'>

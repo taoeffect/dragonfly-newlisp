@@ -2,7 +2,9 @@ Version 0.6
 
   * added DF.DB and ObjNL
   * updated documentation
-  * create /tmp on windows if necessary
+  * improved windows compatibility by creating /tmp if necessary
+  * improved the 'load-once' function (load replacement)
+  * added new add-to-load-path and wrap-func functions to utils.lsp
 
 Version 0.51
 
