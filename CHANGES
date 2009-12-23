@@ -7,6 +7,7 @@ Version 0.6
   * added new add-to-load-path and wrap-func functions to utils.lsp
   * added CGI-like route to the inactive plugins. Move to the active
     active plugins folder if you want to use it.
+  * added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.
 
 Version 0.51
 

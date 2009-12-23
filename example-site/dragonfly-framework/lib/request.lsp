@@ -61,23 +61,48 @@
 (context 'Request)
 
 ;===============================================================================
-; !Private Functions
+; !UTF8 Compatible URL encoding/decoding
 ;===============================================================================
 
-; (url-decode "What+time+is+it%3f")  => "What time is it?"
+(constant 'REGEX_HTTP_SPECIAL_STR (regex-comp {([^.0-9a-z]+)} 1))
 (constant 'REGEX_HEX_ENCODED_CHAR (regex-comp {%([0-9A-F][0-9A-F])} 1))
 
-(define (url-decode str)
-   (replace "+" str " ")
-   (replace REGEX_HEX_ENCODED_CHAR str (char (int (string "0x" $1))) 0x10000)
+(define (hex-encode-str str , cnvrt)
+	(setf cnvrt	(dup "%%%X" (length str)))
+	(eval (append '(format cnvrt) (unpack (dup "b" (length str)) str)))
 )
+
+;; @syntax (utf8-urlencode <str> [<bool-everything>])
+;; @param str the string to encode
+;; @param bool-everything whether to escape the entire string or just most of the "non-ascii friendly" parts.
+;; <p>Use this function to safely encode data that might have foreign characters in it, or simply
+;; characters that should be placed into URLs:</p>
+;; <b>example:</b>
+;; <pre> (utf8-urlencode "What time is it?")  => "What%20time%20is%20it%3F"</pre>
+(define (utf8-urlencode str everything)
+	(if everything
+		(hex-encode-str str)
+		(replace REGEX_HTTP_SPECIAL_STR str (hex-encode-str $1) 0x10000)
+	)
+)
+
+;; @syntax (utf8-urldecode <str>)
+;; <p>Decodes a utf8-urlencoded string. Converts '+'&apos;s to spaces.</p>
+(define (utf8-urldecode str)
+	(replace "+" str " ")
+	(replace REGEX_HEX_ENCODED_CHAR str (pack "b" (int $1 nil 16)) 0x10000)
+)
+
+;===============================================================================
+; !Private Functions
+;===============================================================================
 
 (constant 'REGEX_QUERY (regex-comp {&([^&=]+)=?([^&=]*?)(?=&|$)} 1))
 
 (define (parse-query query)
 	(when (starts-with query "?") (pop query))
 	(push "&" query)
-	(find-all REGEX_QUERY query (list (url-decode $1) (url-decode $2)) 0x10000)
+	(find-all REGEX_QUERY query (list (utf8-urldecode $1) (utf8-urldecode $2)) 0x10000)
 )
 
 (define (regex-captcha regex-str str (options 0) (captcha 1))
@@ -157,7 +182,7 @@
 ; !$COOKIES
 ;===============================================================================
 
-; we do *NOT* want to use url-decode on the value
+; we do *NOT* want to use utf8-urldecode on the value
 ; that's something the user can do if they want to
 (when HTTP_COOKIE
 	(dolist (cookie (parse HTTP_COOKIE "; *" 0))

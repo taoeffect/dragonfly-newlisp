@@ -67,6 +67,22 @@
 
 
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_utf8-urlencode"></a><h3><font color=#CC0000>utf8-urlencode</font></h3>
+<b>syntax: (<font color=#CC0000>utf8-urlencode</font> <em>str</em> [<em>bool-everything</em>])</b><br/>
+<b>parameter: </b>str - the string to encode<br/>
+<b>parameter: </b>bool-everything - whether to escape the entire string or just most of the "non-ascii friendly" parts.<br/>
+ <p>Use this function to safely encode data that might have foreign characters in it, or simply
+ characters that should be placed into URLs:</p>
+ <b>example:</b>
+ <pre> (utf8-urlencode "What time is it?")  => "What%20time%20is%20it%3F"</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_utf8-urldecode"></a><h3><font color=#CC0000>utf8-urldecode</font></h3>
+<b>syntax: (<font color=#CC0000>utf8-urldecode</font> <em>str</em>)</b><br/>
+ <p>Decodes a utf8-urlencoded string. Converts '+'&apos;s to spaces.</p>
+
+
 
 
 
