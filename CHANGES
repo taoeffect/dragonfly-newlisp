@@ -8,6 +8,7 @@ Version 0.6
   * added CGI-like route to the inactive plugins. Move to the active
     active plugins folder if you want to use it.
   * added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.
+  * much improved the smtp module that comes with newLISP and added it to the inactive plugins.
 
 Version 0.51
 
