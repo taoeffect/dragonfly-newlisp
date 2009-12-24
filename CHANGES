@@ -10,6 +10,7 @@ Version 0.6
     active plugins folder if you want to use it.
   * added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.
   * much improved the smtp module that comes with newLISP and added it to the inactive plugins.
+  * added 'SET_DFLY_SELF' function and the corresponding DFLY_SELF and DFLY_SELF_DIR global symbols.
 
 Version 0.51
 

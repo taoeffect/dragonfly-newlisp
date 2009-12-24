@@ -13,6 +13,7 @@
 	)
 )
 (define (run)
+	(SET_DFLY_SELF path)
 	(load path)
 	(DF:send-and-exit)
 )

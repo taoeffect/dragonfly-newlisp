@@ -307,6 +307,7 @@
 	(replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
 	(if-not ext (set 'ext (regex-captcha {.*\.(\w+)$} path)))
 	(if ext (Response:content-type (Response:extension->type ext)))
+	(SET_DFLY_SELF path)
 	(unless (DF:display-file path)
 		(DF:die "Failed to get: " path)
 	)
@@ -321,6 +322,7 @@
 	)
 )
 (define (run)
+	(SET_DFLY_SELF path)
 	(load path)
 	(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
 	(set 'ctx-sym (sym ctx-str))

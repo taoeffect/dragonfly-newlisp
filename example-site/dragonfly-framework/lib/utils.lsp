@@ -133,9 +133,26 @@
 		(dolist (x assoc-list) (ctx (first x) (last x)))
 	)
 	
+;; @syntax (SET_DFLY_SELF <str-filepath>)
+;; @param <str-filepath> The path to the file being served, or the primary file responsible for handling this route.
+;; <p>Routes should call this global function with the path to the file that's being displayed
+;; or the file that's principly in charge of handling this route. This function will then
+;; set the global variables 'DFLY_SELF' and 'DFLY_SELF_DIR' to point to that file and its
+;; parent directory, respectively.</p>
+;; <p>The default routes 'Route.Static' and 'Route.Resource' call this function first thing
+;; in their 'Route:run' methods, prior to loading the files. This is the recommended way of
+;; calling this function.</p>
+	(define (SET_DFLY_SELF file)
+		(when (setf file (real-path file))
+			(set (global 'DFLY_SELF)     file
+			     (global 'DFLY_SELF_DIR) (regex-captcha {^(.+/)} file)
+			)
+		)
+	)
+	
 	; these functions should be global (define-subclass should not)
 	(global 'load-files-in-dir 'regex-captcha 'load-once
-		'wrap-func 'into-ctx-assoc 'add-to-load-path
+		'wrap-func 'into-ctx-assoc 'add-to-load-path 'SET_DFLY_SELF
 	)
 	
 	; swap these functions for ours and save the originals
