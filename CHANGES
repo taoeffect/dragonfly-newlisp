@@ -4,6 +4,7 @@ Version 0.6
   * updated documentation
   * improved windows compatibility by creating /tmp if necessary
   * improved the 'load-once' function (load replacement)
+  * bugfix in Response:cookie
   * added new add-to-load-path and wrap-func functions to utils.lsp
   * added CGI-like route to the inactive plugins. Move to the active
     active plugins folder if you want to use it.
