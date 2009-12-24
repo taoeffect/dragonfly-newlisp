@@ -65,7 +65,7 @@
 ;; cookie is deleted, otherwise it is updated with the value and the rest of the parameters.</p>
 (define (cookie key)
 	(local (value expires path domain http-only)
-		(map set '(value expires path domain http-only) $args)
+		(map (fn(k v) (if v (set k v))) '(value expires path domain http-only) $args)
 		(if (nil? key) cookies
 			(empty? $args) (lookup key cookies)
 			(nil? value) (pop cookies (find key cookies comp-func))
