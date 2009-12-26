@@ -6,11 +6,8 @@
 (constant 'CGI_EXTENSION ".nl")
 
 (define (matches?)
-	(set 'chunks (parse QUERY_STRING "?"))
-	(and (not (empty? chunks))
-		(ends-with (set 'path (first chunks)) CGI_EXTENSION)
-		(file? path)
-	)
+	(setf path (1 DFLY_PAGE))
+	(and (ends-with path CGI_EXTENSION) (file? path))
 )
 (define (run)
 	(SET_DFLY_SELF path)
