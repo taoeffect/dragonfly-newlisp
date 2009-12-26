@@ -107,7 +107,7 @@
 ;; DFLY_PAGE ;=> "/"</pre>
 (if (empty? QUERY_STRING)
 	(constant (global 'DFLY_PAGE) "/")
-	(constant (global 'DFLY_PAGE) ((parse QUERY_STRING {[?&]} 0) 0))
+	(constant (global 'DFLY_PAGE) (string "/" ((parse QUERY_STRING {[?&]} 0) 0)))
 )
 
 ;; @syntax DFLY_SELF
