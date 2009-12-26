@@ -99,6 +99,33 @@
 	(env "QUERY_STRING" QUERY_STRING)
 )
 
+;; @syntax DFLY_PAGE
+;; <p>The web-friendly, host-unqualified URL to the "current page"</p>
+;; <pre> ; load http://www.mysite.com/foo/bar?baz
+;; DFLY_PAGE ;=> "/foo/bar"
+;; ; load http://www.mysite.com
+;; DFLY_PAGE ;=> "/"</pre>
+(if (empty? QUERY_STRING)
+	(constant (global 'DFLY_PAGE) "/")
+	(constant (global 'DFLY_PAGE) ((parse QUERY_STRING {[?&]} 0) 0))
+)
+
+;; @syntax DFLY_SELF
+;; <p>The full, local path (on the server) to the currently loaded file
+;; or view being displayed.</p>
+;; <b>example:</b>
+;; <pre> ; load http://www.mysite.com/foo/bar?baz
+;; DFLY_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
+;; <b>see:</b> the 'SET_DFLY_SELF' function in utils.lsp for more info
+
+;; @syntax DFLY_SELF_DIR
+;; <p>The full, local path (on the server) to the directory holding
+;; the currently loaded file or view being displayed.</p>
+;; <b>example:</b>
+;; <pre> ; load http://www.mysite.com/foo/bar?baz
+;; DFLY_SELF_DIR ;=> "/home/www/mysite.com/foo/"</pre>
+;; <b>see:</b> the 'SET_DFLY_SELF' function in utils.lsp for more info
+
 ; seed the random number generator immediately.
 (seed (time-of-day))
 
@@ -291,7 +318,7 @@
 (context Route.Static)
 
 (define (matches?)
-	(set 'chunks (parse QUERY_STRING {[\?&]} 0))
+	(set 'chunks (parse QUERY_STRING {[?&]} 0))
 	(if (empty? chunks)
 		(push DF:DEFAULT_VIEW chunks))
 	(set 'path (set 'DF:_ (first chunks)))

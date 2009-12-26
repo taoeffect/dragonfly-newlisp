@@ -95,6 +95,35 @@
 
 
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_DFLY_PAGE"></a><h3><font color=#CC0000>DFLY_PAGE</font></h3>
+<b>syntax: DFLY_PAGE</b><br/>
+ <p>The web-friendly, host-unqualified URL to the "current page"</p>
+ <pre> ; load http://www.mysite.com/foo/bar?baz
+ DFLY_PAGE ;=> "/foo/bar"
+ ; load http://www.mysite.com
+ DFLY_PAGE ;=> "/"</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_DFLY_SELF"></a><h3><font color=#CC0000>DFLY_SELF</font></h3>
+<b>syntax: DFLY_SELF</b><br/>
+ <p>The full, local path (on the server) to the currently loaded file
+ or view being displayed.</p>
+ <b>example:</b>
+ <pre> ; load http://www.mysite.com/foo/bar?baz
+ DFLY_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
+ <b>see:</b> the <tt>SET_DFLY_SELF</tt> function in utils.lsp for more info
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_DFLY_SELF_DIR"></a><h3><font color=#CC0000>DFLY_SELF_DIR</font></h3>
+<b>syntax: DFLY_SELF_DIR</b><br/>
+ <p>The full, local path (on the server) to the directory holding
+ the currently loaded file or view being displayed.</p>
+ <b>example:</b>
+ <pre> ; load http://www.mysite.com/foo/bar?baz
+ DFLY_SELF_DIR ;=> "/home/www/mysite.com/foo/"</pre>
+ <b>see:</b> the <tt>SET_DFLY_SELF</tt> function in utils.lsp for more info
+
 
 
 

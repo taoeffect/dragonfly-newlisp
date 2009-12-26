@@ -79,6 +79,17 @@
  ))</pre>
 <br/><br/>
 <br/><br/><center>- &sect; -</center><br/>
+<a name="_SET_DFLY_SELF"></a><h3><font color=#CC0000>SET_DFLY_SELF</font></h3>
+<b>syntax: (<font color=#CC0000>SET_DFLY_SELF</font> <em>str-filepath</em>)</b><br/>
+<b>parameter: </b><em>str-filepath</em> - The path to the file being served, or the primary file responsible for handling this route.<br/>
+ <p>Routes should call this global function with the path to the file that's being displayed
+ or the file that's principly in charge of handling this route. This function will then
+ set the global variables <tt>DFLY_SELF</tt> and <tt>DFLY_SELF_DIR</tt> to point to that file and its
+ parent directory, respectively.</p>
+ <p>The default routes <tt>Route.Static</tt> and <tt>Route.Resource</tt> call this function first thing
+ in their <tt>Route:run</tt> methods, prior to loading the files. This is the recommended way of
+ calling this function.</p>
+<br/><br/><center>- &sect; -</center><br/>
 <a name="_NEWLISP64"></a><h3><font color=#CC0000>NEWLISP64</font></h3>
 <b>syntax: NEWLISP64</b><br/>
  <p>A constant that is <tt>true</tt> if we're running the 64-bit version of newLISP.</p>
