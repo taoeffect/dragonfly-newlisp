@@ -20,7 +20,7 @@
 	)
 )
 
-(define (del-comp path , lst)
+(define (del-comp path remove-leading-slash , lst)
 	(set 'lst (parse path "/"))
 	(if (empty? lst)
 		path ; we were given ""
@@ -34,6 +34,9 @@
 					(push "/" lst)
 					(= (length lst) 1)
 					(push "" lst)
+				)
+				(when remove-leading-slash
+					(pop lst)
 				)
 			)
 			(join lst "/")
