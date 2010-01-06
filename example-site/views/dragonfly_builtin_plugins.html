@@ -22,7 +22,34 @@
 		<p>
 			So what functions are available to you? Dragonfly has a <%(link_to "core set" "dragonfly_api")%> of contexts and functions that are always available (in the lib folder). Its plugins (located in <span class="code">dragonfly-framework/plugins-[in]active</span>) provide additional functionality:
 		</p>
-
+		<h2>Dragonfly Database</h2>
+		<p>
+			Dragonfly includes its own generic database access interface called <span class="code">DF.DB</span>.
+			It serves as an alternative to the individual database wrappers included as part of newLISP's standard modules.
+		</p>
+		<p>
+			DF.DB aims to provide a high-quality, efficient, and standard interface to various databases.
+			Currently only SQLite3 is supported but more databases are on their way. You are welcome to use
+			newLISP's various database modules as well.
+		</p>
+		<p>
+			You can find it in the <span class="code">plugins-inactive/db</span> folder. The API is
+			<%(link_to "available here" "dragonfly_db_api")%>.
+		</p>
+		<h2>Dragonfly SMTP</h2>
+		<p>
+			Dragonfly includes its own SMTP plugin which builds and improves upon the SMTP modules that come with
+			the standard newLISP distribution. Dragonfly's SMTP module has the following advantages over the 
+			SMTP modules that come with newLISP:
+		</p>
+		<ul>
+			<li>Full support for proper encoding of UTF-8 strings</li>
+			<li>Improved interface and implementation for handling attachments</li>
+		</ul>
+		<p>
+			This plugin (like all optional plugins) is located in the <span class="code">plugins-inactive</span> folder.
+			The API is <%(link_to "available here" "dragonfly_smtp_api")%>.
+		</p>
 		<h2>Dragonfly's example-site functions</h2>
 		<p>
 			These include all of the files in the plugins folders that begin with <span class="code">dragonfly_</span>. They are used by this website to various conveniences and demos. Some of their functionality includes:
@@ -37,20 +64,6 @@
 				</ul>
 			</li>
 		</ul>
-		<h2>Dragonfly Database</h2>
-		<p>
-			Dragonfly includes its own generic database access interface called <span class="code">DF.DB</span>.
-			It serves as an alternative to the individual database wrappers included as part of newLISP's standard modules.
-		</p>
-		<p>
-			DF.DB aims to provide a high-quality, efficient, and standard interface to various databases.
-			Currently only SQLite3 is supported but more databases are on their way. You are welcome to use
-			newLISP's various database modules as well.
-		</p>
-		<p>
-			You can find it in the <span class="code">plugins-inactive/db</span> folder. The API is
-			<a href="http://www.taoeffect.com/newlisp/index.html">online here</a>.
-		</p>
 		<h2>Artful Code Modules</h2>
 		<p>
 			Dragonfly includes several of Jeff Ober's <a href="http://static.artfulcode.net/newlisp/">Artful Code modules</a>, including functions for:
@@ -60,6 +73,7 @@
 			<li>JSON parsing and creation from newLISP lists</li>
 			<li>Various utility functions for web-based programming</li>
 			<li>Generating HTTP requests</li>
+			<li>Encoding and decoding HTML entities</li>
 		</ul>
 		<p>
 			Have a look in the <span class="code">plugins-inactive/artfulcode</span> folder to see the included ones. Documentation for all of Jeff's modules can be found <a href="http://static.artfulcode.net/newlisp/">here</a>.
@@ -68,7 +82,6 @@
 		<p>Additional plugins include:</p>
 		<ul>
 			<li>nldb.lsp - a simple list-based database by <a href="http://unbalanced-parentheses.nfshost.com/">cormullion</a></li>
-			<li>path.lsp - a FOOP class for manipulating file paths</li>
 		</ul>
 		<h2>More Plugins</h2>
 		<p>

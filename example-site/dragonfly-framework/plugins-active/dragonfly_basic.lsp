@@ -87,7 +87,8 @@
 	<h2>QUERY_STRING</h2>"QUERY_STRING"
 	<h2>REQUEST METHOD</h2>"REQUEST_METHOD"
 	<h2>DEFAULT_VIEW</h2>"DEFAULT_VIEW"
-	<h2>DF:viewname</h2>"viewname"
+	<h2>DF_PAGE</h2>"DF_PAGE"
+	<h2>DF_SELF</h2>"DF_SELF"
 	<h2>HTTP_USER_AGENT</h2>"HTTP_USER_AGENT"
 	<h2>HTTP_PROXY</h2>"HTTP_PROXY"
 	<h2>SERVER_SOFTWARE</h2>"SERVER_SOFTWARE"
@@ -122,7 +123,7 @@
 ;; <p>Writes a title including the current navigation entry.</p>
 ;; 
 (define (title websitename)
-  (println (string (title-case (replace "_" (copy viewname) " ")) " " websitename  ))
+	(println (string (title-case (replace "_" (basename (del-ext DF_PAGE)) " ")) " " websitename  ))
 )
 
 ;; @syntax (Dragonfly:css <css-media> <css-location>)

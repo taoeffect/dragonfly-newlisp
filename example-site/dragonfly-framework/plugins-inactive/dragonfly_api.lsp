@@ -25,9 +25,7 @@
 
 (context 'Dragonfly)
 
-(set 'dragonfly-api-directory "dragonfly-api")
-
-(define (api-browser)
+(define (api-browser api-dir)
 	(print (format [text]
 		<div id="api-browser">&nbsp</div>
 		<script type="text/javascript">
@@ -52,7 +50,7 @@
 				);
 			})("%s/index.html");
 		</script>
-		[/text] (web-root "dragonfly_ajax-api") dragonfly-api-directory dragonfly-api-directory)
+		[/text] (web-root "dragonfly_ajax-api") api-dir api-dir)
 	)
 )
 

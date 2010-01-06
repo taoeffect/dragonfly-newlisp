@@ -1,0 +1,87 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Working Locally</h1>
+		<p class="extract">
+			With Dragonfly web development is fast and painless. There's no
+			need to upload your changes to some remote server for testing, nor 
+			do you have to setup and run a local Apache web server.
+		</p>
+		<p>
+			In this tutorial, we'll show you how to run this website on your computer. We will also
+			cover some important caveats related to how we're able to remove the leading question-mark
+			from the URL using the <b>newlisp-redirection.lsp</b> file.
+		</p>
+		<p>
+			Before following these steps, make sure you have the latest version of <a href="http://www.newlisp.org">newLISP</a> installed, preferably version 10.1.9 or later.
+		</p>
+		<h3 class="code">Step 1: Get Dragonfly</h3>
+		<p>
+			Download the latest version of Dragonfly <a href="http://code.google.com/p/dragonfly-newlisp/downloads/list">from Google Code</a> and unzip it somewhere.
+		</p>
+		<h3 class="code">Step 2: Run the 'newlispServer' script</h3>
+		<p>
+			Inside of the unzipped folder you'll find a folder called <b>example-site</b>, and inside of there are two <b>newlispServer</b> scripts, one is for UNIX-based operating systems, and is a bat file for Windows.
+		</p>
+		<p>If you're running Windows, just double-click on the <b>newlispServer.bat</b> file. On OS X/Linux/UNIX we'll run <b>newlispServer</b> from the terminal:
+		</p>
+		<pre class="code">
+$ cd path/to/dragonfly-newlisp/example-site
+$ ./newlispServer
+If all goes well visit http://localhost:8080 in your browser</pre>
+		<p>
+			As the script says, now visit <a href="http://localhost:8080">http://localhost:8080</a>! You should see this website in your browser.
+		</p>
+		<h3 class="code">That's it! Have fun!</h3>
+		<p>Feel free to look through the files and folders inside of the <b>example-site</b> folder to get an idea of how everything works. Don't be afraid of tinkering around and making changes to files!
+		</p>
+		<p>Unlike some other LISP-based web frameworks, Dragonfly is powered by newLISP which is an extremely dynamic interpreted language, perfectly suited for web development. The second you hit save the changes are live, no need to recompile!
+		</p>
+		<h2>Note on newlisp-redirection.lsp</h2>
+		<p>
+			Inside of the <b>dragonfly-framework</b> folder you'll find a file called <b>newlisp-redirection.lsp</b>. This file is only loaded when running <b>newlispServer</b> script, and it is what allows us to have URLs like this:
+		</p>
+		<p><span class="code">http://localhost:8080/working_locally</span></p>
+		<p>Instead of:</p>
+		<p><span class="code">http://localhost:8080/?working_locally</span></p>
+		<p>You can think of it as the newLISP version of the <b>.htacces</b> file.</p>
+		<p>Normally you don't need to worry about it, but <%(link_to "as with" "htaccess")%> the <b>.htaccess</b> file, it determines which requests get handled by Dragonfly, and which requests get handled directly by the server (in this case, newLISP).</p>
+		<p>
+			Thus, if you decide that you'd like requests for files ending in ".foo" to be routed through Dragonfly, then
+			you'll need to edit a list called <span class="code">NEWLISP_REDIRECTION_EXTENSIONS</span> which is defined in <b>newlisp-redirection.lsp</b> and by default is set to:
+		</p>
+		<pre class="textmate-source"><span class="source source_newlisp">'<span class="entity entity_paren entity_paren_lisp">(</span><span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>.html<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>.nhtml<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>.nl<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
+		<p>
+			Because <b>newlisp-redirection.lsp</b> is loaded before anything else, you must edit <span class="code">NEWLISP_REDIRECTION_EXTENSIONS</span> directly in that
+			file itself, and add to it any additional file extensions that you would like Dragonfly to handle.
+		</p>
+		<% (display-partial "continue") %>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

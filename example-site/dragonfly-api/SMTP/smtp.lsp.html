@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>smtp.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>smtp.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;smtp.lsp </h2><p>Send mail using SMTP protocol</p>
+<b>Version: </b>3.0 - Partial rewrite for Dragonfly. Addition attachments, custom port and proper utf8 encoding for subject/message/attachments<br/>
+<b>Version: </b>2.3 - fix in mail-send-body, thanks to Alessandro<br/>
+<b>Version: </b>2.2 - doc changes<br/>
+<b>Version: </b>2.1 - changes for 10.0<br/>
+<b>Version: </b>2.0 - March 2008, Cormullion added AUTH PLAIN authentication <br/>
+<b>Author: </b>Lutz Mueller 2001-2009, Cormullion 2008, Greg Slepak 2009-2010<br/>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_send-mail"></a><h3><font color=#CC0000>SMTP:send-mail</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:send-mail</font> <em>str-from</em> <em>str-to</em> <em>str-subject</em> <em>str-message</em> [<em>str-server</em> [<em>str-usr</em> <em>str-pass</em> [<em>int-port</em>]]])</b><br/>
+<b>parameter: </b><em>str-from</em> - The email address of the sender.<br/>
+<b>parameter: </b><em>str-to</em> - The email address of the recipient.<br/>
+<b>parameter: </b><em>str-subject</em> - The subject line of the email.<br/>
+<b>parameter: </b><em>str-message</em> - The message part of the email.<br/>
+<b>parameter: </b><em>str-server</em> - The address of the SMTP server (default: "localhost")<br/>
+<b>parameter: </b><em>str-user</em> - Optional user name for authentication.<br/>
+<b>parameter: </b><em>str-pass</em> - Optional password for authentication.<br/>
+<b>parameter: </b><em>int-port</em> - Optional port to communicate on (default: 25)<br/>
+<p><b>return: </b>On success <tt>true</tt>, on failure <tt>nil</tt>.</p>
+ In case the function fails returning <tt>nil</tt>, the function
+ <tt>SMTP:get-error-text</tt> can be used to receive the error text.
+<br/><br/>
+<b>example:</b><blockquote><pre> (SMTP:send-mail "jdoe@asite.com" "somebody@isp.com" "Greetings" 
+   "How are you today? - john doe -" "smtp.asite.com" "jdoe" "secret") 
+ 
+ This logs in to the server, tries to authenticate using the username 'jdoe' and password 'secret' (if supplied), 
+ and sends an email with the format: 
+
+  From:    jdoe@asite.com 
+  To:      somebody@isp.com 
+  Subject: Greetings 
+  Message: How are you today? - John Doe - </pre></blockquote>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_get-error-text"></a><h3><font color=#CC0000>SMTP:get-error-text</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:get-error-text</font>)</b><br/>
+ <p>Call this to get the reason <tt>send-mail</tt> returned <tt>nil</tt>.</p>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_clear-attachments"></a><h3><font color=#CC0000>SMTP:clear-attachments</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:clear-attachments</font>)</b><br/>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_attach-document"></a><h3><font color=#CC0000>SMTP:attach-document</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:attach-document</font> <em>str-content</em> <em>str-filename</em> [<em>str-disposition</em> [<em>str-mime-type</em> [<em>str-encoding</em>]]])</b><br/>
+<b>parameter: </b><em>str-content</em> - The attachment data.<br/>
+<b>parameter: </b><em>str-filename</em> - How you'd like your attachment to appear named in the email.<br/>
+<b>parameter: </b><em>str-disposition</em> - "attachment" or "inline". default is "attachment".<br/>
+<b>parameter: </b><em>str-mime-type</em> - default is "application/octet-stream".<br/>
+<b>parameter: </b><em>str-encoding</em> - default is "base64". If <tt>encoding</tt> is "base64" it will be automatically transformed using <tt>encode64-widthsafe</tt><br/>
+
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_encode64-widthsafe"></a><h3><font color=#CC0000>SMTP:encode64-widthsafe</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:encode64-widthsafe</font> <em>buff-data</em>)</b><br/>
+ <p>Useful for attaching binary data such as images. Converts the data into base64
+ and chops it up so that the lines are not longer than 76 characters long, making
+ it safe to include in the body of emails.</p>
+ <p>If the attachment's encoding to "base64" (which it is by default), this function
+ will automatically applied to the <em>str-content</em> of the email.</p>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="SMTP_encode64-line"></a><h3><font color=#CC0000>SMTP:encode64-line</font></h3>
+<b>syntax: (<font color=#CC0000>SMTP:encode64-line</font> <em>str-line</em>)</b><br/>
+ <p>Creates a base64 UTF-8 compatible string, suitable for including foreign characters
+ in the subjects of emails. This is used by <tt>send-mail</tt> automatically on the filename
+ of any attachments, as well as the subject of the email.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

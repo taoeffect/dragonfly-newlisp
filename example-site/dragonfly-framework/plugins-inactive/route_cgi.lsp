@@ -6,11 +6,11 @@
 (constant 'CGI_EXTENSION ".nl")
 
 (define (matches?)
-	(setf path (1 DFLY_PAGE))
+	(setf path (1 DF_PAGE))
 	(and (ends-with path CGI_EXTENSION) (file? path))
 )
 (define (run)
-	(SET_DFLY_SELF path)
+	(SET_DF_SELF path)
 	(load path)
 	(DF:send-and-exit)
 )

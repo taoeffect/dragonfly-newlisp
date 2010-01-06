@@ -1,18 +1,22 @@
 Version 0.6
 
   * added DF.DB and ObjNL
-  * updated documentation
+  * added Dragonfly's own improved SMTP module
+  * added new add-to-load-path and wrap-func functions to utils.lsp
+  * added CGI-like route to the inactive plugins: route_cgi.lsp
+  * added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.
+  * added 'SET_DF_SELF' function and the corresponding DF_SELF and DF_SELF_DIR global symbols.
+  * added 'DF_PAGE' to point to the currently loaded, host-unqualified web URL
+  * added global path functions to utils.lsp: file-ext del-ext basename dirname
+  * updated and rewrote parts of the user guide
   * improved windows compatibility by creating /tmp if necessary
   * improved the 'load-once' function (load replacement)
-  * bugfix in Response:cookie
-  * added new add-to-load-path and wrap-func functions to utils.lsp
-  * added CGI-like route to the inactive plugins. Move to the active
-    active plugins folder if you want to use it.
-  * added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.
-  * much improved the smtp module that comes with newLISP and added it to the inactive plugins.
-  * added 'SET_DFLY_SELF' function and the corresponding DFLY_SELF and DFLY_SELF_DIR global symbols.
-  * added 'DFLY_PAGE' to point to the currently loaded, host-unqualified web URL
-  * added some preliminary stuff to path.lsp in plugins-inactive
+  * bugfix in Response:cookie for deleting a cookie
+  * bugfix when directly accessing an .html file related to 'title' function
+  * removed path.lsp in plugins-inactive
+  * removed the 'into-ctx-assoc' function
+  * removed 'viewname' from STATIC_TRANSFORMATIONS. Replace with: DF_PAGE or (basename DF_PAGE)
+  * the winning transformation from STATIC_TRANSFORMATIONS is no longer evaluated twice
 
 Version 0.51
 

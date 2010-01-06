@@ -35,7 +35,7 @@
 		<p>
 			Dragonfly uses the <span class="code">DF:display-error</span> function to show these pages. You can too! Here's a quick example of how to use it:
 		</p>
-		<pre class="code">(display-error 500)</pre>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">display-error</span> <span class="constant constant_numeric constant_numeric_lisp">500</span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p>
 			Pretty simple huh?
 		</p>
@@ -59,7 +59,7 @@
 		<p>
 			Dragonfly will check inside <span class="code">VIEW_PATHS</span> to see if a view with the error number exists. In other words, a call to <span class="code">(display-error 500)</span> results in a check for:
 		</p>
-		<pre class="code">(file? (Dragonfly:view-path "500"))</pre>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">file?</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">Dragonfly:view-path</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>500<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">))</span></span></pre>
 		<p>
 			If it exists, it will be displayed instead of <span class="code">ERROR_TEMPLATE</span>.
 		</p>

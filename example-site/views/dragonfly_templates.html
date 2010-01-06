@@ -31,13 +31,10 @@
 		</p>
 		<h2>Where routes come into the picture</h2>
 		<p>
-			<span class="code">Route.Static</span> (one of the <%(link_to "default views" "dragonfly_routes")%>) contains, by default, two request transformations for handling views:
+			<span class="code">Route.Static</span> (one of the <%(link_to "built-in routes" "dragonfly_routes")%>) contains by default two request transformations for handling views:
 		</p>
-		<pre class="code">
-    (begin (set 'viewname _)
-           (string VIEWS_PATH "/" _))
-    (begin (set 'viewname _)
-           (string VIEWS_PATH "/" _ VIEW_EXTENSION))</pre>
+		<pre class="textmate-source"><span class="source source_newlisp">    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">VIEWS_PATH</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _<span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">VIEWS_PATH</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _ <span class="entity entity_symbol entity_symbol_lisp">VIEW_EXTENSION</span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p>
 			The last transformation listed there is responsible for transforming a request to this URL:
 		</p>
@@ -49,12 +46,11 @@
 		<p>
 			By default, the <span class="code">OPEN_TAG</span> is <span class="code">&lt;%</span> and the <span class="code">CLOSE_TAG</span> is <span class="code">%&gt;</span>. Let's say we want to create an HTML file that displays the current time on the server, we might go about it like this:
 		</p>
-<pre class="code">
-&lt;html&gt;
-&lt;body&gt;
-	The time is: &lt;% (date) %&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
+<pre class="textmate-source html_doc"><span class="text text_html text_html_basic"><span class="meta meta_tag meta_tag_structure meta_tag_structure_any meta_tag_structure_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_structure entity_name_tag_structure_any entity_name_tag_structure_any_html">html</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&gt;</span></span>
+<span class="meta meta_tag meta_tag_structure meta_tag_structure_any meta_tag_structure_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_structure entity_name_tag_structure_any entity_name_tag_structure_any_html">body</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&gt;</span></span>
+    The time is: <span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;% <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">date</span><span class="entity entity_paren entity_paren_lisp">)</span> %&gt;</span>
+<span class="meta meta_tag meta_tag_structure meta_tag_structure_any meta_tag_structure_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_structure entity_name_tag_structure_any entity_name_tag_structure_any_html">body</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&gt;</span></span>
+<span class="meta meta_tag meta_tag_structure meta_tag_structure_any meta_tag_structure_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_structure entity_name_tag_structure_any entity_name_tag_structure_any_html">html</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_html">&gt;</span></span></span></pre>
 		<p>
 			That, however, will result in a page that says:
 		</p>
@@ -64,14 +60,14 @@
 		<p>
 			That's because evaluated expressions do not output anything unless they call <span class="code">print</span> or <span class="code">println</span>. We can fix it by rewriting it like so:
 		</p>
-		<pre class="code">The time is: &lt;% (print (date)) %&gt;</pre>
+<pre class="textmate-source html_doc"><span class="text text_html text_html_basic">The time is: <span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;% <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">print</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">date</span><span class="entity entity_paren entity_paren_lisp">))</span> %&gt;</span></span></pre>
 		<div class="resultbox">
 			The time is: <% (print (date)) %>
 		</div>
 		<p>
 			You can append an equals sign after the <span class="code">OPEN_TAG</span> to achieve the same result in fewer keystrokes:
 		</p>
-		<pre class="code">The time is: &lt;%= (date) %&gt;</pre>
+		<pre class="textmate-source html_doc"><span class="text text_html text_html_basic">The time is: <span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;%= <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">date</span><span class="entity entity_paren entity_paren_lisp">)</span> %&gt;</span></span></pre>
 		<div class="resultbox">
 			The time is: <%= (date) %>
 		</div>

@@ -12,12 +12,14 @@
 (constant (global 'DOCUMENT_ROOT) (env "DOCUMENT_ROOT"))
 ; dragonfly root
 (constant (global 'DRAGONFLY_ROOT) (string DOCUMENT_ROOT "/dragonfly-framework"))
+
 ; ------------------------------------------------------
 ; sync any customization of DOCUMENT_ROOT with the 'env'
 ; don't modify these two lines below!
 (constant (global 'ORIGINAL_ROOT) (env "DOCUMENT_ROOT"))
 (env "DOCUMENT_ROOT" DOCUMENT_ROOT)
 ; ------------------------------------------------------
+
 (context 'Dragonfly)
 
 ;===============================================================================
@@ -53,11 +55,10 @@
 ; to the path, which is bound to the '_' symbol). If one of them matches a file,
 ; the entire route matches and the file is passed through the template evaluator,
 ; otherwise it will not match and defer to the other handler(s).
-; Note that these expressions can be used to do more than just match URLs.
 (constant 'STATIC_TRANSFORMATIONS '(
 	(string DOCUMENT_ROOT "/" _ "/index.html")
-	(begin (set 'viewname _) (string VIEWS_PATH "/" _))
-	(begin (set 'viewname _) (string VIEWS_PATH "/" _ VIEW_EXTENSION))
+	(string VIEWS_PATH "/" _)
+	(string VIEWS_PATH "/" _ VIEW_EXTENSION)
 ))
 
 ;===============================================================================

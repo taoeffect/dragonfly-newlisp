@@ -7,26 +7,34 @@
 		<div id="user_guide_menu" class="menu clearfix" style="display:none;">
 			<dl class="L">
 				<dt>Getting started</dt>
-				<dd><% (link_to  "Setting up Dragonfly" "dragonfly_welcome") %></dd>
+				<dd><% (link_to "Setting up Dragonfly" "dragonfly_welcome") %></dd>
+				<dd><% (link_to "Working locally" "working_locally") %></dd>
+				<dd><% (link_to "The .htaccess file" "htaccess") %></dd>
 
 				<dt>Routes</dt>
-				<dd><% (link_to  "Default routes" "dragonfly_routes") %></dd>
-				<dd><% (link_to  "Creating your own routes" "dragonfly_create_routes") %></dd>
+				<dd><% (link_to "Default routes" "dragonfly_routes") %></dd>
+				<dd><% (link_to "Creating your own routes" "dragonfly_create_routes") %></dd>
 				
 				<dt>Templates</dt>
-				<dd><% (link_to  "Creating templates and views" "dragonfly_templates") %></dd>
-				<dd><% (link_to  "Handling errors using templates" "dragonfly_errors") %></dd>
+				<dd><% (link_to "Creating templates and views" "dragonfly_templates") %></dd>
+				<dd><% (link_to "Handling errors using templates" "dragonfly_errors") %></dd>
 				
-				<dt>Parameters and forms</dt>
-				<dd><% (link_to "$GET, $POST, $FILES..." "dragonfly_getpost") %></dd>
+				<dt>Important Globals</dt>
+				<dd><% (link_to "$GET $POST $FILES $COOKIES" "dragonfly_getpost") %></dd>
+				<dd><% (link_to "DF_SELF DF_SELF_DIR DF_PAGE" "locating_self") %></dd>
 			</dl>
 			<dl class="R">
 				<dt>Plugins</dt>
-				<dd><% (link_to  "Using and creating plugins" "dragonfly_plugins") %></dd>
-				<dd><% (link_to  "List of included plugins" "dragonfly_builtin_plugins") %></dd>
+				<dd><% (link_to "Using and creating plugins" "dragonfly_plugins") %></dd>
+				<dd><% (link_to "List of included plugins" "dragonfly_builtin_plugins") %></dd>
 				
-				<dt>Core API</dt>
-				<dd><% (link_to  "Reference for Dragonfly's core API" "dragonfly_api") %></dd>
+				<dt>Changes</dt>
+				<dd><% (link_to "Changes between versions" "changes")%>
+				
+				<dt>API Reference</dt>
+				<dd><% (link_to "Core API" "dragonfly_api") %></dd>
+				<dd><% (link_to "Dragonfly DB" "dragonfly_db_api") %></dd>
+				<dd><% (link_to "Dragonfly SMTP" "dragonfly_smtp_api") %></dd>
 			</dl>
 		</div>
 	</li>

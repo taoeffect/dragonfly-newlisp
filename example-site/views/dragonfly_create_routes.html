@@ -35,46 +35,57 @@
 		<p>
 			<span class="code"><b>run</b></span> - does anything it needs to do and sends a response back to the client.
 		</p>
-		<h3 class="code">Example: Route.StaticSimple</h3>
+		<h3 class="param">SET_DF_SELF</h3>
 		<p>
-			Below is a simplified version of the default route <span class="code">Route.Static</span> called <span class="code">Route.StaticSimple</span>:
+			Most routes should also call the function <span class="code">SET_DF_SELF</span> prior to
+			actually loading or serving the requested URL. This function takes a single argument: the actual path (on the server) to whatever file is being served.
 		</p>
-		<pre class="code">
-; File: plugins-active/route_static_simple.lsp
-
-(new Route 'Route.StaticSimple)
-(context Route.StaticSimple)
-
-(define (matches?)
-    (set 'chunks (parse QUERY_STRING "?"))
-    (if (empty? chunks)
-        (push DF:DEFAULT_VIEW chunks))
-    (file? (set 'path (first chunks)))
-)
-(define (run)
-    (set 'ext (regex-captcha {.*\.(\w+)$} path))
-    (Response:content-type (Response:extension->type ext))
-    (unless (DF:display-file path)
-        (DF:die "Failed to get: " path)
-    )
-)
-
-; add the route to the end of the list of routes
-(push (Route.StaticSimple) DF:dragonfly-routes -1)
-
-(context MAIN)</pre>
+		<p>Based on that parameter, the function will then set the global symbols <span class="code">DF_SELF</span> and <span class="code">DF_SELF_DIR</span>, <%(link_to "which let" "locating_self")%> whatever is being loaded know where it is
+			located on the server.
+		</p>
+		<p class="info"><b>IMPORTANT</b><br/>
+			Do not confuse <span class="code">DF_SELF</span> with PHP's <span class="code">$_SERVER['PHP_SELF']</span>
+			(which is <span class="code">DF_PAGE</span> in Dragonfly).
+		</p>
+		<h3 class="code">Example: Route.CGI</h3>
 		<p>
-			This static route takes requests very literally. For example, take the following request URL:
+			In addition to the two default routes <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>, Dragonfly includes a route called <span class="code">Route.CGI</span>, although by default it's disabled because it's in the <span class="code">plugins-inactive</span> folder:
+		</p>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="comment comment_doc comment_doc_lisp">;; File: plugins-inactive/route_cgi.lsp
+</span>
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">new</span> <span class="entity entity_symbol entity_symbol_lisp">Route</span> '<span class="entity entity_symbol entity_symbol_lisp">Route</span>.<span class="entity entity_symbol entity_symbol_lisp">CGI</span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">context</span> <span class="entity entity_symbol entity_symbol_lisp">Route</span>.<span class="entity entity_symbol entity_symbol_lisp">CGI</span><span class="entity entity_paren entity_paren_lisp">)</span>
+
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">constant</span> '<span class="entity entity_symbol entity_symbol_lisp">CGI_EXTENSION</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>.nl<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="meta meta_function meta_function_lisp"><span class="storage storage_type storage_type_function-type storage_type_function-type_lisp">define</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_functiondef entity_name_functiondef_lisp">matches?</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">setf</span> <span class="entity entity_symbol entity_symbol_lisp">path</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="constant constant_numeric constant_numeric_lisp">1</span> <span class="entity entity_symbol entity_symbol_lisp">DF_PAGE</span><span class="entity entity_paren entity_paren_lisp">))</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">and</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">ends-with</span> <span class="entity entity_symbol entity_symbol_lisp">path</span> <span class="entity entity_symbol entity_symbol_lisp">CGI_EXTENSION</span><span class="entity entity_paren entity_paren_lisp">)</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">file?</span> <span class="entity entity_symbol entity_symbol_lisp">path</span><span class="entity entity_paren entity_paren_lisp">))</span>
+<span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="meta meta_function meta_function_lisp"><span class="storage storage_type storage_type_function-type storage_type_function-type_lisp">define</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_functiondef entity_name_functiondef_lisp">run</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">SET_DF_SELF</span> <span class="entity entity_symbol entity_symbol_lisp">path</span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">load</span> <span class="entity entity_symbol entity_symbol_lisp">path</span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">DF:send-and-exit</span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">)</span>
+
+<span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span> add the route to the end of the list of routes
+</span><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">push</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">Route.CGI</span><span class="entity entity_paren entity_paren_lisp">)</span> <span class="entity entity_symbol entity_symbol_lisp">DF:dragonfly-routes</span> <span class="constant constant_numeric constant_numeric_lisp">-1</span><span class="entity entity_paren entity_paren_lisp">)</span>
+
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">context</span> <span class="entity entity_symbol entity_symbol_lisp">MAIN</span><span class="entity entity_paren entity_paren_lisp">)</span>
+</span></pre>
+		<p>
+			This route is very useful if you simply want to run some newLISP code without having to deal with
+			HTML templates. It simply loads a newLISP source file ending in <span class="code">CGI_EXTENSION</span>,
+			essentially behaving like a CGI script.
 		</p>
 		<p>
-			<span class="code">http://example-site.com/index
+			The script then does whatever it needs to do, and it can send output back to the browser using the <span class="code">print</span> and <span class="code">println</span> functions.
 		</p>
-		<p>
-			This route will match only if a file (and unfortunately, a directory) called
-			"index" exists in the site's root.
-		</p>
-		<p>
-			If it does, it will attempt to display the file "index" by calling the <span class="code">DF:display-file</span> function with the path to the file.
+		<p class="config"><b>CONFIGURATION</b><BR/>
+			If you change <span class="code">CGI_EXTENSION</span>, check <b>newlisp-redirection.lsp</b>
+			for compatibility when running the <b>newlispServer</b> script.
+			<br/>
+			<i>More information:</i> <%(link_to "Working Locally" "working_locally")%>
 		</p>
 		
 		<% (display-partial "continue") %>

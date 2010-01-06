@@ -17,7 +17,7 @@ RewriteCond %{REQUEST_FILENAME} !-f [OR]
 
 # if don't want Dragonfly to process html files comment
 # out the line below (you may need to remove the [OR] above too).
-RewriteCond %{REQUEST_FILENAME} \.html$
+RewriteCond %{REQUEST_FILENAME} \.(html|nl)$
 
 # Main URL rewriting.
 RewriteRule (.*) index.cgi?$1 [L,QSA]

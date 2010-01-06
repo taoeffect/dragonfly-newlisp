@@ -3,7 +3,7 @@
 
 <script type="text/javascript" charset="utf-8">
 	$('#continue_link').attr('href', function () {
-		var viewpath = "<%=(web-root viewname)%>";
+		var viewpath = "<%=(web-root (basename (del-ext DF_PAGE)))%>";
 		var ourlink = $("#user_guide_menu dd > a[href='"+viewpath+"']:first");
 		var nextlink = ourlink.parent().nextAll('dd:first').children('a:first').not(ourlink);
 		// if there's a next link in the current column return its href

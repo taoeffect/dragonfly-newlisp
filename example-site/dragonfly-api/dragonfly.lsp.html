@@ -96,33 +96,33 @@
 
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="_DFLY_PAGE"></a><h3><font color=#CC0000>DFLY_PAGE</font></h3>
-<b>syntax: DFLY_PAGE</b><br/>
+<a name="_DF_PAGE"></a><h3><font color=#CC0000>DF_PAGE</font></h3>
+<b>syntax: DF_PAGE</b><br/>
  <p>The web-friendly, host-unqualified URL to the "current page"</p>
  <pre> ; load http://www.mysite.com/foo/bar?baz
- DFLY_PAGE ;=> "/foo/bar"
+ DF_PAGE ;=> "/foo/bar"
  ; load http://www.mysite.com
- DFLY_PAGE ;=> "/"</pre>
+ DF_PAGE ;=> "/"</pre>
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="_DFLY_SELF"></a><h3><font color=#CC0000>DFLY_SELF</font></h3>
-<b>syntax: DFLY_SELF</b><br/>
+<a name="_DF_SELF"></a><h3><font color=#CC0000>DF_SELF</font></h3>
+<b>syntax: DF_SELF</b><br/>
  <p>The full, local path (on the server) to the currently loaded file
  or view being displayed.</p>
  <b>example:</b>
  <pre> ; load http://www.mysite.com/foo/bar?baz
- DFLY_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
- <b>see:</b> the <tt>SET_DFLY_SELF</tt> function in utils.lsp for more info
+ DF_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
+ <b>see:</b> the <tt>SET_DF_SELF</tt> function in utils.lsp for more info
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="_DFLY_SELF_DIR"></a><h3><font color=#CC0000>DFLY_SELF_DIR</font></h3>
-<b>syntax: DFLY_SELF_DIR</b><br/>
+<a name="_DF_SELF_DIR"></a><h3><font color=#CC0000>DF_SELF_DIR</font></h3>
+<b>syntax: DF_SELF_DIR</b><br/>
  <p>The full, local path (on the server) to the directory holding
  the currently loaded file or view being displayed.</p>
  <b>example:</b>
  <pre> ; load http://www.mysite.com/foo/bar?baz
- DFLY_SELF_DIR ;=> "/home/www/mysite.com/foo/"</pre>
- <b>see:</b> the <tt>SET_DFLY_SELF</tt> function in utils.lsp for more info
+ DF_SELF_DIR ;=> "/home/www/mysite.com/foo"</pre>
+ <b>see:</b> the <tt>SET_DF_SELF</tt> function in utils.lsp for more info
 
 
 
@@ -141,14 +141,14 @@
 
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_activate-plugin"></a><h3><font color=#CC0000>Dragonfly:activate-plugin</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:activate-plugin</font> <em>str-plugin-name</em> [<em>str-plugin-name-2</em> ...])</b><br/>
+<a name="DF_activate-plugin"></a><h3><font color=#CC0000>DF:activate-plugin</font></h3>
+<b>syntax: (<font color=#CC0000>DF:activate-plugin</font> <em>str-plugin-name</em> [<em>str-plugin-name-2</em> ...])</b><br/>
 <b>parameter: </b><em>str-plugin-name</em> - The name of the plugin to load, without the ".lsp" extension.<br/>
  <br>Loads (once only) a the named plugin from the <tt>plugins-inactive</tt> folder.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_web-root"></a><h3><font color=#CC0000>Dragonfly:web-root</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:web-root</font> [<em>str-path</em> [<em>bool-question-mark</em>]])</b><br/>
+<a name="DF_web-root"></a><h3><font color=#CC0000>DF:web-root</font></h3>
+<b>syntax: (<font color=#CC0000>DF:web-root</font> [<em>str-path</em> [<em>bool-question-mark</em>]])</b><br/>
 <b>parameter: </b><em>str-path</em> - Path relative to the folder containing <tt>index.cgi</tt>.<br/>
 <b>parameter: </b><em>bool-question-mark</em> - Whether to return a URL with /? prepended.<br/>
  <p>This function is quite handy for making working links when your <tt>index.cgi</tt> file
@@ -159,46 +159,46 @@
  (web-root "/foo" true) =&gt; "/example-site/?foo"
  (web-root) =&gt; /example-site/</pre></blockquote>
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_view-path"></a><h3><font color=#CC0000>Dragonfly:view-path</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:view-path</font> <em>str-view-name</em>)</b><br/>
+<a name="DF_view-path"></a><h3><font color=#CC0000>DF:view-path</font></h3>
+<b>syntax: (<font color=#CC0000>DF:view-path</font> <em>str-view-name</em>)</b><br/>
 <b>parameter: </b><em>str-view-name</em> - Name of view in <tt>VIEWS_PATH</tt>, without any extension.<br/>
  <br>Returns the absolute path to the view as a string, appending <tt>VIEW_EXTENSION</tt> if necessary.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_partial-path"></a><h3><font color=#CC0000>Dragonfly:partial-path</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:partial-path</font> <em>str-partial-name</em>)</b><br/>
+<a name="DF_partial-path"></a><h3><font color=#CC0000>DF:partial-path</font></h3>
+<b>syntax: (<font color=#CC0000>DF:partial-path</font> <em>str-partial-name</em>)</b><br/>
  <br>Just like <tt>view-path</tt>, except for partials in <tt>PARTIALS_PATH</tt>.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_resource-path"></a><h3><font color=#CC0000>Dragonfly:resource-path</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:resource-path</font> <em>str-resource-name</em>)</b><br/>
+<a name="DF_resource-path"></a><h3><font color=#CC0000>DF:resource-path</font></h3>
+<b>syntax: (<font color=#CC0000>DF:resource-path</font> <em>str-resource-name</em>)</b><br/>
  <br>Similar to <tt>view-path</tt>, except for resources in <tt>RESOURCES_PATH</tt>.
  Don't include the .lsp extension.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_include"></a><h3><font color=#CC0000>Dragonfly:include</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:include</font>)</b><br/>
+<a name="DF_include"></a><h3><font color=#CC0000>DF:include</font></h3>
+<b>syntax: (<font color=#CC0000>DF:include</font>)</b><br/>
  <br>Like <tt>display-file</tt> but does not pass the file through <tt>eval-template</tt>.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_display-file"></a><h3><font color=#CC0000>Dragonfly:display-file</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:display-file</font>)</b><br/>
+<a name="DF_display-file"></a><h3><font color=#CC0000>DF:display-file</font></h3>
+<b>syntax: (<font color=#CC0000>DF:display-file</font>)</b><br/>
  <br>String-concats its arguments and displays the file
  at that path after passing it through <tt>eval-template</tt>.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_display-partial"></a><h3><font color=#CC0000>Dragonfly:display-partial</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:display-partial</font> <em>str-partial-name</em>)</b><br/>
+<a name="DF_display-partial"></a><h3><font color=#CC0000>DF:display-partial</font></h3>
+<b>syntax: (<font color=#CC0000>DF:display-partial</font> <em>str-partial-name</em>)</b><br/>
  Displays the partial named <em>str-partial-name</em> using <tt>display-file</tt> and <tt>partial-path</tt>.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_display-view"></a><h3><font color=#CC0000>Dragonfly:display-view</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:display-view</font> <em>str-view-name</em>)</b><br/>
+<a name="DF_display-view"></a><h3><font color=#CC0000>DF:display-view</font></h3>
+<b>syntax: (<font color=#CC0000>DF:display-view</font> <em>str-view-name</em>)</b><br/>
  Displays the view named <em>str-view-name</em> using <tt>display-file</tt> and <tt>view-path</tt>.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_display-error"></a><h3><font color=#CC0000>Dragonfly:display-error</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:display-error</font> <em>int-error-code</em>)</b><br/>
+<a name="DF_display-error"></a><h3><font color=#CC0000>DF:display-error</font></h3>
+<b>syntax: (<font color=#CC0000>DF:display-error</font> <em>int-error-code</em>)</b><br/>
  <br>Sends the <em>int-error-code</em> and, if it exists, displays the view named
  <em>int-error-code</em> using <tt>display-view</tt>. Otherwise, displays the built-in error
  template <tt>Dragonfly:ERROR_TEMPLATE</tt>.
@@ -207,16 +207,16 @@
  with an <em>int-error-code</em> of 500 (Internal Server Error).
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_eval-template"></a><h3><font color=#CC0000>Dragonfly:eval-template</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:eval-template</font> <em>str</em> [<em>ctx</em>])</b><br/>
+<a name="DF_eval-template"></a><h3><font color=#CC0000>DF:eval-template</font></h3>
+<b>syntax: (<font color=#CC0000>DF:eval-template</font> <em>str</em> [<em>ctx</em>])</b><br/>
 <b>parameter: </b><em>str</em> - A string containing the template.<br/>
 <b>parameter: </b><em>ctx</em> - Optional. Represents the context the template is evaluted in. Defaults to Dragonfly.<br/>
  <br>newLISP code in the template between the <tt>OPEN_TAG</tt> and <tt>CLOSE_TAG</tt> (see <tt>config.lsp</tt>) is
  evaluated, and the result, along with the text outside of the "code islands" will be sent if no errors occur.
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="Dragonfly_die"></a><h3><font color=#CC0000>Dragonfly:die</font></h3>
-<b>syntax: (<font color=#CC0000>Dragonfly:die</font>)</b><br/>
+<a name="DF_die"></a><h3><font color=#CC0000>DF:die</font></h3>
+<b>syntax: (<font color=#CC0000>DF:die</font>)</b><br/>
  <br>String-concats its arguments, logs them as an error via <tt>log-err</tt>, and calls
  <tt>throw-error</tt> with the same string.
 <br/><br/>

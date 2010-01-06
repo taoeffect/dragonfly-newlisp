@@ -33,12 +33,15 @@
 		<p>
 			Inactive plugins are simply those that should be loaded on a "need to use" basis. Most plugins will probably fall into this category. Use <span class="code">DF:activate-plugin</span> to load them. All plugins are loaded exactly once, no matter how many times <span class="code">activate-plugin</span> is called on them.
 		</p>
-		
+		<p>
+			For example, to load Dragonfly's Sqlite3 database interface:
+		</p>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">DF:activate-plugin</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>db/database_sqlite3<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<h2>Modules</h2>
 		<p>
 			In addition to <%(link_to "Dragonfly's plugins" "dragonfly_builtin_plugins")%>, you can use the <a href="http://www.newlisp.org/code/modules/">modules</a> that come with newLISP. You can load them using the <span class="code">module</span> function like this:
 		</p>
-		<pre class="code">(module "sqlite3.lsp")</pre>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">module</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>sqlite3.lsp<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p class="info"><b>INFORMATION</b><br/>
 			Dragonfly overloads the <span class="code">load</span> function (which <span class="code">module</span> uses) to ensure that modules, like plugins, are loaded only once.
 		</p>

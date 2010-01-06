@@ -19,7 +19,9 @@
 		
 		<h1>Getting Started</h1>
 		<p class="extract">
-		Setting up Dragonfly is easy, there are only two steps, copying files, and changing the configuration to suit your site. Typically the configuration needs no adjusting, but depending on your situation you may need to make some adjustments.	
+			Setting up Dragonfly is easy, all you need is newLISP and a web server (like Apache).
+			As newLISP compiles virtually everywhere, you can host a Dragonfly-based site just about anywhere,
+			even on shared web hosts!
 		</p>
 
 		<h2>At first one question</h2>
@@ -28,31 +30,21 @@
 		<h2>Requirements</h2>
 		<p>Dragonfly requires the following to work:</p>
 		<ul>
-			<li>newLISP v10.1 or greater.</li>
-			<li>For magic redirection Apache web server is recommended.</li>
+			<li><a href="http://code.google.com/p/dragonfly-newlisp/downloads/list">Dragonfly</a></li>
+			<li><a href="http://www.newlisp.org">newLISP</a> v10.1 (10.1.9 or later is recommended)</li>
 		</ul>
-		
-		<p>If you meet those requirements, great!
-		<p class="config"><b>CONFIGURATION</b><br/>If you're using a custom web server, you might want to setup your own redirection script based on the .htaccess file.
+		<p>For magic redirection, <a href="http://httpd.apache.org/">Apache web server</a> is recommended.</p>
+		<p class="config"><b>CONFIGURATION</b><br/>If you're using a custom web server, you might want to setup your own redirection script based on the <b>.htaccess</b> file.
 		</p>
-		
-		<h2>newLISP Server</h2>
-		<p>You can easily run this website locally using newLISP's built-in web server:</p>
-		<pre class="code">$ cd path/to/dragonfly-newlisp/example-site
-$ ./newlispServer</pre>
-		<p>Then just visit:
-			<a href="http://localhost:8080">http://localhost:8080</a></p>
-		<p class="info"><b>INFORMATION</b><br/>For information on how to configure various parameters of Dragonfly, see <a href="#config">Step 2: Configuring Dragonfly</a> below.</p>
-		
-		<h2>Apache Server</h2>
+		<h2>Running Dragonfly Remotely</h2>
 		<h3 class="code">Step 1: Copying Files</h3>
-		<p>There are three things you'll need to copy into your site's root to install
-		Dragonfly. You'll find these files inside the <span class="code">example-site</span> folder.</p>
+		<p>There are three things you <b>must copy</b> into your site's root to install
+		Dragonfly. These items are found inside of the <b>example-site</b> folder:</p>
 		
 		<ol>
-			<li>The <span class="code">dragonfly-framework</span> folder</li>
-			<li>index.cgi</li>
-			<li>.htaccess (this file is hidden)</li>
+			<li>The <b>dragonfly-framework</b> folder</li>
+			<li><b>index.cgi</b></li>
+			<li><b>.htaccess</b> (This file is hidden but important!)</li>
 		</ol>
 		
 		<p>By "site root" we mean the folder that represents your basic web address,
@@ -65,18 +57,29 @@ $ ./newlispServer</pre>
 		</p><p>
 		Then that's the folder you'll want to copy the files into.
 		</p>
-		<p class="info"><b>INFORMATION</b><br/>If you'd like Dragonfly to live somewhere else inside your site root,
+		<p class="info"><b>INFORMATION</b><br/>If you'd like Dragonfly to live somewhere else inside your site root, or have newlisp installed outside of your <b>/usr/bin</b> folder,
 		click <% (link_to "here" "setup_example") %> for instructions.</p>
 		
 		<h3 class="code">Step 2: Configure Dragonfly</h3>
-		<p>You can configure various aspects of Dragonfly's behavior by editing the <b>config.lsp</b> file in the <span class="code">dragonfly-framework</span> folder.</p><p>Read through the comments (they begin with a semi-colon) for instructions on what the settings are for.</p>
+		<p>You can configure various aspects of Dragonfly's behavior by editing the <b>config.lsp</b> file in the <b>dragonfly-framework</b> folder.</p><p>Read through the comments (they begin with a semi-colon) for instructions on what the settings are for.</p>
 		<a name="config"></a>
-		<p>By default, Apache will send all .html files through Dragonfly for further processing (if necessary) to allow for PHP-like development. If you wish to change this behavior, open the .htaccess file in the site root and read through the comments there.
+		<p>By default, Apache will send all .html files through Dragonfly for further processing (if necessary) to allow for PHP-like development. If you wish to change this behavior, open the <b>.htaccess</b> file in the site root and read through the comments there.
 		</p>
 
 		<h3 class="code">Step 3: That's it!</h3>
 		<p>You're ready to run Dragonfly!</p>
-		
+		<p class="info"><b>INFORMATION</b><br/>
+			Trouble? Questions? Visit the <a href="http://newlispfanclub.alh.net/forum/viewforum.php?f=17">Dragonfly forum</a>
+			and we'll help you out!
+		</p>
+		<h2>Running Dragonfly Locally</h2>
+		<p>
+			You can easily run this entire site (or your own) on your computer using
+			newlisp's built-in web server.
+		</p>
+		<p>
+			This is covered in detail in the section: <%(link_to "Working Locally" "working_locally")%>.
+		</p>
 		<% (display-partial "continue") %>
 		
 		<div class="line-dotted"></div>

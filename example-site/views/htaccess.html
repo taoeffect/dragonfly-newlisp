@@ -1,0 +1,78 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Apache's .htaccess file</h1>
+		<p>
+			Because Dragonfly runs under the <a href="http://en.wikipedia.org/wiki/Common_Gateway_Interface">CGI protocol</a>,
+			it needs the server to redirect URL requests to it so that your website's URLs look like this:
+		</p>
+		<p><span class="code">http://www.rundragonfly.com/welcome</span></p>
+		<p>Instead of this:</p>
+		<p><span class="code">http://www.rundragonfly.com/?welcome</span></p>
+		<p>
+			The <b>.htaccess</b> file included with Dragonfly is set to rewrite the requested URL and pass it
+			to Dragonfly's <b>index.cgi</b> file which in turn triggers
+			Dragonfly's own <%(link_to "routing mechanism" "dragonfly_routes")%>.
+		</p>
+		<h2>Why It's Important</h2>
+		<p>
+			We only want <i>some</i> of the requests to be passed to Dragonfly for processing. It wouldn't make sense, for example, for Dragonfly to handle a request for an image file:
+		</p>
+		<p><span class="code">/includes/images/dragonfly_logo_white.gif</span></p>
+		<p>
+			By default, the <b>.htaccess</b> file is setup so that two kinds of requests are redirected to
+			Dragonfly for routing:
+		</p>
+		<ol><li>"Non-existent" files</li>
+			<li>Files matching a certain extension</li>
+		</ol>
+		<p>As an example of "non-existent" files, take look at the URL for this page. There <i>is no</i> "htaccess" file
+			in the root of this website, and therefore the request is sent to Dragonfly <%(link_to "which transforms" "dragonfly_routes")%> it so that we're served the actual file, located here:
+		</p>
+		<p><span class="code">/views/htaccess.html</span></p>
+		<p>
+			Which brings us to the second type of request that is redirected to Dragonfly: requests
+			matching certain file extensions. This allows requests for actual files to be routed through Dragonfly.
+		</p>
+		<p>By default, the <b>.htaccess</b> file is set to forward all requests for files ending in ".html" or ".nl" to Dragonfly.
+			Because of this, you can go ahead and safely visit this page <a href="/views/htaccess.html">directly</a>,
+			the newLISP code inside of it will still be processed.
+		</p>
+		<h2>Modifying the .htaccess file</h2>
+		<p>
+			Apache configuration files, regular expressions, and <a href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html">mod_rewrite</a> are beyond the scope of this tutorial, however, we'll leave you with a quick example that shows how to make it so that files ending in ".foo" are also passed through Dragonfly.
+		</p>
+		<p>Edit the <b>.htaccess</b> file and change this line:</p>
+		<pre class="textmate-source"><span class="source source_apache-config"><span class="support support_constant support_constant_rewritecond support_constant_rewritecond_apache-config">RewriteCond</span> <span class="support support_variable support_variable_apache-config"><span class="punctuation punctuation_definition punctuation_definition_variable punctuation_definition_variable_apache-config">%{</span>REQUEST_FILENAME}</span> <span class="string string_other string_other_rewrite-condition string_other_rewrite-condition_apache-config">\.(html|nl)$</span></span></pre>
+		<p>To:</p>
+		<pre class="textmate-source"><span class="source source_apache-config"><span class="support support_constant support_constant_rewritecond support_constant_rewritecond_apache-config">RewriteCond</span> <span class="support support_variable support_variable_apache-config"><span class="punctuation punctuation_definition punctuation_definition_variable punctuation_definition_variable_apache-config">%{</span>REQUEST_FILENAME}</span> <span class="string string_other string_other_rewrite-condition string_other_rewrite-condition_apache-config">\.(html|nl|foo)$</span></span></pre>
+		<% (display-partial "continue") %>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

@@ -1,5 +1,38 @@
-(context 'SMTP) 
+;; @module smtp.lsp 
+;; @description Send mail using SMTP protocol
+;; @version 3.0 - Partial rewrite for Dragonfly. Addition attachments, custom port and proper utf8 encoding for subject/message/attachments
+;; @version 2.3 - fix in mail-send-body, thanks to Alessandro
+;; @version 2.2 - doc changes
+;; @version 2.1 - changes for 10.0
+;; @version 2.0 - March 2008, Cormullion added AUTH PLAIN authentication 
+;; @author Lutz Mueller 2001-2009, Cormullion 2008, Greg Slepak 2009-2010
 
+(context 'SMTP) 
+	
+;; @syntax (SMTP:send-mail <str-from> <str-to> <str-subject> <str-message> [<str-server> [<str-usr> <str-pass> [<int-port>]]])
+;; @param <str-from> The email address of the sender.
+;; @param <str-to> The email address of the recipient.
+;; @param <str-subject> The subject line of the email.
+;; @param <str-message> The message part of the email.
+;; @param <str-server> The address of the SMTP server (default: "localhost")
+;; @param <str-user> Optional user name for authentication.
+;; @param <str-pass> Optional password for authentication.
+;; @param <int-port> Optional port to communicate on (default: 25)
+;; @return On success 'true', on failure 'nil'.
+;; In case the function fails returning 'nil', the function
+;; 'SMTP:get-error-text' can be used to receive the error text.
+;;
+;; @example 
+;; (SMTP:send-mail "jdoe@asite.com" "somebody@isp.com" "Greetings" 
+;;   "How are you today? - john doe -" "smtp.asite.com" "jdoe" "secret") 
+;; 
+;; This logs in to the server, tries to authenticate using the username 'jdoe' and password 'secret' (if supplied), 
+;; and sends an email with the format: 
+;;
+;;  From:    jdoe@asite.com 
+;;  To:      somebody@isp.com 
+;;  Subject: Greetings 
+;;  Message: How are you today? - John Doe - 
 (define (send-mail mail-from mail-to mail-subject mail-body (SMTP-server "localhost") user-name password (port 25)) 
     (and 
         (set 'from-hostname (nth 1 (parse mail-from "@"))) 
@@ -38,7 +71,7 @@
        (string "AUTH PLAIN " 
                (base64-enc (append "\000" user-name "\000" password))) "235"))
 
-;; old functions, we have our own.
+; ;old functions, we have our own.
 ; (define (mail-send-header) 
 ;     (net-send-get-result (string "TO: " mail-to)) 
 ;     (net-send-get-result (string "FROM: " mail-from)) 
@@ -54,6 +87,8 @@
 ;             (net-send-get-result lne))) 
 ;     (net-send-get-result ".")) 
 
+;; @syntax (SMTP:get-error-text)
+;; <p>Call this to get the reason 'send-mail' returned 'nil'.</p>
 (define (get-error-text) 
     recvbuff) 
 
@@ -61,13 +96,17 @@
 ; !Attachments - Public API
 ; ---------------------------------------------------------------
 
+;; @syntax (SMTP:clear-attachments)
 (define (clear-attachments)
 	(setf attachments '())
 )
 
-;; @param disposition one of "attachment" or "inline". default is "attachment".
-;; @param mime-type default is "application/octet-stream".
-;; @param encoding default is "base64". If 'encoding' is "base64" it will be automatically transformed using 'encode64-widthsafe'
+;; @syntax (SMTP:attach-document <str-content> <str-filename> [<str-disposition> [<str-mime-type> [<str-encoding>]]])
+;; @param <str-content> The attachment data.
+;; @param <str-filename> How you'd like your attachment to appear named in the email.
+;; @param <str-disposition> "attachment" or "inline". default is "attachment".
+;; @param <str-mime-type> default is "application/octet-stream".
+;; @param <str-encoding> default is "base64". If 'encoding' is "base64" it will be automatically transformed using 'encode64-widthsafe'
 (define (attach-document content filename (disposition "attachment") (mime-type "application/octet-stream") (encoding "base64"))
 	(push (list content filename disposition mime-type encoding) attachments -1)
 )
@@ -76,12 +115,20 @@
 ; !UTF-8 encoding support for non-ASCII characters
 ; ---------------------------------------------------------------
 
-;; useful for attaching binary data such as images.
-;; if you use this make sure to set the attachment's encoding to "base64"
+;; @syntax (SMTP:encode64-widthsafe <buff-data>)
+;; <p>Useful for attaching binary data such as images. Converts the data into base64
+;; and chops it up so that the lines are not longer than 76 characters long, making
+;; it safe to include in the body of emails.</p>
+;; <p>If the attachment's encoding to "base64" (which it is by default), this function
+;; will automatically applied to the <str-content> of the email.</p>
 (define (encode64-widthsafe data)
 	(join (explode (base64-enc data) 76) "\n")
 )
 
+;; @syntax (SMTP:encode64-line <str-line>)
+;; <p>Creates a base64 UTF-8 compatible string, suitable for including foreign characters
+;; in the subjects of emails. This is used by 'send-mail' automatically on the filename
+;; of any attachments, as well as the subject of the email.</p>
 (define (encode64-line str)
 	(string "=?UTF-8?B?" (base64-enc str) "?=")
 )
@@ -102,8 +149,8 @@ Content-Transfer-Encoding: base64
 	
 --} boundary {%s}))
 
-;; filename madness. We actually do not need the *=utf-8 weirdness
-;; if we're using the encode64-line func instead of utf8-urlencode
+; filename madness. We actually do not need the *=utf-8 weirdness
+; if we're using the encode64-line func instead of utf8-urlencode
 
 (setf attachment-wrapper (string
 ;{Content-Disposition: %s; filename*=utf-8''%s

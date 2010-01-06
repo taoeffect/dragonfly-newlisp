@@ -1,0 +1,68 @@
+<% (display-partial "doctype") %>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Changes</h1>
+		<h4>Dragonfly 0.60 - January 6th, 2010</h4>
+		<ul>
+			<li>added <span class="code">DF.DB</span> and <span class="code">ObjNL</span></li>
+			<li>added Dragonfly's own improved <span class="code"></span> module</li>
+			<li>added new <span class="code">add-to-load-path</span> and <span class="code">wrap-func</span> functions to utils.lsp</li>
+			<li>added CGI-like route to the inactive plugins: route_cgi.lsp</li>
+			<li>added utf8-urlencode/decode functions to Request, they handle foreign characters perfectly.</li>
+			<li>added <span class="code">SET_DF_SELF</span> function and the corresponding <span class="code">DF_SELF</span> and <span class="code">DF_SELF_DIR</span> global symbols.</li>
+			<li>added <span class="code">DF_PAGE</span> to point to the currently loaded, host-unqualified web URL</li>
+			<li>added global path functions to utils.lsp: <span class="code">file-ext</span> <span class="code">del-ext</span> <span class="code">basename</span> <span class="code">dirname</span></li>
+			<li>updated and rewrote parts of the user guide</li>
+			<li>improved windows compatibility by creating /tmp if necessary</li>
+			<li>improved the <span class="code">load-once</span> function (load replacement)</li>
+			<li>bugfix in Response:cookie for deleting a cookie</li>
+			<li>bugfix when directly accessing an .html file related to <span class="code">title</span> function</li>
+			<li>removed path.lsp in plugins-inactive</li>
+			<li>removed the <span class="code">into-ctx-assoc</span> function</li>
+			<li>removed <span class="code">viewname</span> from <span class="code">STATIC_TRANSFORMATIONS</span>. Replace with: <span class="code">DF_PAGE</span> or <span class="code">(basename DF_PAGE)</span></li>
+			<li>the winning transformation from <span class="code">STATIC_TRANSFORMATIONS</span> is no longer evaluated twice</li>
+		</ul>
+		<h4>Dragonfly 0.51 - November 16th, 2009</h4>
+		<ul>
+			<li>added redirection script when running the built-in newLISP server</li>
+			<li>changed recommendations to run ./newlispServer</li>
+			<li>added newlispServerWin.bat file provided by m35</li>
+			<li>support for PHP-like multi-params by appending [] to the var name</li>
+			<li>added documentation for $GET/$POST/$FILES and multiparams to guide</li>
+			<li>updated the RSS feed on the example-site for 0.50</li>
+		</ul>
+		<h4>Dragonfly 0.50 - November 11th, 2009</h4>
+		<ul>
+			<li>Massive rewrite</li>
+		</ul>
+		
+		<% (display-partial "continue") %>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+

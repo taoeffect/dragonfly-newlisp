@@ -65,21 +65,91 @@
 	)
 	
 	(define (Dragonfly:print)
-		(write-buffer Dragonfly:STDOUT (apply string (args)))
-		(last (args)) ; to behave the same way as print
+		(write-buffer Dragonfly:STDOUT (apply string $args))
+		(last $args) ; to behave the same way as print
 	)
 	
-	; If someday newLISP supports switching contexts like this we'll use it
-	(define-macro (define-subclass)
-		(new (args 0 1) (args 0 0))
-		;(context (args 0 0))
-		(dolist (method (rest $args))
-			(setf (method 0 0) (sym $it (args 0 0)))
-			(eval (push 'define method))
+	(set 'file-ext-regex (regex-comp {^.*\.(.+)$})
+	     'del-ext-regex  (regex-comp {^(.*)\..+$})
+	     'basename-regex (regex-comp {^(.*/)?(.+)$})
+	     'dirname-regex  (regex-comp {^(.*)/([^/]+/?)$})
+	)
+
+;; @syntax (file-ext <str-path>)
+;; <p>Returns the file extension of the file in <str-path></p>
+;; <pre> (file-ext "")
+;; ;=> ""
+;; (file-ext "asdf")
+;; ;=> ""
+;; (file-ext "asdf.")
+;; ;=> ""
+;; (file-ext "asdf.jpg")
+;; ;=> "jpg"</pre>
+	(define (file-ext path)
+		(if (regex file-ext-regex path 0x10000)
+			$1
+			""
 		)
-		;(context MAIN)
 	)
-	
+
+;; @syntax (del-ext <str-path>)
+;; <p>Returns the <str-path> without the file extension removed.</p>
+;; <pre> (del-ext "")
+;; ;=> ""
+;; (del-ext "asdf")
+;; ;=> "asdf"
+;; (del-ext "asdf.")
+;; ;=> "asdf."
+;; (del-ext "asdf.jpg")
+;; ;=> "asdf"</pre>
+	(define (del-ext path)
+		(if (regex del-ext-regex path 0x10000)
+			$1
+			path
+		)
+	)
+
+;; @syntax (basename <str-path>)
+;; <p>Returns the filename component of <str-path>.</p>
+;; <pre> (basename "")
+;; ;=> ""
+;; (basename "/")
+;; ;=> ""
+;; (basename "asdf")
+;; ;=> "asdf"
+;; (basename "/foo/bar")
+;; ;=> "bar"
+;; (basename "/foo/bar/")
+;; ;=> "bar"</pre>
+	(define (basename path)
+		(if (regex basename-regex path 0x10000)
+			(trim $2 "/")
+			""
+		)
+	)
+
+;; @syntax (dirname <str-path>)
+;; <p>Returns the directory path component of <str-path>.</p>
+;; <pre> (dirname "")
+;; ;=> ""
+;; (dirname "/")
+;; ;=> "/"
+;; (dirname "asdf")
+;; ;=> "."
+;; (dirname "/asdf/")
+;; ;=> "/"
+;; (dirname "asdf/foo")
+;; ;=> "asdf"</pre>
+	(define (dirname path)
+		(if (empty? path)
+			""
+			(if (regex dirname-regex path 0x10000)
+				(if (empty? $1) "/" $1)
+				(if (starts-with path "/") "/" ".")
+			)
+		)
+	)
+
 ;; @syntax (regex-captcha <str-regex> <str> [<int-options>] [<int-captcha>])
 ;; @param <int-options> options to regex, defaults to 0.
 ;; @param <int-captch> which of the regex group captures to return, defaults to 1.
@@ -117,42 +187,26 @@
 		(set func-sym (eval (expand wrapper 'wrapped-func)))
 	)
 
-;; @syntax (into-ctx-assoc <ctx> <list-assoc>)
-;; <p>Places the key/value pairs in <list-assoc> into the context <ctx>
-;; to be used as a lookup table.<br/>This is a global function.</p>
-;; <b>example:</b>
-;; <pre> (new Tree 'MyCtx)
-;; (into-ctx-assoc MyCtx '(
-;;     ("key" "value")
-;;     ("apple" "mmmm... good")
-;;     ("organic?" true)
-;; ))</pre>
-;; 
-	(define (into-ctx-assoc ctx assoc-list)
-		; dolist is slightly faster than map
-		(dolist (x assoc-list) (ctx (first x) (last x)))
-	)
-	
-;; @syntax (SET_DFLY_SELF <str-filepath>)
+;; @syntax (SET_DF_SELF <str-filepath>)
 ;; @param <str-filepath> The path to the file being served, or the primary file responsible for handling this route.
 ;; <p>Routes should call this global function with the path to the file that's being displayed
 ;; or the file that's principly in charge of handling this route. This function will then
-;; set the global variables 'DFLY_SELF' and 'DFLY_SELF_DIR' to point to that file and its
+;; set the global variables 'DF_SELF' and 'DF_SELF_DIR' to point to that file and its
 ;; parent directory, respectively.</p>
 ;; <p>The default routes 'Route.Static' and 'Route.Resource' call this function first thing
 ;; in their 'Route:run' methods, prior to loading the files. This is the recommended way of
 ;; calling this function.</p>
-	(define (SET_DFLY_SELF file)
+	(define (SET_DF_SELF file)
 		(when (setf file (real-path file))
-			(set (global 'DFLY_SELF)     file
-			     (global 'DFLY_SELF_DIR) (regex-captcha {^(.+/)} file)
-			)
+			(constant (global 'DF_SELF) file)
+			(constant (global 'DF_SELF_DIR) (regex-captcha {^(.+)/} file))
 		)
 	)
 	
 	; these functions should be global (define-subclass should not)
 	(global 'load-files-in-dir 'regex-captcha 'load-once
-		'wrap-func 'into-ctx-assoc 'add-to-load-path 'SET_DFLY_SELF
+		'wrap-func 'add-to-load-path 'SET_DF_SELF
+		'file-ext 'del-ext 'basename 'dirname
 	)
 	
 	; swap these functions for ours and save the originals

@@ -39,6 +39,63 @@
  ; no need to update any source files, it just works.</pre>
  <b>warning:</b> Use this function sparingly as name-conflicts could
  result in the wrong file being loaded!
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_file-ext"></a><h3><font color=#CC0000>file-ext</font></h3>
+<b>syntax: (<font color=#CC0000>file-ext</font> <em>str-path</em>)</b><br/>
+ <p>Returns the file extension of the file in <em>str-path</em></p>
+ <pre> (file-ext "")
+ ;=> ""
+ (file-ext "asdf")
+ ;=> ""
+ (file-ext "asdf.")
+ ;=> ""
+ (file-ext "asdf.jpg")
+ ;=> "jpg"</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_del-ext"></a><h3><font color=#CC0000>del-ext</font></h3>
+<b>syntax: (<font color=#CC0000>del-ext</font> <em>str-path</em>)</b><br/>
+ <p>Returns the <em>str-path</em> without the file extension removed.</p>
+ <pre> (del-ext "")
+ ;=> ""
+ (del-ext "asdf")
+ ;=> "asdf"
+ (del-ext "asdf.")
+ ;=> "asdf."
+ (del-ext "asdf.jpg")
+ ;=> "asdf"</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_basename"></a><h3><font color=#CC0000>basename</font></h3>
+<b>syntax: (<font color=#CC0000>basename</font> <em>str-path</em>)</b><br/>
+ <p>Returns the filename component of <em>str-path</em>.</p>
+ <pre> (basename "")
+ ;=> ""
+ (basename "/")
+ ;=> ""
+ (basename "asdf")
+ ;=> "asdf"
+ (basename "/foo/bar")
+ ;=> "bar"
+ (basename "/foo/bar/")
+ ;=> "bar"</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dirname"></a><h3><font color=#CC0000>dirname</font></h3>
+<b>syntax: (<font color=#CC0000>dirname</font> <em>str-path</em>)</b><br/>
+ <p>Returns the directory path component of <em>str-path</em>.</p>
+ <pre> (dirname "")
+ ;=> ""
+ (dirname "/")
+ ;=> "/"
+ (dirname "asdf")
+ ;=> "."
+ (dirname "/asdf/")
+ ;=> "/"
+ (dirname "asdf/foo")
+ ;=> "asdf"</pre>
+
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_regex-captcha"></a><h3><font color=#CC0000>regex-captcha</font></h3>
 <b>syntax: (<font color=#CC0000>regex-captcha</font> <em>str-regex</em> <em>str</em> [<em>int-options</em>] [<em>int-captcha</em>])</b><br/>
@@ -66,25 +123,12 @@
          (throw-error (string "execute-update failed: " $args)))))</pre>
 
 <br/><br/><center>- &sect; -</center><br/>
-<a name="_into-ctx-assoc"></a><h3><font color=#CC0000>into-ctx-assoc</font></h3>
-<b>syntax: (<font color=#CC0000>into-ctx-assoc</font> <em>ctx</em> <em>list-assoc</em>)</b><br/>
- <p>Places the key/value pairs in <em>list-assoc</em> into the context <em>ctx</em>
- to be used as a lookup table.<br/>This is a global function.</p>
- <b>example:</b>
- <pre> (new Tree 'MyCtx)
- (into-ctx-assoc MyCtx '(
-     ("key" "value")
-     ("apple" "mmmm... good")
-     ("organic?" true)
- ))</pre>
-<br/><br/>
-<br/><br/><center>- &sect; -</center><br/>
-<a name="_SET_DFLY_SELF"></a><h3><font color=#CC0000>SET_DFLY_SELF</font></h3>
-<b>syntax: (<font color=#CC0000>SET_DFLY_SELF</font> <em>str-filepath</em>)</b><br/>
+<a name="_SET_DF_SELF"></a><h3><font color=#CC0000>SET_DF_SELF</font></h3>
+<b>syntax: (<font color=#CC0000>SET_DF_SELF</font> <em>str-filepath</em>)</b><br/>
 <b>parameter: </b><em>str-filepath</em> - The path to the file being served, or the primary file responsible for handling this route.<br/>
  <p>Routes should call this global function with the path to the file that's being displayed
  or the file that's principly in charge of handling this route. This function will then
- set the global variables <tt>DFLY_SELF</tt> and <tt>DFLY_SELF_DIR</tt> to point to that file and its
+ set the global variables <tt>DF_SELF</tt> and <tt>DF_SELF_DIR</tt> to point to that file and its
  parent directory, respectively.</p>
  <p>The default routes <tt>Route.Static</tt> and <tt>Route.Resource</tt> call this function first thing
  in their <tt>Route:run</tt> methods, prior to loading the files. This is the recommended way of

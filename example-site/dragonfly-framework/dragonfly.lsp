@@ -99,32 +99,32 @@
 	(env "QUERY_STRING" QUERY_STRING)
 )
 
-;; @syntax DFLY_PAGE
+;; @syntax DF_PAGE
 ;; <p>The web-friendly, host-unqualified URL to the "current page"</p>
 ;; <pre> ; load http://www.mysite.com/foo/bar?baz
-;; DFLY_PAGE ;=> "/foo/bar"
+;; DF_PAGE ;=> "/foo/bar"
 ;; ; load http://www.mysite.com
-;; DFLY_PAGE ;=> "/"</pre>
+;; DF_PAGE ;=> "/"</pre>
 (if (empty? QUERY_STRING)
-	(constant (global 'DFLY_PAGE) "/")
-	(constant (global 'DFLY_PAGE) (string "/" ((parse QUERY_STRING {[?&]} 0) 0)))
+	(constant (global 'DF_PAGE) "/")
+	(constant (global 'DF_PAGE) (string "/" ((parse QUERY_STRING {[?&]} 0) 0)))
 )
 
-;; @syntax DFLY_SELF
+;; @syntax DF_SELF
 ;; <p>The full, local path (on the server) to the currently loaded file
 ;; or view being displayed.</p>
 ;; <b>example:</b>
 ;; <pre> ; load http://www.mysite.com/foo/bar?baz
-;; DFLY_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
-;; <b>see:</b> the 'SET_DFLY_SELF' function in utils.lsp for more info
+;; DF_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
+;; <b>see:</b> the 'SET_DF_SELF' function in utils.lsp for more info
 
-;; @syntax DFLY_SELF_DIR
+;; @syntax DF_SELF_DIR
 ;; <p>The full, local path (on the server) to the directory holding
 ;; the currently loaded file or view being displayed.</p>
 ;; <b>example:</b>
 ;; <pre> ; load http://www.mysite.com/foo/bar?baz
-;; DFLY_SELF_DIR ;=> "/home/www/mysite.com/foo/"</pre>
-;; <b>see:</b> the 'SET_DFLY_SELF' function in utils.lsp for more info
+;; DF_SELF_DIR ;=> "/home/www/mysite.com/foo"</pre>
+;; <b>see:</b> the 'SET_DF_SELF' function in utils.lsp for more info
 
 ; seed the random number generator immediately.
 (seed (time-of-day))
@@ -164,7 +164,7 @@
 ; !Public Functions
 ;===============================================================================
 
-;; @syntax (Dragonfly:activate-plugin <str-plugin-name> [<str-plugin-name-2> ...])
+;; @syntax (DF:activate-plugin <str-plugin-name> [<str-plugin-name-2> ...])
 ;; @param <str-plugin-name> The name of the plugin to load, without the ".lsp" extension.
 ;; <br>Loads (once only) a the named plugin from the 'plugins-inactive' folder.
 (define (activate-plugin)
@@ -173,7 +173,7 @@
 	)
 )
 
-;; @syntax (Dragonfly:web-root [<str-path> [<bool-question-mark>]])
+;; @syntax (DF:web-root [<str-path> [<bool-question-mark>]])
 ;; @param <str-path> Path relative to the folder containing 'index.cgi'.
 ;; @param <bool-question-mark> Whether to return a URL with /? prepended.
 ;; <p>This function is quite handy for making working links when your 'index.cgi' file
@@ -190,52 +190,52 @@
 	(string WEB_ROOT (if question-mark "?" "") path)
 )
 
-;; @syntax (Dragonfly:view-path <str-view-name>)
+;; @syntax (DF:view-path <str-view-name>)
 ;; @param <str-view-name> Name of view in 'VIEWS_PATH', without any extension.
 ;; <br>Returns the absolute path to the view as a string, appending 'VIEW_EXTENSION' if necessary.
 (define (view-path view-name)
 	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
-;; @syntax (Dragonfly:partial-path <str-partial-name>)
+;; @syntax (DF:partial-path <str-partial-name>)
 ;; <br>Just like 'view-path', except for partials in 'PARTIALS_PATH'.
 (define (partial-path partial-name)
 	(string PARTIALS_PATH "/" partial-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
-;; @syntax (Dragonfly:resource-path <str-resource-name>)
+;; @syntax (DF:resource-path <str-resource-name>)
 ;; <br>Similar to 'view-path', except for resources in 'RESOURCES_PATH'.
 ;; Don't include the .lsp extension.
 (define (resource-path resource-name)
 	(string RESOURCES_PATH "/" resource-name ".lsp")
 )
 
-;; @syntax (Dragonfly:include)
+;; @syntax (DF:include)
 ;; <br>Like 'display-file' but does not pass the file through 'eval-template'.
 (define (include)
 	(print (read-file (apply string $args)))
 )
 
-;; @syntax (Dragonfly:display-file)
+;; @syntax (DF:display-file)
 ;; <br>String-concats its arguments and displays the file
 ;; at that path after passing it through 'eval-template'.
 (define (display-file)
 	(eval-template (read-file (apply string $args)))
 )
 
-;; @syntax (Dragonfly:display-partial <str-partial-name>)
+;; @syntax (DF:display-partial <str-partial-name>)
 ;; Displays the partial named <str-partial-name> using 'display-file' and 'partial-path'.
 (define (display-partial partialname)
   	(display-file (partial-path partialname))
 )
 
-;; @syntax (Dragonfly:display-view <str-view-name>)
+;; @syntax (DF:display-view <str-view-name>)
 ;; Displays the view named <str-view-name> using 'display-file' and 'view-path'.
 (define (display-view viewname)
 	(display-file (view-path viewname))
 )
 
-;; @syntax (Dragonfly:display-error <int-error-code>)
+;; @syntax (DF:display-error <int-error-code>)
 ;; <br>Sends the <int-error-code> and, if it exists, displays the view named
 ;; <int-error-code> using 'display-view'. Otherwise, displays the built-in error
 ;; template 'Dragonfly:ERROR_TEMPLATE'.
@@ -253,7 +253,7 @@
 	)
 )
 
-;; @syntax (Dragonfly:eval-template <str> [<ctx>])
+;; @syntax (DF:eval-template <str> [<ctx>])
 ;; @param <str> A string containing the template.
 ;; @param <ctx> Optional. Represents the context the template is evaluted in. Defaults to Dragonfly.
 ;; <br>newLISP code in the template between the 'OPEN_TAG' and 'CLOSE_TAG' (see 'config.lsp') is
@@ -274,7 +274,7 @@
 	)
 )
 
-;; @syntax (Dragonfly:die)
+;; @syntax (DF:die)
 ;; <br>String-concats its arguments, logs them as an error via 'log-err', and calls
 ;; 'throw-error' with the same string.
 ;; 
@@ -315,7 +315,7 @@
 (new Route 'Route.Static) 
 (new Route 'Route.Resource)
 
-(context Route.Static)
+(context 'Route.Static)
 
 (define (matches?)
 	(set 'chunks (parse QUERY_STRING {[?&]} 0))
@@ -327,20 +327,20 @@
 		; if the path ends with one of the trigger extensions, match if it exists
 		(file? path)
 		; otherwise, check if one of the transformations exists
-		(set 'path (eval (exists (fn (x) (file? (eval x))) DF:STATIC_TRANSFORMATIONS)))
+		(exists (fn (x) (file? (setf path (eval x)))) DF:STATIC_TRANSFORMATIONS)
 	)
 )
 (define (run)
 	(replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
-	(if-not ext (set 'ext (regex-captcha {.*\.(\w+)$} path)))
-	(if ext (Response:content-type (Response:extension->type ext)))
-	(SET_DFLY_SELF path)
+	(SET_DF_SELF path)
+	(unless ext (setf ext (regex-captcha {.*\.(\w+)$} path)))
+	(when ext (Response:content-type (Response:extension->type ext)))
 	(unless (DF:display-file path)
 		(DF:die "Failed to get: " path)
 	)
 )
 
-(context Route.Resource)
+(context 'Route.Resource)
 
 (define (matches?)
 	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
@@ -349,7 +349,7 @@
 	)
 )
 (define (run)
-	(SET_DFLY_SELF path)
+	(SET_DF_SELF path)
 	(load path)
 	(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
 	(set 'ctx-sym (sym ctx-str))
@@ -366,8 +366,8 @@
 
 (context 'Dragonfly)
 
-(if ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
-(if ENABLE_RESTFUL_HANDLER (push (Route.Resource) dragonfly-routes -1))
+(when ENABLE_STATIC_TEMPLATES (push (Route.Static) dragonfly-routes -1))
+(when ENABLE_RESTFUL_HANDLER  (push (Route.Resource) dragonfly-routes -1))
 
 ;===============================================================================
 ; !Private Functions (i.e. you shouldn't ever call these)

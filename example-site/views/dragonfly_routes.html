@@ -31,7 +31,7 @@
 		</p>
 		<p><span class="code">http://rundragonfly.com/welcome</span></p>
 		<p>
-			Then one of Dragonfly's routes (<span class="code">Route.Static</span>) sends the contents of the <b>welcome.html</b> file to your web browser.
+			Then one of Dragonfly's routes (<span class="code">Route.Static</span>) sends the contents of the <b>welcome.html</b> file to your web browser (after evaluating any newLISP code inside of it).
 		</p>
 		<p>
 			Dragonfly's routes are represented as <a href="http://www.newlisp.org/index.cgi?page=newLISP-FOOP">FOOP objects</a> and use
@@ -42,9 +42,9 @@
 			where they are asked, one-by-one, whether they wish to handle the current request. The first route to say "yes" gets run.
 		</p>
 		<p>
-			This document describes Dragonfly's two default routes: <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>.
+			This document describes Dragonfly's two default routes: <span class="code">Route.Static</span> and <span class="code">Route.Resource</span>. A third route included with Dragonfly (but not built into the core) is <span class="code">Route.CGI</span> and is explained in the next topic: <%(link_to "Creating your own routes" "dragonfly_create_routes")%>.
 		</p>
-		<h2>Static Routes</h2>
+		<h2>Templates with <span class="code" style="font-size:inherit">Routes.Static</span></h2>
 		<p><span class="code">Route.Static</span> offers a flexible method for serving template files to allow for a PHP-like development pattern, but without the PHP.
 		</p>
 		<p>
@@ -84,13 +84,11 @@
 		</p>
 		<h3 class="param">STATIC_TRANSFORMATIONS</h3>
 		<p>Default value:</p>
-		<pre class="code">'(
-    (string DOCUMENT_ROOT "/" _ "/index.html")
-    (begin (set 'viewname _)
-           (string VIEWS_PATH "/" _))
-    (begin (set 'viewname _)
-           (string VIEWS_PATH "/" _ VIEW_EXTENSION))
-)</pre>
+		<pre class="textmate-source"><span class="source source_newlisp">'<span class="entity entity_paren entity_paren_lisp">(</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">DOCUMENT_ROOT</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _ <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/index.html<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">VIEWS_PATH</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _<span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">VIEWS_PATH</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _ <span class="entity entity_symbol entity_symbol_lisp">VIEW_EXTENSION</span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p>
 			If the request does not have one of the
 			<span class="code">STATIC_TRIGGER_EXTENSIONS</span>, then
@@ -107,29 +105,20 @@
 		<p>
 			This is because the first transformation resulted in a match:
 		</p>
-<pre class="code">
-(string DOCUMENT_ROOT "/" _ "/index.html")
-=> "/home/www/example-site.com/foo/index.html"
-</pre>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">DOCUMENT_ROOT</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _ <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/index.html<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span>=&gt; "/home/www/example-site.com/foo/index.html"</span></span></pre>
 		<p>
 			Go ahead and <% (link_to "give it a try!" "foo") %>
 		</p>
 		<p>
 			The page you're currently on was matched by the third transformation:
 		</p>
-<pre class="code">
-(begin (set 'viewname _)
-       (string VIEWS_PATH "/" _ VIEW_EXTENSION))
-</pre>
+<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">string</span> <span class="entity entity_symbol entity_symbol_lisp">VIEWS_PATH</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> _ <span class="entity entity_symbol entity_symbol_lisp">VIEW_EXTENSION</span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p>
-			The winning transformation is evaluated twice: the first time to
-			check for a file, and once again if the file exists. This allows
-			you to use transformations for more than just path testing. For example,
-			the third transformation also sets <span class="code">DF:viewname</span>
-			to the name of the view.
+			Note that this technique is very powerful as the transformations can contain arbitrarily complex newLISP expressions, so long as they eventually evaluate to a string.
 		</p>
 		<a name="restful"></a>
-		<h2>RESTful Routes</h2>
+		<h2>RESTful routing with <span class="code" style="font-size:inherit">Route.Resource</span></h2>
 		<p class="extract">
 			Dragonfly supports the creation of powerful web applications through
 			the use of clean RESTful routes.
@@ -166,42 +155,41 @@
 		</p>
 		
 		<h3 class="code">Example resource in resources/wings.lsp:</h3>
-		<pre class="code">
-(DF:activate-plugin "artfulcode/json")
+<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">DF:activate-plugin</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>artfulcode/json<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
 
-(new Resource 'Resource.Wings)
-(context 'Resource.Wings)
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">new</span> <span class="entity entity_symbol entity_symbol_lisp">Resource</span> '<span class="entity entity_symbol entity_symbol_lisp">Resource</span>.<span class="entity entity_symbol entity_symbol_lisp">Wings</span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">context</span> '<span class="entity entity_symbol entity_symbol_lisp">Resource</span>.<span class="entity entity_symbol entity_symbol_lisp">Wings</span><span class="entity entity_paren entity_paren_lisp">)</span>
 
-(set 'my-data
-  '((wings (left right))
-    (wings-condition ("good" "excellent"))
-    (wings-opacity 0.5))
-)
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">set</span> '<span class="entity entity_symbol entity_symbol_lisp">my-data</span>
+  '<span class="entity entity_paren entity_paren_lisp">((</span><span class="entity entity_name entity_name_function entity_name_function_lisp">wings</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">left</span> <span class="entity entity_symbol entity_symbol_lisp">right</span><span class="entity entity_paren entity_paren_lisp">))</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">wings-condition</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>good<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>excellent<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">))</span>
+    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">wings-opacity</span> <span class="constant constant_numeric constant_numeric_lisp">0.5</span><span class="entity entity_paren entity_paren_lisp">))</span>
+<span class="entity entity_paren entity_paren_lisp">)</span>
 
-(define (Resource.Wings:Resource.Wings id response-format)
-    ; defaults to calling show
-    (show id response-format)
-)
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="meta meta_function meta_function_lisp"><span class="storage storage_type storage_type_function-type storage_type_function-type_lisp">define</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_functiondef entity_name_functiondef_lisp">Resource.Wings:Resource.Wings</span></span> <span class="entity entity_symbol entity_symbol_lisp">id</span> <span class="entity entity_symbol entity_symbol_lisp">response-format</span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span> defaults to calling show
+</span>    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">show</span> <span class="entity entity_symbol entity_symbol_lisp">id</span> <span class="entity entity_symbol entity_symbol_lisp">response-format</span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">)</span>
 
-(define (show id response-format)
-    ; in this situation we can't use newLISP's default
-    ; parameter values to do this for us.
-    (if-not id (set 'id 0))
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="meta meta_function meta_function_lisp"><span class="storage storage_type storage_type_function-type storage_type_function-type_lisp">define</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_functiondef entity_name_functiondef_lisp">show</span></span> <span class="entity entity_symbol entity_symbol_lisp">id</span> <span class="entity entity_symbol entity_symbol_lisp">response-format</span><span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span> in this situation we can't use newLISP's default
+</span>    <span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span> parameter values to do this for us.
+</span>    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">if-not</span> <span class="entity entity_symbol entity_symbol_lisp">id</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">set</span> '<span class="entity entity_symbol entity_symbol_lisp">id</span> <span class="constant constant_numeric constant_numeric_lisp">0</span><span class="entity entity_paren entity_paren_lisp">))</span>
 
-    ; uh-oh! No range checking on 'resource-id' ...
-    (if (= response-format "json")
-        (begin
-            (Response:content-type Response:json-type)
-            (print (Json:lisp->json (my-data id)))
-        )
-        (begin
-            (Response:content-type Response:text-type)
-            (print (my-data id))
-        )
-    )
-)
+    <span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span> uh-oh! No range checking on 'resource-id' ...
+</span>    <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">if</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">=</span> <span class="entity entity_symbol entity_symbol_lisp">response-format</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>json<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+        <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">begin</span>
+            <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">Response:content-type</span> <span class="entity entity_symbol entity_symbol_lisp">Response:json-type</span><span class="entity entity_paren entity_paren_lisp">)</span>
+            <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">print</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">Json:lisp-&gt;json</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">my-data</span> <span class="entity entity_symbol entity_symbol_lisp">id</span><span class="entity entity_paren entity_paren_lisp">)))</span>
+        <span class="entity entity_paren entity_paren_lisp">)</span>
+        <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">begin</span>
+            <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">Response:content-type</span> <span class="entity entity_symbol entity_symbol_lisp">Response:text-type</span><span class="entity entity_paren entity_paren_lisp">)</span>
+            <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">print</span> <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">my-data</span> <span class="entity entity_symbol entity_symbol_lisp">id</span><span class="entity entity_paren entity_paren_lisp">))</span>
+        <span class="entity entity_paren entity_paren_lisp">)</span>
+    <span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="entity entity_paren entity_paren_lisp">)</span>
 
-(context MAIN)</pre>
+<span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">context</span> <span class="entity entity_symbol entity_symbol_lisp">MAIN</span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
 		<p>Try it out:</p>
 		<div style="margin-top:10px">
 			<div id="wings_resp" style="width:300px; height:40px; border:1px solid gray; padding:4px; overflow:auto">
