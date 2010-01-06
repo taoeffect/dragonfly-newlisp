@@ -123,7 +123,7 @@
 ;; <p>Writes a title including the current navigation entry.</p>
 ;; 
 (define (title websitename)
-	(println (string (title-case (replace "_" (basename (del-ext DF_PAGE)) " ")) " " websitename  ))
+	(println (string (title-case (replace "_" (basename (del-ext DF_SELF)) " ")) " " websitename))
 )
 
 ;; @syntax (Dragonfly:css <css-media> <css-location>)

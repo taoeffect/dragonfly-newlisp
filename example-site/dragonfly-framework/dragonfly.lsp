@@ -117,6 +117,7 @@
 ;; <pre> ; load http://www.mysite.com/foo/bar?baz
 ;; DF_SELF ;=> "/home/www/mysite.com/foo/bar.html"</pre>
 ;; <b>see:</b> the 'SET_DF_SELF' function in utils.lsp for more info
+(global 'DF_SELF)
 
 ;; @syntax DF_SELF_DIR
 ;; <p>The full, local path (on the server) to the directory holding
@@ -125,6 +126,7 @@
 ;; <pre> ; load http://www.mysite.com/foo/bar?baz
 ;; DF_SELF_DIR ;=> "/home/www/mysite.com/foo"</pre>
 ;; <b>see:</b> the 'SET_DF_SELF' function in utils.lsp for more info
+(global 'DF_SELF_DIR)
 
 ; seed the random number generator immediately.
 (seed (time-of-day))
