@@ -51,10 +51,16 @@
 (new Tree '$FILES)
 
 ; used to store binary STDIN data
-(global '$BINARY)
+(set (global '$BINARY) "")
 
-; define MAX_POST_LENGTH if you want a custom value
-(unless (and (number? MAX_POST_LENGTH) (global? MAX_POST_LENGTH))
+;; @syntax MAX_POST_LENGTH
+;; <p>A constant global integer whose value by default is '1048576'. This represents
+;; the maximum amount of binary data (in bytes) that can be sent in the body of the
+;; request (which gets stored in '$BINARY').</p>
+;; <p>Minimum value is '8192'. Set this value prior to the loading of this file
+;; (for example in 'config.lsp') to customize it.</p>
+(global 'MAX_POST_LENGTH)
+(unless (> MAX_POST_LENGTH 8192)
 	(constant (global 'MAX_POST_LENGTH) 1048576)
 )
 
@@ -111,8 +117,17 @@
 	)
 )
 
-(define (handle-binary-data)
-	(read-buffer (device) $BINARY MAX_POST_LENGTH)
+; we can't simply do: (read-buffer (device) $BINARY MAX_POST_LENGTH)
+; because versions of newlisp (upto and including 10.1.9) have a fairly
+; broken 'read-buffer' function that can't handle large amounts of data.
+; this may be fixed in a future version of newLISP, but for now we're doing
+; it the C-way.
+(define (handle-binary-data , (chunk "") (chunk-size 8192) (max-bytes MAX_POST_LENGTH) read)
+	(while (and (setf read (read-buffer (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
+		(write-buffer $BINARY chunk)
+		(dec max-bytes read)
+		(when (< max-bytes chunk-size) (setf chunk-size max-bytes))
+	)
 )
 
 (define (parse-multipart-chunk chunk , idx disp var val data)
