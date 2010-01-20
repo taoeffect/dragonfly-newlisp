@@ -1,0 +1,118 @@
+<% (display-partial "doctype") %>
+<head>
+	<%
+	(display-partial "header")
+	(script (web-root "includes/js/jquery-ui-1.7.2.custom.min.js"))
+	%>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Parameters and Forms</h1>
+		<p class="extract">
+			Dragonfly's <b>lib/request.lsp</b> defines many of the global symbols needed to deal with getting user input from forms, handling file uploads, etc.
+		</p>
+		<p>
+			Dragonfly includes the PHP-like contexts <b>$GET</b>, <b>$POST</b>, <b>$COOKIES</b> and <b>$FILES</b> for handling user-supplied data.
+		</p>
+		<p>
+			For example, if we wanted to retrieve the value of the GET parameter "foo", we would write:
+		</p>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">$GET</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>foo<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span></span></pre>
+		<p>
+			This box shows the value of "foo":
+		</p>
+		<div class="resultbox" id="foo-result"><%=($GET "foo")%></div>
+		<% (if-not ($GET "foo") (begin %>
+		<p>
+			It's currently <span class="code">nil</span> because no GET parameter "foo" has been set. Click <%(link_to "this link" (string DF_PAGE "?foo=bar"))%> to set its value to <span class="code">bar</span>.
+		</p>
+		<% ) %>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#foo-result').effect("highlight", {color:"#fdb2b5"}, 3000);
+			});
+		</script>
+		<% ) %>
+		<p>
+			For more information on <b>$GET</b>, <b>$POST</b>, <b>$COOKIES</b> and <b>$FILES</b>, see the <%(link_to "api" "dragonfly_api")%>.
+		</p>
+		<h2>Same Name Multi-Params</h2>
+		<p>
+			Although it's rare, sometimes it's convenient to generate a request where a single parameter has multiple values, like this:
+		</p>
+		<p><span class="code">GET /form.cgi?bar=1&bar=2</span></p>
+		<p>
+			However, normally only the last value of <span class="code">bar</span> is accepted. To get the entire list of values append <b>[]</b> to the end of the variable name, like this:
+		</p>
+		<p><span class="code">GET /form.cgi?bar[]=1&bar[]=2</span></p>
+		<pre class="textmate-source"><span class="source source_newlisp"><span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">$GET</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>bar[]<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span><span class="entity entity_paren entity_paren_lisp">)</span>
+<span class="comment comment_line comment_line_semicolon comment_line_semicolon_lisp"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_lisp">;</span>=&gt; (1 2)</span></span></pre>
+		<p>
+			One prominent example is a form that contains a select box that allows multiple selections. Like this one:
+		</p>
+		<h3 class="code">Example: Multi-selection form</h3>
+		<p>
+			Select multiple choices by holding down the <i>Shift</i> key and then click <b>Submit</b>.
+		</p>
+		<div style="width:200px; margin-top: 10px">
+			<a name="multi"></a>
+			
+			<% 			
+			(DF:activate-plugin "form")
+			(FORM:create (string DF_PAGE "#multi") "POST")			
+			%>
+			
+			<select name="foo[]" multiple="yes" style="width:100%">
+				<option value="option1">option1</option>
+				<option value="option2">option2</option>
+				<option value="option3">option3</option>
+			</select>
+			
+			<div style="float:right">
+				<%
+				(FORM:input "reset" "Deselect", "reset1")
+				(FORM:input "submit" "Submit", "submit1")
+				(FORM:input "hidden" "", "hidden1")
+				(FORM:input "hidden" "", "hidden2")
+				%>
+			</div>
+			<div class="clear"></div>
+			
+			<%
+			(FORM:end)
+			%>
+
+		</div>
+		
+		<% (when ($POST "foo[]") %>
+		<p>Value of <span class="code"><b>($POST "foo[]")</b></span>:</p>
+		<p><span class="code"><%=($POST "foo[]")%></span></p>
+		<%)%>
+		
+		<% (display-partial "continue") %>
+		
+		<div class="line-dotted"></div>
+
+		<% (benchmark-result) %>
+		
+		<div class="line-dotted"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
