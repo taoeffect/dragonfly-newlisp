@@ -1,5 +1,5 @@
 ;; @module Json
-;; @author Jeff Ober <jeffober@gmail.com>
+;; @author Jeff Ober <jeffober@gmail.com>, Greg Slepak added fix for proper JSON (" instead of ')
 ;; @version 2.0
 ;; @location http://static.artfulcode.net/newlisp/json.lsp
 ;; @package http://static.artfulcode.net/newlisp/json.qwerty
@@ -36,14 +36,14 @@
   (case (type-of lisp)
     ("boolean" (if lisp "true" "false"))
     ("quote" (lisp->json (eval lisp)))
-    ("symbol" (format "'%s'" (name lisp)))
-    ("string" (format "'%s'" (simple-escape lisp)))
+    ("symbol" (format {"%s"} (name lisp)))
+    ("string" (format {"%s"} (simple-escape lisp)))
     ("integer" (string lisp))
     ("float" (string lisp))
     ("list" (if (assoc? lisp)
                 (format "{ %s }"
                         (join (map (fn (pair)
-                                     (format "'%s': %s"
+                                     (format {"%s": %s}
                                              (if (symbol? (pair 0))
                                                  (name (pair 0))
                                                  (string (pair 0)))
@@ -54,7 +54,7 @@
     ("array" (string "[" (join (map lisp->json lisp) ", ") "]"))
     ("context" (let ((values '()))
                  (dotree (s lisp)
-                   (push (format "'%s': %s"
+                   (push (format {"%s": %s}
                                  (name s)
                                  (lisp->json (eval s)))
                          values -1))
@@ -63,7 +63,8 @@
 
 (define (simple-escape str)
   (replace {[\n\r]+} str {\n} 4)
-  (replace {'} str {\'} 4)
+  ;(replace {'} str {\'} 4)
+	(replace {"} str {\"})
   str)
 
 ;; @syntax (Json:json->lisp <str-json>)
