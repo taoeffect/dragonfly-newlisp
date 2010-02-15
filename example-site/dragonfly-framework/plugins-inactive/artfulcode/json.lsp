@@ -99,7 +99,7 @@
     (until (empty? (setf c (pop text)))
       (if (and (= c quot) (not escaped))
         (throw $idx)
-        (write-buffer str c))
+        (extend str c))
       (setf escaped (and (not $it) (= c {\})))))
   (list str text))
 
@@ -151,18 +151,18 @@
   (dolist (tok tokens)
     (case tok
       (OPEN_BRACKET
-        (inc depth)
+        (++ depth)
         (push (list) tree loc)
         (push -1 loc))
       (OPEN_BRACE
-        (inc depth)
+        (++ depth)
         (push (list) tree loc)
         (push -1 loc))
       (CLOSE_BRACKET
-        (dec depth)
+        (-- depth)
         (pop loc))
       (CLOSE_BRACE
-        (dec depth)
+        (-- depth)
         (pop loc))
       (COLON
         (push (list (pop tree loc)) tree loc)

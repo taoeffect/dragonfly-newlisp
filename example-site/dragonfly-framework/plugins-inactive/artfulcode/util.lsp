@@ -203,7 +203,7 @@
 ;; => '(gensym-1 gensym-2 gensym-3 gensym-4)
 (define (make-array size fun , arr i)
   (setf arr (array size) i -1)
-  (until (= (inc i) size)
+  (until (= (++ i) size)
     (setf (arr i) (fun)))
   arr)
 
@@ -223,7 +223,7 @@
 ;; 6
 (define (array-iter fun arr , size i)
   (setf i -1 size (length arr))
-  (until (= (inc i) size)
+  (until (= (++ i) size)
     (fun (arr i))))
 
 (global 'array-iter)
@@ -241,7 +241,7 @@
 (define-macro (array-map)
   (letex ((i (gensym)) (size (gensym)) (fun (eval (args 0)) (arr (args 1))))
     (setf i -1 size (length arr))
-    (until (= (inc i) size)
+    (until (= (++ i) size)
       (setf (arr i) (fun $it)))))
 
 (global 'array-map)

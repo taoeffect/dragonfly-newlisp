@@ -547,7 +547,7 @@
 
 
 
-(define (html:html str) (write-buffer cv:body-html str))
+(define (html:html str) (extend cv:body-html str))
 
 (context 'cv)
 
@@ -882,9 +882,9 @@ function drawAllCanvas() { try
 	(let ( (buff "") (rec nil))
 		(while (set 'rec (pop lst))
 			(if (= (length rec) 6)
-				(write-buffer buff (string ",'B'," (join (map string rec) ","))))
+				(extend buff (string ",'B'," (join (map string rec) ","))))
 			(if (= (length rec) 2)
-				(write-buffer buff (string ",'L'," (rec 0) "," (rec 1)))))
+				(extend buff (string ",'L'," (rec 0) "," (rec 1)))))
 		(1 buff)
 ) )
 	

@@ -1,5 +1,6 @@
-Version 0.6.1
+Version 0.7
 
+  * all code uses new ++,--,extend,write,read functions (still compatible with older newlisps)
   * now $BINARY can handle large data (compensated for a newLISP bug in 'read-buffer').
   * added documentation for MAX_POST_LENGTH in request.lsp
   * fix to Jeff's JSON.lsp plugin (switched to " instead of ' for strings)

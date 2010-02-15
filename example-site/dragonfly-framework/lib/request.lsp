@@ -117,15 +117,15 @@
 	)
 )
 
-; we can't simply do: (read-buffer (device) $BINARY MAX_POST_LENGTH)
+; we can't simply do: (read (device) $BINARY MAX_POST_LENGTH)
 ; because versions of newlisp (upto and including 10.1.9) have a fairly
 ; broken 'read-buffer' function that can't handle large amounts of data.
 ; this may be fixed in a future version of newLISP, but for now we're doing
 ; it the C-way.
 (define (handle-binary-data , (chunk "") (chunk-size 8192) (max-bytes MAX_POST_LENGTH) read)
-	(while (and (setf read (read-buffer (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
-		(write-buffer $BINARY chunk)
-		(dec max-bytes read)
+	(while (and (setf read (read (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
+		(extend $BINARY chunk)
+		(-- max-bytes read)
 		(when (< max-bytes chunk-size) (setf chunk-size max-bytes))
 	)
 )
@@ -150,7 +150,7 @@
 
 (define (handle-multipart-data , buff boundary)
 	(set 'boundary (regex-captcha {boundary=(.+)} CONTENT_TYPE))	
-	(while (read-buffer (device) buff MAX_POST_LENGTH boundary)
+	(while (read (device) buff MAX_POST_LENGTH boundary)
 		(parse-multipart-chunk buff)
 	)
 )
@@ -186,7 +186,7 @@
 		(handle-binary-data)
 		(and (setf temp CONTENT_TYPE) (starts-with temp "multipart/form-data"))
 		(handle-multipart-data)
-		(and (read-buffer (device) temp MAX_POST_LENGTH) temp)
+		(and (read (device) temp MAX_POST_LENGTH) temp)
 		(dolist (pair (parse-query temp))
 			(add-keyvalue-to-ctx (first pair) (last pair) $POST)
 		)

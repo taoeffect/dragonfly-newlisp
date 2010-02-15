@@ -65,7 +65,7 @@
 	)
 	
 	(define (Dragonfly:print)
-		(write-buffer Dragonfly:STDOUT (apply string $args))
+		(extend Dragonfly:STDOUT (apply string $args))
 		(last $args) ; to behave the same way as print
 	)
 	
@@ -182,7 +182,7 @@
 ;;     (fn () (unless (apply wrapped-func $args)
 ;;         (throw-error (string "execute-update failed: " $args)))))</pre>
 	(define-macro (wrap-func func-sym wrapper , wrapped-func)
-		(setf wrapped-func (sym (string func-sym "|wrapped#" (inc wrap-func.counter))))
+		(setf wrapped-func (sym (string func-sym "|wrapped#" (++ wrap-func.counter))))
 		(set wrapped-func (eval func-sym))
 		(set func-sym (eval (expand wrapper 'wrapped-func)))
 	)

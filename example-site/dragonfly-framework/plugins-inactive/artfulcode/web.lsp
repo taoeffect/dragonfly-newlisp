@@ -135,7 +135,7 @@
 ;; @link http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references Wikipedia.
 (define (encode-entities str , ent (buf ""))
   (dostring (c str)
-    (write-buffer buf
+    (extend buf
       (if (setf ent (lookup c ENTITIES)) ent (char c))))
   buf)
 

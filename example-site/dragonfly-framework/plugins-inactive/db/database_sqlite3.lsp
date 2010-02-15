@@ -394,7 +394,7 @@
 
 (define (binding-strategy-incremental stmt param)
 	(if stmt
-		(bind-param-at-index stmt param (inc .bsi-idx))
+		(bind-param-at-index stmt param (++ .bsi-idx))
 		(set '.bsi-idx 0) ; reset it
 	)
 )

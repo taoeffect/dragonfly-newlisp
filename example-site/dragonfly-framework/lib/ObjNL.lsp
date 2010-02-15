@@ -101,7 +101,7 @@
 ;; <p>The returned object <b>must</b> be deallocated using the 'deallocate'
 ;; function.</p>
 (define (instantiate class)
-	(letn (	obj-sym	(sym (string class "#" (inc class:@instance-counter)))
+	(letn (	obj-sym	(sym (string class "#" (++ class:@instance-counter)))
 			obj		(new class obj-sym)
 		)
 		; set these prior to calling the constructor
@@ -140,14 +140,14 @@
 ;; @syntax (retain <ctx-obj>)
 ;; <p>Increment's <ctx-obj>&apos;s retain count and returns the object.</p>
 (define (retain obj)
-	(inc obj:@rc)
+	(++ obj:@rc)
 	obj
 )
 
 ;; @syntax (release <ctx-obj>)
 ;; <p>Decrement's <ctx-obj>&apos;s retain count. Deallocates the object if the retain count hits zero.</p>
 (define (release obj)
-	(when (zero? (dec obj:@rc))
+	(when (zero? (-- obj:@rc))
 		(deallocate obj)
 	)
 )

@@ -1,6 +1,6 @@
 ;; @module dragonfly.lsp
 ;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
-;; @version 0.50
+;; @version 0.70
 ;; @author Team Dragonfly 2009
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; <br>This file is the main entry-point of the Dragonfly framework and
@@ -78,6 +78,21 @@
 ;; to load them. All plugins are loaded exactly once, no matter how many times
 ;; 'activate-plugin' is called on them.</p>
 
+
+;===============================================================================
+; !Compatibility with older versions of newLISP
+;===============================================================================
+
+(when (< (sys-info -2) 10110)
+	(constant (global '++) inc)
+	(constant (global '--) dec)
+	(constant (global 'extend) write-buffer)
+)
+(when (< (sys-info -2) 10111)
+	(constant (global 'term) name)
+	(constant (global 'read) read-buffer)
+	(constant (global 'write) write-buffer)
+) 
 
 ;===============================================================================
 ; !Basic Setup, Global Vars, and Sanity Checks
@@ -268,16 +283,16 @@
 ;; evaluated, and the result, along with the text outside of the "code islands" will be sent if no errors occur.
 (define (eval-template str (ctx Dragonfly) , start end block (buf ""))
 	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
-		(write-buffer buf (string "(print [text]" (slice str 0 start) "[/text])"))
+		(extend buf (string "(print [text]" (slice str 0 start) "[/text])"))
 		(setf block (slice str (+ start 2) (- end start 2)))
 		(if (starts-with block "=")
-			(write-buffer buf (string "(print " (rest block) ")"))
-			(write-buffer buf block)
+			(extend buf (string "(print " (rest block) ")"))
+			(extend buf block)
 		)
 		(setf str (slice str (+ end 2)))
 	)
 	(when str
-		(write-buffer buf (string "(print [text]" str "[/text])"))
+		(extend buf (string "(print [text]" str "[/text])"))
 		(eval-string buf ctx)
 	)
 )

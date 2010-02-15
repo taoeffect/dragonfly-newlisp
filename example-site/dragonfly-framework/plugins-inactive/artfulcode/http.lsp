@@ -96,13 +96,13 @@
   (if-not (and (string? method) (find (upper-case method) '("GET" "POST" "HEAD" "PUT")))
 	  (throw-error "Invalid or unimplemented HTTP method"))
   (setf method (upper-case method))
-  (write-buffer buf (format "%s %s HTTP/1.0\r\n" method (string path)))
+  (extend buf (format "%s %s HTTP/1.0\r\n" method (string path)))
   (dolist (header headers)
-    (write-buffer buf (format "%s\r\n" (format-header header))))
+    (extend buf (format "%s\r\n" (format-header header))))
   (when content
-		(write-buffer buf (format "Content-Length: %d\r\n\r\n" (length content)))
-		(write-buffer buf content))
-  (write-buffer buf "\r\n\r\n")
+		(extend buf (format "Content-Length: %d\r\n\r\n" (length content)))
+		(extend buf content))
+  (extend buf "\r\n\r\n")
   buf)
 
 (context MAIN)

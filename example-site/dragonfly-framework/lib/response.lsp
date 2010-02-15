@@ -152,9 +152,9 @@
 ; these parameters must match the order in the 'cookie' function.
 (define (format-cookie key value expires path domain http-only)
 	(let (cookie (string key "=" value))
-		(if expires (write-buffer cookie (string "; expires=" (date expires 0 "%a, %d %b %Y %H:%M:%S %Z"))))
-		(if path (write-buffer cookie (string "; path=" path)))
-		(if domain (write-buffer cookie (string "; domain=" domain)))
+		(if expires (extend cookie (string "; expires=" (date expires 0 "%a, %d %b %Y %H:%M:%S %Z"))))
+		(if path (extend cookie (string "; path=" path)))
+		(if domain (extend cookie (string "; domain=" domain)))
 		cookie
 	)
 )
