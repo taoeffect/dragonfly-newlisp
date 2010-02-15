@@ -512,13 +512,9 @@ pre.textmate-source {
 	font-family:Courier,monospace;
 	font-size:11px;
 	color:#ffffff;
-	
-	line-height: 1.5em;
-	word-wrap: break-word;
+	line-height: 15px;
 	white-space: pre;
-	white-space: pre-wrap;
-	white-space: -moz-pre-wrap;
-	white-space: -o-pre-wrap;
+	overflow: auto;
 }
 
 pre.textmate-source .linenum {

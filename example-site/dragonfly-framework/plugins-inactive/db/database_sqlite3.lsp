@@ -1,6 +1,6 @@
 ;; @module Sqlite3
 ;; @description SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.
-;; @version 1.1.1
+;; @version 1.1.2
 ;; @author Greg Slepak 
 ;; @location http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt
 ;; <h3>Features not found in newLISP's sqlite3.lsp:</h3>
@@ -19,6 +19,7 @@
 ;; <h3>Requirements</h3>
 ;; See module @link http://www.taoeffect.com/newlisp/database.lsp.html DF.DB for requirements.
 ;; <h3>Version history</h3>
+;; <b>1.1.2</b> &bull; fixed a bug in 'get-string-cast' and implemented 'DF.SQL:col-name'
 ;; <b>1.1.1</b> &bull; improved readability in error logging, fixed binding of integers on 32-bit newlisp builds<br/>
 ;; <b>1.1.0</b> &bull; support for 'DF.BLOB'<br/>
 ;; <b>1.0.0</b> &bull; initial release
@@ -267,12 +268,12 @@
 (def-new 'Sqlite3:failable)
 
 (set 'lib-funcs '(                                       
-	"sqlite3_column_count"   "sqlite3_finalize"      "sqlite3_bind_parameter_index"
-	"sqlite3_column_name"    "sqlite3_reset"         "sqlite3_transfer_bindings"  
-	"sqlite3_column_type"    "sqlite3_errmsg"        "sqlite3_step"
-	"sqlite3_bind_int64"     "sqlite3_column_int64"      "sqlite3_bind_int"
-	"sqlite3_bind_double"    "sqlite3_column_double"     
-	"sqlite3_bind_null"      "sqlite3_column_text"       
+	"sqlite3_column_count"   "sqlite3_finalize"         "sqlite3_bind_parameter_index"
+	"sqlite3_column_name"    "sqlite3_reset"            "sqlite3_transfer_bindings"  
+	"sqlite3_column_type"    "sqlite3_errmsg"           "sqlite3_step"
+	"sqlite3_bind_int64"     "sqlite3_column_int64"     "sqlite3_bind_int"
+	"sqlite3_bind_double"    "sqlite3_column_double"    "sqlite3_column_name"
+	"sqlite3_bind_null"      "sqlite3_column_text"      "sqlite3_column_count"
 	"sqlite3_bind_text"      "sqlite3_column_blob"       
 	"sqlite3_bind_blob"      "sqlite3_column_bytes"   
 ))
@@ -338,6 +339,14 @@
 	(zero? (failable (sqlite3_reset stmt)))
 )
 
+(define (Sqlite3.SQL:col-name col-num)
+	(get-string-cast string (sqlite3_column_name stmt col-num))
+)
+
+(define (Sqlite3.SQL:col-count)
+	(sqlite3_column_count stmt)
+)
+
 (define (Sqlite3.SQL:close)
 	(when (and stmt (failable (sqlite3_finalize stmt)))
 		(setf stmt nil)
@@ -400,8 +409,7 @@
 ;---------------------------------------------------------------
 
 (define (get-string-cast cast ptr , temp)
-	(setf temp (get-string ptr))
-	(if-not (zero? temp) (cast temp))
+	(if-not (zero? ptr) (cast (get-string ptr)))
 )
 
 (define (get-row , (row '()) type i ptr len buf)

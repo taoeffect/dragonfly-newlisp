@@ -203,10 +203,20 @@
 		)
 	)
 	
+;; @syntax (define-smacro)
+;; <p>Defines a "safe macro", free of variable capture issues. Note though
+;; that it does this by placing the macro in its own context, so be careful
+;; when choosing its name!</p>
+	(define-macro (define-smacro)
+	    (let (temp (append (fn-macro) (list (1 (args 0)) (args 1))))
+	        (def-new 'temp (sym (args 0 0) (args 0 0)))
+		)
+	)
+	
 	; these functions should be global (define-subclass should not)
 	(global 'load-files-in-dir 'regex-captcha 'load-once
 		'wrap-func 'add-to-load-path 'SET_DF_SELF
-		'file-ext 'del-ext 'basename 'dirname
+		'file-ext 'del-ext 'basename 'dirname 'define-smacro
 	)
 	
 	; swap these functions for ours and save the originals

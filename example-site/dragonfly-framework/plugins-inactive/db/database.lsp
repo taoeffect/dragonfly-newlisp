@@ -1,6 +1,6 @@
 ;; @module DF.DB, DF.SQL, DF.BLOB
 ;; @description Generic database access interface for <a href="http://www.rundragonfly.com">Dragonfly</a> using Objective newLISP
-;; @version 1.1
+;; @version 1.2
 ;; @author Greg Slepak
 ;; @location http://www.taoeffect.com/newlisp/database.lsp.txt
 ;; <p>The purpose of this module is to standardize the interface to
@@ -55,6 +55,7 @@
 ;; @link http://www.rundragonfly.com Dragonfly is only required for its logging functions. You can easily implement your own
 ;; versions of 'DF:log-err', 'DF:log-debug', and the other functions found in Dragonfly&apos;s 'log.lsp'.
 ;; <h3>Version history</h3>
+;; <b>1.2</b> &bull; added 'DF.SQL:col-name' and 'DF.SQL:col-count' to specification
 ;; <b>1.1</b> &bull; 'DF.BLOB' added<br/>
 ;; <b>1.0</b> &bull; initial release
 
@@ -241,6 +242,14 @@
 ;; statement (which is more efficient). After reseting a statement you typically
 ;; use 'DF.SQL:bind-params' to bind new values and then 'DF.SQL:next-row'.</p>
 (define (DF.SQL:reset)
+	(throw-not-implemented)
+)
+
+(define (DF.SQL:col-name col-num)
+	(throw-not-implemented)
+)
+
+(define (DF.SQL:col-count)
 	(throw-not-implemented)
 )
 

@@ -169,9 +169,15 @@
 ;; @syntax (DF:activate-plugin <str-plugin-name> [<str-plugin-name-2> ...])
 ;; @param <str-plugin-name> The name of the plugin to load, without the ".lsp" extension.
 ;; <br>Loads (once only) a the named plugin from the 'plugins-inactive' folder.
+;; <br>If <str-plugin-name> refers to a directory, then loads all of the ".lsp" files in that directory.
 (define (activate-plugin)
 	(doargs (plugin-name)
-		(load-once (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name ".lsp"))
+		(let (plugin-name (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name))
+			(if (directory? plugin-name)
+				(load-files-in-dir plugin-name "\.lsp$")
+				(load-once (string plugin-name ".lsp"))
+			)
+		)
 	)
 )
 

@@ -1,0 +1,69 @@
+<%
+(activate-plugin "db")
+(display-partial "doctype")
+%>
+<head>
+	<% (display-partial "header") %>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<% (display-partial "navigation") %>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="content">
+				
+		<div class="title nomargin">
+			<p><% (title "| Dragonfly web framework") %><p>
+		</div>
+		
+		<h1>Using DF.DB</h1>
+		<p>
+			<%
+			(setf db (instantiate Sqlite3 ":memory:"))
+			(db:execute-update "CREATE TABLE people (name TEXT, age INTEGER)")
+			(dolist (person '(("Lizzy" 8) ("Sally" 10) ("Betty" 7)))
+				(db:execute-update "INSERT INTO people VALUES (?,?)" person)
+			)
+			%>
+			<table>
+				<tr class="header"><td>ID</td><td>Name</td><td>Age</td></tr>
+				<% (for-query-with-db db "SELECT rowid,name,age FROM people" %>
+					<tr>
+						<td><%=ROWID%></td>
+						<td><%=NAME%></td>
+						<td><%=AGE%></td>
+					</tr>
+				<% ) %>
+			</table>
+		</p>
+		<p>
+			The table above was created like so:
+		</p>
+		<pre class="textmate-source" style="overflow:visible"><span class="text text_html text_html_basic"><span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">table</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+<span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">tr</span> <span class="entity entity_other entity_other_attribute-name entity_other_attribute-name_html">class</span>=<span class="string string_quoted string_quoted_double string_quoted_double_html"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_html">"</span>header<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_html">"</span></span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>ID<span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>Name<span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>Age<span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">tr</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+<span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;% <span class="entity entity_paren entity_paren_lisp">(</span><span class="entity entity_name entity_name_function entity_name_function_lisp">for-query-with-db</span> <span class="entity entity_symbol entity_symbol_lisp">db</span> <span class="string string_quoted string_quoted_double string_quoted_double_lisp"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_lisp">"</span>SELECT rowid,name,age FROM people<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_lisp">"</span></span> %&gt;</span>
+    <span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">tr</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+        <span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span><span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;%=<span class="entity entity_symbol entity_symbol_lisp">ROWID</span>%&gt;</span><span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+        <span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span><span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;%=<span class="entity entity_symbol entity_symbol_lisp">NAME</span>%&gt;</span><span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+        <span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span><span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;%=<span class="entity entity_symbol entity_symbol_lisp">AGE</span>%&gt;</span><span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">td</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+    <span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">tr</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span>
+<span class="source source_newlisp source_newlisp_embedded source_newlisp_embedded_html">&lt;% <span class="entity entity_paren entity_paren_lisp">)</span> %&gt;</span>
+<span class="meta meta_tag meta_tag_inline meta_tag_inline_any meta_tag_inline_any_html"><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_begin punctuation_definition_tag_begin_html">&lt;/</span><span class="entity entity_name entity_name_tag entity_name_tag_inline entity_name_tag_inline_any entity_name_tag_inline_any_html">table</span><span class="punctuation punctuation_definition punctuation_definition_tag punctuation_definition_tag_end punctuation_definition_tag_end_html">&gt;</span></span></span></pre>
+		
+		<div class="line-dotted"></div>
+
+
+		<% (benchmark-result) %>
+		
+		<div class="line-solid"></div>
+		
+		
+	</div><!-- END CONTENT -->
+	
+</div><!-- END WRAP -->
+<% (display-partial "footer") %>
+
