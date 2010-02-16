@@ -6,11 +6,9 @@
 ; this cannot be used because newlisp's 'caller' function is broken.
 ; define-smacro defined in utils.lsp (part of Dragonfly's core functions)
 ; (define-smacro (for-query-with-db db query )
-; 	(letn (db (eval db) sql (db:prepare-sql (eval query)) keys '() ctx (prefix (caller)))
-; 		;(println ctx " vs " (prefix (caller)))
+; 	(letn (db (eval db) sql (db:prepare-sql (eval query)) keys '())
 ; 		(dotimes (i (sql:col-count))
 ; 			;(push (sym (upper-case (sql:col-name i)) (prefix (caller))) keys -1)
-; 			;(push (sym (upper-case (sql:col-name i)) ctx) keys -1)
 ; 			(push (sym (upper-case (sql:col-name i)) Dragonfly) keys -1)
 ; 		)
 ; 		(push-autorelease-pool) ; in case we have blobs
@@ -34,3 +32,14 @@
 	)
 )
 (global 'fn-query-with-db)
+
+(define (assoc-row-with-db db query)
+	(let (sql (db:prepare-sql query) keys '())
+		(set 'keys (map sql:col-name (sequence 0 (-- (sql:col-count))))
+		     'values (sql:next-row)
+		)
+		(deallocate sql)
+		(when (list? values) (transpose (list keys values)))
+	)
+)
+(global 'assoc-row-with-db)
