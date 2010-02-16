@@ -18,6 +18,7 @@
 ; 			(eval (expand (cons 'begin $args) (unify keys values)))
 ; 		)
 ; 		(pop-autorelease-pool)
+;		(deallocate sql)
 ; 	)
 ; )
 
@@ -29,6 +30,7 @@
 			(func (transpose (list keys values)))
 		)
 		(pop-autorelease-pool)
+		(deallocate sql)
 	)
 )
 (global 'fn-query-with-db)
