@@ -1,4 +1,4 @@
-Version 0.7
+Version 0.61
 
   * all code uses new ++,--,extend,write,read functions (still compatible with older newlisps)
   * now $BINARY can handle large data (compensated for a newLISP bug in 'read-buffer').
@@ -6,6 +6,7 @@ Version 0.7
   * fix to Jeff's JSON.lsp plugin (switched to " instead of ' for strings)
   * DF:activate-plugin can now be used to load all lisp files in a directory
   * added a dragonfly_utils.lsp file to the DF.DB folder, includes handy fn-query-with-db function.
+  * fixed handling of floats in Sqlite3 on some architectures (more improvements needed though, see TODO)
 
 Version 0.6
 
