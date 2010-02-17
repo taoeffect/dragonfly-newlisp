@@ -213,10 +213,17 @@
 		)
 	)
 	
+	(define (extract-assoc lst sym-assoc-list , idx)
+		(when (setf idx (find lst (eval sym-assoc-list) match))
+			(nth idx (eval sym-assoc-list))
+		)
+	)
+	
 	; these functions should be global (define-subclass should not)
 	(global 'load-files-in-dir 'regex-captcha 'load-once
 		'wrap-func 'add-to-load-path 'SET_DF_SELF
 		'file-ext 'del-ext 'basename 'dirname 'define-smacro
+		'extract-assoc
 	)
 	
 	; swap these functions for ours and save the originals
@@ -236,5 +243,8 @@
 ;; @syntax (throw-not-implemented)
 ;; <p>Used to indicate that an ObjNL method *must* be overwritten.</p>
 	(constant (global 'throw-not-implemented) (fn()(throw-error "not defined by subclass!")))
+;; @syntax (<- <key> <assoc-list>)
+;; <p>An alias for 'lookup'</p>
+	(constant (global '<-) lookup)
 )
 
