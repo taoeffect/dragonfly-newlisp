@@ -69,8 +69,10 @@
 	(when (setf sql (db:prepare-sql query))
 		(when (or (not params) (sql:bind-params params))
 			(setf result (sql:next-row))
-			(when (list? result)
-				(setf result (first result)))
+			(if (list? result)
+				(setf result (first result))
+				(setf result nil) ; next-row returns true
+			)
 		)
 		(deallocate sql)
 		result
