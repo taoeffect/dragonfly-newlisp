@@ -213,7 +213,7 @@
 		)
 	)
 	
-	(define (extract-assoc lst sym-assoc-list , idx)
+	(define (extract lst sym-assoc-list , idx)
 		(when (setf idx (find lst (eval sym-assoc-list) match))
 			(nth idx (eval sym-assoc-list))
 		)
@@ -223,7 +223,7 @@
 	(global 'load-files-in-dir 'regex-captcha 'load-once
 		'wrap-func 'add-to-load-path 'SET_DF_SELF
 		'file-ext 'del-ext 'basename 'dirname 'define-smacro
-		'extract-assoc
+		'extract
 	)
 	
 	; swap these functions for ours and save the originals

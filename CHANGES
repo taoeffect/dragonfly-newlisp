@@ -7,7 +7,7 @@ Version 0.61
   * DF:activate-plugin can now be used to load all lisp files in a directory
   * added db/dragonfly_utils, includes fn-query-with-db, assoc-row-with-db and assoc-rows-with-db
   * fixed handling of floats in Sqlite3 on some architectures (more improvements needed though, see TODO)
-  * added 'extract-assoc' and '<-' functions to core utils
+  * added 'extract' and '<-' functions to core utils
 
 Version 0.6
 
