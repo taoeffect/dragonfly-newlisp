@@ -33,12 +33,23 @@
 				<tr class="header"><td>ID</td><td>Name</td><td>Age</td></tr>
 				<% (fn-query-with-db db "SELECT rowid,name,age FROM people" (fn (row) %>
 					<tr>
-						<td><%=(lookup "rowid" row)%></td>
-						<td><%=(lookup "name" row)%></td>
-						<td><%=(lookup "age" row)%></td>
+						<td><%=(<- "rowid" row)%></td>
+						<td><%=(<- "name" row)%></td>
+						<td><%=(<- "age" row)%></td>
 					</tr>
 				<% )) %>
 			</table>
+			<table>
+				<tr class="header"><td>ID</td><td>Name</td><td>Age</td></tr>
+				<% (for-query-with-db db "SELECT rowid,name,age FROM people" %>
+					<tr>
+						<td><%=ROWID%></td>
+						<td><%=NAME%></td>
+						<td><%=AGE%></td>
+					</tr>
+				<% ) %>
+			</table>
+			
 		</p>
 		<p>
 			The table above was created like so:
