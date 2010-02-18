@@ -20,6 +20,8 @@
 ; 	)
 ; )
 
+(context MAIN)
+
 (define (fn-query-with-db db query func params , sql keys values)
 	(when (setf sql (db:prepare-sql query))
 		(when (or (not params) (sql:bind-params params))

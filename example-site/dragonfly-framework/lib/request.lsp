@@ -122,10 +122,10 @@
 ; broken 'read-buffer' function that can't handle large amounts of data.
 ; this may be fixed in a future version of newLISP, but for now we're doing
 ; it the C-way.
-(define (handle-binary-data , (chunk "") (chunk-size 8192) (max-bytes MAX_POST_LENGTH) read)
-	(while (and (setf read (read (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
+(define (handle-binary-data , (chunk "") (chunk-size 8192) (max-bytes MAX_POST_LENGTH) bytes)
+	(while (and (setf bytes (read (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
 		(extend $BINARY chunk)
-		(-- max-bytes read)
+		(-- max-bytes bytes)
 		(when (< max-bytes chunk-size) (setf chunk-size max-bytes))
 	)
 )
