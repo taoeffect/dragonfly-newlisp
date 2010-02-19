@@ -27,13 +27,13 @@
 ;===============================================================================
 
 ; location of views (for use with 'display-view' function)
-(constant 'VIEWS_PATH DOCUMENT_ROOT)
+(constant 'VIEWS_PATH (string DOCUMENT_ROOT "/views"))
 ; location of partials (for use with 'display-partial' function)
 (constant 'PARTIALS_PATH (string DOCUMENT_ROOT "/views/partials"))
 ; setting a default view (sans file extension)
 (constant 'DEFAULT_VIEW "welcome")
 ; used by 'display-view' to save you keystrokes and by the static routing.
-(constant 'VIEW_EXTENSION ".nhtml")
+(constant 'VIEW_EXTENSION ".html")
 
 ;===============================================================================
 ; Static Route Configuration
@@ -56,9 +56,9 @@
 ; the entire route matches and the file is passed through the template evaluator,
 ; otherwise it will not match and defer to the other handler(s).
 (constant 'STATIC_TRANSFORMATIONS '(
-	; (string DOCUMENT_ROOT "/" _ "/index.html")
-	(if (ends-with _ VIEW_EXTENSION) (string VIEWS_PATH "/" _) "")
-	; (begin (set 'viewname _) (string VIEWS_PATH "/" _ VIEW_EXTENSION))
+	(string DOCUMENT_ROOT "/" _ "/index.html")
+	(string VIEWS_PATH "/" _)
+	(string VIEWS_PATH "/" _ VIEW_EXTENSION)
 ))
 
 ;===============================================================================
@@ -66,7 +66,7 @@
 ;===============================================================================
 
 ; set to nil to disable the RESTful handler
-(constant 'ENABLE_RESTFUL_HANDLER nil)
+(constant 'ENABLE_RESTFUL_HANDLER true)
 ; location of RESTful resources
 (constant 'RESOURCES_PATH (string DOCUMENT_ROOT "/resources"))
 
