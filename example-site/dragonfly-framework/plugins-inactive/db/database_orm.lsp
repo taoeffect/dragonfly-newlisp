@@ -12,6 +12,7 @@
      (global 'DBOBJ_UPDATE_SQL)   "UPDATE %s SET %s=? WHERE %s" ; LIMIT isn't supported for UPDATE unless sqlite3 was compiled with the option
      (global 'DBOBJ_INSERT_SQL)   "INSERT INTO %s (%s) VALUES (%s)"
      (global 'DBOBJ_INSERT_SQL2)  "INSERT INTO %s VALUES (%s)"
+	 (global 'DBOBJ_DELETE_SQL)   "DELETE FROM %s WHERE %s"
      (global 'DBOBJ_ROWID_COL)    "ROWID=")
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
@@ -54,6 +55,17 @@
 							(<- attr-str revert-set)
 							(<- attr-str change-set))))))))
 
+(define (DB.OBJ:keys)
+	(map first change-set)
+)
+
+(define (DB.OBJ:values from-revert-set)
+	(if from-revert-set
+		(map last revert-set)
+		(map last change-set)
+	)
+)
+
 (define (DB.OBJ:refetch)
 	(set 'dirty      nil
 	     'revert-set (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join (map first revert-set) ",") table finder))
@@ -70,6 +82,17 @@
 	(if (null? (setf diff (difference change-set revert-set)))
 		0
 		(when (db:execute-update (format DBOBJ_UPDATE_SQL table (join (map first diff) "=?,") finder) (map last diff))
-			(set 'revert-set change-set 'dirty nil) true)))
+			(set 'revert-set change-set 'dirty nil)
+			true
+		)
+	)
+)
+
+(define (DB.OBJ:delete)
+	(when (db:execute-update (format DBOBJ_DELETE_SQL table finder))
+		(set 'revert-set '() 'change-set '())
+		true
+	)
+)
 
 (context MAIN)
