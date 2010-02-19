@@ -23,8 +23,7 @@
 		(when (setf sql (db:prepare-sql (format DBOBJ_SELECT_SQL2 table)))
 			(setf cols (map sql:col-name (sequence 0 (-- (sql:col-count)))))
 			(when (db:execute-update (format DBOBJ_INSERT_SQL2 table qs) data)
-				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_COL (db:rowid))))
-			)
+				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_COL (db:rowid)))))
 			(deallocate sql)
 			result
 		)
@@ -60,9 +59,11 @@
 	     'revert-set (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join (map first revert-set) ",") table finder))
 	     'change-set revert-set))
 
+; returns true on successfull update, 0 if no update was needed, or nil if update failed
 (define (DB.OBJ:save , diff)
-	(unless (null? (setf diff (difference change-set revert-set)))
+	(if (null? (setf diff (difference change-set revert-set)))
+		0
 		(when (db:execute-update (format DBOBJ_UPDATE_SQL table (join (map first diff) "=?,") finder) (map last diff))
-			(set 'revert-set change-set 'dirty nil))))
+			(set 'revert-set change-set 'dirty nil) true)))
 
 (context MAIN)
