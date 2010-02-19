@@ -1,16 +1,16 @@
 ;; @module database_orm
-;; @description DB.OBJ - Simple Object Relational Mapping (ORM) for DF.DB
+;; @description DB.Singleton - Simple ORM Singleton class for DF.DB
 ;; @version 1.0
 ;; @author Greg Slepak
 
 (DF:activate-plugin "db/database_utils")
-(new-class 'DB.OBJ)
-(context DB.OBJ)
+(new-class 'DB.Singleton)
+(context DB.Singleton)
 
 (constant 'SELECT_SQL	"SELECT %s FROM %s WHERE %s LIMIT 1"
           'UPDATE_SQL	"UPDATE %s SET %s=? WHERE %s LIMIT 1")
 
-(define (DB.OBJ:DB.OBJ _db _table _cols _finder)
+(define (DB.Singleton:DB.Singleton _db _table _cols _finder)
 	(if (= @self @class)
 		(autorelease (instantiate @class _db _table _cols _finder))
 		(begin
@@ -28,14 +28,14 @@
 									(<- attr-str revert-set)
 									(<- attr-str change-set))))))))))
 
-(define (DB.OBJ:refetch)
+(define (DB.Singleton:refetch)
 	(set 'dirty nil
 	     'revert-set (assoc-row-with-db db (format SELECT_SQL (join (map first revert-set) ",") table finder))
 	     'change-set revert-set
 	)
 )
 
-(define (DB.OBJ:save , diff)
+(define (DB.Singleton:save , diff)
 	(unless (null? (setf diff (difference change-set revert-set)))
 		(when (db:execute-update (format UPDATE_SQL table (join (map first diff) "=?,") finder) (map last diff))
 			(set 'revert-set change-set 'dirty nil)
