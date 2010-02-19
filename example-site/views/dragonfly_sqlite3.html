@@ -50,7 +50,7 @@
 				<% ) %>
 			</table>
 			<%
-				(setf obj (instantiate DB.Singleton db "people" '("name" "age") "ROWID=1"))
+				(setf obj (instantiate DB.OBJ db "people" '("name" "age") "ROWID=1"))
 			%>
 			<p>
 				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
