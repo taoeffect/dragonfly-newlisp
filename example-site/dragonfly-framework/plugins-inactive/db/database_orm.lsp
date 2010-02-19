@@ -10,14 +10,14 @@
 (constant 'SELECT_SQL	"SELECT %s FROM %s WHERE %s LIMIT 1"
           'UPDATE_SQL	"UPDATE %s SET %s=? WHERE %s LIMIT 1")
 
-(define (DB.OBJ:DB.OBJ _db _table _cols _finder)
+(define (DB.OBJ:DB.OBJ _db _table cols _finder)
 	(if (= @self @class)
-		(autorelease (instantiate @class _db _table _cols _finder))
+		(autorelease (instantiate @class _db _table cols _finder))
 		(begin
-			(set 'db _db 'table _table 'cols _cols 'finder _finder)
+			(set 'db _db 'table _table 'finder _finder)
 			(setf revert-set (assoc-row-with-db db (format SELECT_SQL (join cols ",") table finder)))
 			(when (setf change-set revert-set)
-				(dolist (col cols)
+				(dolist (col (map first revert-set)) ; we don't use 'cols' so that we can pass in things like '("*")
 					(letex (attr-sym (sym col) attr-str col)
 						(define (attr-sym value from-revert-set)
 							(if value
