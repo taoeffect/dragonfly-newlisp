@@ -39,6 +39,26 @@
 					</tr>
 				<% )) %>
 			</table>
+			<%
+				(setf obj (find-dbobj db "people" '("name" "age") "ROWID=1"))
+			%>
+			<p>
+				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
+			</p>
+			<p>
+				Let's set their age to 10.<%(obj:age 10) (obj:save)%>
+			</p>
+			<p>
+				They are now <%=(obj:age)%> years old.
+			</p>
+			<p>
+				Further, I can create a new person. See:
+				<%
+					(release obj)
+					(setf obj (create-dbobj db "people" '("Sue" 57)))
+				%>
+			</p>
+			<p>
 			<table>
 				<tr class="header"><td>ID</td><td>Name</td><td>Age</td></tr>
 				<% (for-query-with-db db "SELECT rowid,name,age FROM people" %>
@@ -49,17 +69,6 @@
 					</tr>
 				<% ) %>
 			</table>
-			<%
-				(setf obj (instantiate DB.OBJ db "people" '("name" "age") "ROWID=1"))
-			%>
-			<p>
-				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
-			</p>
-			<p>
-				Let's set their age to 10.<%(obj:age 10) (obj:save)%>
-			</p>
-			<p>
-				They are now <%=(obj:age)%> years old.
 			</p>
 		</p>
 		<p>
