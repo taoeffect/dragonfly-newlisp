@@ -59,7 +59,13 @@
 	     'revert-set (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join (map first revert-set) ",") table finder))
 	     'change-set revert-set))
 
-; returns true on successfull update, 0 if no update was needed, or nil if update failed
+(define (DB.OBJ:refind _finder)
+	(setf finder _finder)
+	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
+	(DB.OBJ:refetch)
+)
+
+; returns true on successful update, 0 if no update was needed, or nil if update failed
 (define (DB.OBJ:save , diff)
 	(if (null? (setf diff (difference change-set revert-set)))
 		0
