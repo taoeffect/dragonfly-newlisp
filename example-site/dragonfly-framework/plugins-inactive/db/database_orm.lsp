@@ -7,23 +7,23 @@
 
 (new-class 'DB.OBJ)
 
-(constant (global 'DBOBJ_SELECT_SQL)	"SELECT %s FROM %s WHERE %s LIMIT 1"
-		  (global 'DBOBJ_SELECT_SQL2)	"SELECT * FROM %s" ; quasi-hack to obtain the col names b/c INSERT doesn't tell us. we don't actually retrieve the rows.
-          (global 'DBOBJ_UPDATE_SQL)	"UPDATE %s SET %s=? WHERE %s" ; LIMIT isn't supported for UPDATE unless sqlite3 was compiled with the option
-		  (global 'DBOBJ_INSERT_SQL)	"INSERT INTO %s (%s) VALUES (%s)"
-		  (global 'DBOBJ_INSERT_SQL2)	"INSERT INTO %s VALUES (%s)"
-		  (global 'DBOBJ_ROWID_COL)		"ROWID")
+(set (global 'DBOBJ_SELECT_SQL)   "SELECT %s FROM %s WHERE %s LIMIT 1"
+     (global 'DBOBJ_SELECT_SQL2)  "SELECT * FROM %s" ; quasi-hack to obtain the col names b/c INSERT doesn't tell us. we don't actually retrieve the rows.
+     (global 'DBOBJ_UPDATE_SQL)   "UPDATE %s SET %s=? WHERE %s" ; LIMIT isn't supported for UPDATE unless sqlite3 was compiled with the option
+     (global 'DBOBJ_INSERT_SQL)   "INSERT INTO %s (%s) VALUES (%s)"
+     (global 'DBOBJ_INSERT_SQL2)  "INSERT INTO %s VALUES (%s)"
+     (global 'DBOBJ_ROWID_COL)    "ROWID=")
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
 (define (create-dbobj db table data , qs sql cols result)
 	(setf qs (join (dup "?" (length data) true) ","))
 	(if (list? (first data))
 		(when (db:execute-update (format DBOBJ_INSERT_SQL table (join (map first data) ",") qs) (map last data))
-			(instantiate DB.OBJ db table data (string DBOBJ_ROWID_COL "=" (db:rowid))))
+			(instantiate DB.OBJ db table data (string DBOBJ_ROWID_COL (db:rowid))))
 		(when (setf sql (db:prepare-sql (format DBOBJ_SELECT_SQL2 table)))
 			(setf cols (map sql:col-name (sequence 0 (-- (sql:col-count)))))
 			(when (db:execute-update (format DBOBJ_INSERT_SQL2 table qs) data)
-				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_COL "=" (db:rowid))))
+				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_COL (db:rowid))))
 			)
 			(deallocate sql)
 			result
@@ -33,6 +33,7 @@
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
 (define (find-dbobj db table cols finder , data)
+	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
 	(when (setf data (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join cols ",") table finder)))
 		(instantiate DB.OBJ db table data finder)))
 

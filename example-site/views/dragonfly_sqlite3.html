@@ -39,9 +39,7 @@
 					</tr>
 				<% )) %>
 			</table>
-			<%
-				(setf obj (find-dbobj db "people" '("name" "age") "ROWID=1"))
-			%>
+			<% (setf obj (find-dbobj db "people" '("name" "age") 1)) %>
 			<p>
 				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
 			</p>
@@ -53,10 +51,7 @@
 			</p>
 			<p>
 				Further, I can create a new person. See:
-				<%
-					(release obj)
-					(setf obj (create-dbobj db "people" '("Sue" 57)))
-				%>
+				<% (release obj) (setf obj (create-dbobj db "people" '("Sue" 57))) %>
 			</p>
 			<p>
 			<table>
