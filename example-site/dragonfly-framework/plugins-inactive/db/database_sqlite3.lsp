@@ -19,7 +19,7 @@
 ;; <h3>Requirements</h3>
 ;; See module @link http://www.taoeffect.com/newlisp/database.lsp.html DF.DB for requirements.
 ;; <h3>Version history</h3>
-;; <b>1.1.3</b> &bull; fixed handling of floats, more improvements needed though
+;; <b>1.1.3</b> &bull; temporary fix for handling of floats, now import sqlite3 functions globally
 ;; <b>1.1.2</b> &bull; fixed a bug in 'get-string-cast' and implemented 'DF.SQL:col-name'
 ;; <b>1.1.1</b> &bull; improved readability in error logging, fixed binding of integers on 32-bit newlisp builds<br/>
 ;; <b>1.1.0</b> &bull; support for 'DF.BLOB'<br/>
@@ -52,18 +52,36 @@
 				(throw-error "sqlite3 library not found. Set SQLITE3_LIBRARY_PATH."))))
 
 (set 'lib-funcs '(
-	"sqlite3_open"     "sqlite3_last_insert_rowid"   "sqlite3_changes"
-	"sqlite3_close"    "sqlite3_busy_timeout"        "sqlite3_libversion_number"
-	"sqlite3_prepare"  "sqlite3_errmsg"         
+	; functions for dealing with sqlite3 databases
+	"sqlite3_open"           "sqlite3_last_insert_rowid" "sqlite3_changes"
+	"sqlite3_close"          "sqlite3_busy_timeout"      "sqlite3_libversion_number"
+	"sqlite3_prepare"        "sqlite3_errmsg"
+	; functions for dealing with sqlite3 statements
+	"sqlite3_column_count"   "sqlite3_finalize"          "sqlite3_bind_parameter_index"
+	"sqlite3_column_name"    "sqlite3_reset"             "sqlite3_transfer_bindings"  
+	"sqlite3_column_type"    "sqlite3_errmsg"            "sqlite3_step"
+	"sqlite3_bind_int64"     "sqlite3_column_int64"      "sqlite3_bind_int"
+	"sqlite3_bind_double"    "sqlite3_column_double"     "sqlite3_column_name"
+	"sqlite3_bind_null"      "sqlite3_column_text"       "sqlite3_column_count"
+	"sqlite3_bind_text"      "sqlite3_column_blob"
+	"sqlite3_bind_blob"      "sqlite3_column_bytes"   
 ))
 
-(dolist (func lib-funcs)
-	(import library func "cdecl")
+; Switch to MAIN context and import them as global functions so that we're not copying
+; these symbols each time we create a new sql object. This is OK because they're qualified names.
+(context MAIN)
+
+(dolist (func Sqlite3:lib-funcs)
+	(global (sym func))
+	(import Sqlite3:library func "cdecl")
 )
 
 ; import possibly missing functions
-(catch (import library "sqlite3_open_v2" "cdecl") 'open_v2)
-(catch (import library "sqlite3_prepare_v2" "cdecl") 'prepare_v2)
+(catch (begin (import library "sqlite3_open_v2" "cdecl") (global 'sqlite3_open_v2)) 'Sqlite3:open_v2)
+(catch (begin (import library "sqlite3_prepare_v2" "cdecl") (global 'sqlite3_prepare_v2)) 'Sqlite3:prepare_v2)
+
+(context Sqlite3)
+
 ; if open_v2 = sqlite3_open_v2 then sqlite3_open_v2 is available
 (set 'open_v2 (= open_v2 sqlite3_open_v2)
      'prepare_v2 (= prepare_v2 sqlite3_prepare_v2)
@@ -267,21 +285,6 @@
 (def-new 'Sqlite3:error-codes)
 (def-new 'Sqlite3:good-errors)
 (def-new 'Sqlite3:failable)
-
-(set 'lib-funcs '(                                       
-	"sqlite3_column_count"   "sqlite3_finalize"         "sqlite3_bind_parameter_index"
-	"sqlite3_column_name"    "sqlite3_reset"            "sqlite3_transfer_bindings"  
-	"sqlite3_column_type"    "sqlite3_errmsg"           "sqlite3_step"
-	"sqlite3_bind_int64"     "sqlite3_column_int64"     "sqlite3_bind_int"
-	"sqlite3_bind_double"    "sqlite3_column_double"    "sqlite3_column_name"
-	"sqlite3_bind_null"      "sqlite3_column_text"      "sqlite3_column_count"
-	"sqlite3_bind_text"      "sqlite3_column_blob"       
-	"sqlite3_bind_blob"      "sqlite3_column_bytes"   
-))
-
-(dolist (func lib-funcs)
-	(import Sqlite3:library func "cdecl")
-)
 
 ; sqlite3 types
 (constant 'SQLITE_INTEGER 1 'SQLITE_BLOB    4

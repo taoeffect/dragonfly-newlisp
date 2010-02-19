@@ -49,7 +49,18 @@
 					</tr>
 				<% ) %>
 			</table>
-			
+			<%
+				(setf obj (instantiate DB.OBJ db "people" '("name" "age") "ROWID=1"))
+			%>
+			<p>
+				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
+			</p>
+			<p>
+				Let's set their age to 10.<%(obj:age 10) (obj:save)%>
+			</p>
+			<p>
+				They are now <%=(obj:age)%> years old.
+			</p>
 		</p>
 		<p>
 			The table above was created like so:
