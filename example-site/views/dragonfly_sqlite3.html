@@ -44,7 +44,7 @@
 				I've found a person called <%=(obj:name)%> in the table '<%=obj:table%>' at location <%=obj:finder%>, this person is <%=(obj:age)%> years old.
 			</p>
 			<p>
-				Let's set their age to 10.<%(obj:age 10) (obj:save)%>
+				Let's set their age to 10.<%(obj:age 10) (dbobj-save obj)%>
 			</p>
 			<p>
 				They are now <%=(obj:age)%> years old.

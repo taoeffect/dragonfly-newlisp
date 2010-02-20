@@ -15,6 +15,10 @@
 	 (global 'DBOBJ_DELETE_SQL)   "DELETE FROM %s WHERE %s"
      (global 'DBOBJ_ROWID_COL)    "ROWID=")
 
+;---------------------------------------------------------------
+; !Getting DF.OBJs
+;---------------------------------------------------------------
+
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
 (define (create-dbobj db table data , qs sql cols result)
 	(setf qs (join (dup "?" (length data) true) ","))
@@ -46,7 +50,64 @@
 	)
 )
 
-(global 'create-dbobj 'find-dbobj 'find-or-create-dbobj)
+;---------------------------------------------------------------
+; !Manipulating DF.OBJs
+;---------------------------------------------------------------
+
+(define (dbobj-keys obj)
+	(map first obj:change-set)
+)
+
+(define (dbobj-values obj from-revert-set)
+	(if from-revert-set
+		(map last obj:revert-set)
+		(map last obj:change-set)
+	)
+)
+
+(define (dbobj-refetch obj)
+	(set 'obj:dirty      nil
+	     'obj:revert-set (assoc-row-with-db obj:db (format DBOBJ_SELECT_SQL (join (map first obj:revert-set) ",") obj:table obj:finder))
+	     'obj:change-set obj:revert-set
+	)
+)
+
+(define (dbobj-refind obj finder)
+	(if (integer? finder)
+		(setf obj:finder (string DBOBJ_ROWID_COL finder))
+		(setf obj:finder finder)
+	)
+	(dbobj-refetch obj)
+)
+
+; returns list of saved differences on successful update, 0 if no update was needed, or nil if update failed
+(define (dbobj-save obj , diff db)
+	(setf db obj:db)
+	(if (null? (setf diff (difference obj:change-set obj:revert-set)))
+		0
+		(when (db:execute-update (format DBOBJ_UPDATE_SQL obj:table (join (map first diff) "=?,") obj:finder) (map last diff))
+			(set 'obj:revert-set obj:change-set 'obj:dirty nil)
+			diff
+		)
+	)
+)
+
+(define (dbobj-delete obj , db)
+	(setf db obj:db)
+	(when (db:execute-update (format DBOBJ_DELETE_SQL obj:table obj:finder))
+		(set 'obj:revert-set '() 'obj:change-set '())
+		true
+	)
+)
+
+(global
+	'create-dbobj 'find-dbobj 'find-or-create-dbobj
+	'dbobj-keys 'dbobj-values 'dbobj-refetch 'dbobj-refind 'dbobj-save 'dbobj-save 'dbobj-delete
+)
+
+;---------------------------------------------------------------
+; !The DB.OBJ constructor
+;---------------------------------------------------------------
 
 (context DB.OBJ)
 
@@ -63,45 +124,5 @@
 						(if from-revert-set
 							(<- attr-str revert-set)
 							(<- attr-str change-set))))))))
-
-(define (DB.OBJ:keys)
-	(map first change-set)
-)
-
-(define (DB.OBJ:values from-revert-set)
-	(if from-revert-set
-		(map last revert-set)
-		(map last change-set)
-	)
-)
-
-(define (DB.OBJ:refetch)
-	(set 'dirty      nil
-	     'revert-set (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join (map first revert-set) ",") table finder))
-	     'change-set revert-set))
-
-(define (DB.OBJ:refind _finder)
-	(setf finder _finder)
-	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
-	(DB.OBJ:refetch)
-)
-
-; returns list of saved differences on successful update, 0 if no update was needed, or nil if update failed
-(define (DB.OBJ:save , diff)
-	(if (null? (setf diff (difference change-set revert-set)))
-		0
-		(when (db:execute-update (format DBOBJ_UPDATE_SQL table (join (map first diff) "=?,") finder) (map last diff))
-			(set 'revert-set change-set 'dirty nil)
-			diff
-		)
-	)
-)
-
-(define (DB.OBJ:delete)
-	(when (db:execute-update (format DBOBJ_DELETE_SQL table finder))
-		(set 'revert-set '() 'change-set '())
-		true
-	)
-)
 
 (context MAIN)
