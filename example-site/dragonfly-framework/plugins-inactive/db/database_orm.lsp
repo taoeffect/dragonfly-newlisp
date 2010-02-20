@@ -86,13 +86,13 @@
 	(DB.OBJ:refetch)
 )
 
-; returns true on successful update, 0 if no update was needed, or nil if update failed
+; returns list of saved differences on successful update, 0 if no update was needed, or nil if update failed
 (define (DB.OBJ:save , diff)
 	(if (null? (setf diff (difference change-set revert-set)))
 		0
 		(when (db:execute-update (format DBOBJ_UPDATE_SQL table (join (map first diff) "=?,") finder) (map last diff))
 			(set 'revert-set change-set 'dirty nil)
-			true
+			diff
 		)
 	)
 )
