@@ -5,6 +5,10 @@
 
 (context MAIN)
 
+(define (null->nil x)
+	(if-not (null? x) x)
+)
+
 ; define-smacro defined in utils.lsp (part of Dragonfly's core functions)
 (define-smacro (for-query-with-db db query)
 	(letn (ctx (prefix db) db (eval db) sql (db:prepare-sql (eval query)) keys '() values)

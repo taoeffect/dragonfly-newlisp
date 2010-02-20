@@ -1,14 +1,15 @@
 Version 0.7
 
   * all code uses new ++,--,extend,write,read functions (still compatible with older newlisps)
-  * now $BINARY can handle large data (compensated for a newLISP bug in 'read-buffer').
-  * added documentation for MAX_POST_LENGTH in request.lsp
-  * fix to Jeff's JSON.lsp plugin (switched to " instead of ' for strings)
-  * DF:activate-plugin can now be used to load all lisp files in a directory
-  * db/database_utils includes for-query-with-db, fn-query-with-db, assoc-row-with-db, assoc-rows-with-db and query-cell-with-db
-  * db/database_orm - DB.OBJ - a very simple ORM for DF.DB
-  * fixed handling of floats in Sqlite3 on some architectures (more improvements needed though, see TODO)
   * added 'extract' and '<-' functions to core utils
+  * added documentation for MAX_POST_LENGTH in request.lsp
+  * $BINARY can now handle large data (compensated for a newLISP bug in 'read-buffer').
+  * DF:activate-plugin can now be used to load all lisp files in a directory
+  * db/database_utils includes for-query-with-db, assoc-row-with-db, query-cell-with-db and others
+  * db/database_orm - DB.OBJ - a very simple ORM for DF.DB
+  * fixed Jeff's JSON.lsp plugin (switched to " instead of ' for strings)
+  * fixed handling of floats in Sqlite3 on some architectures (more improvements needed though, see TODO)
+  * fixed bug in definition of define-smacro
 
 Version 0.6
 

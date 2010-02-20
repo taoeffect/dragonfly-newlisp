@@ -208,8 +208,8 @@
 ;; that it does this by placing the macro in its own context, so be careful
 ;; when choosing its name!</p>
 	(define-macro (define-smacro)
-	    (let (temp (append (fn-macro) (list (1 (args 0)) (args 1))))
-	        (def-new 'temp (sym (args 0 0) (args 0 0)))
+	    (let (_temp1 (append (fn-macro) (cons (1 (args 0)) (rest $args))) _temp2 (args 0 0))
+	        (def-new '_temp1 (sym _temp2 _temp2))
 		)
 	)
 	
