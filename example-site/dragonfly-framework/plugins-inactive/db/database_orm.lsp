@@ -35,9 +35,18 @@
 (define (find-dbobj db table cols finder , data)
 	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
 	(when (setf data (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join cols ",") table finder)))
-		(instantiate DB.OBJ db table data finder)))
+		(instantiate DB.OBJ db table data finder)
+	)
+)
 
-(global 'create-dbobj 'find-dbobj)
+
+(define (find-or-create-dbobj db table data finder)
+	(unless (find-dbobj db table (map first data) finder)
+		(create-dbobj db table data)
+	)
+)
+
+(global 'create-dbobj 'find-dbobj 'find-or-create-dbobj)
 
 (context DB.OBJ)
 
