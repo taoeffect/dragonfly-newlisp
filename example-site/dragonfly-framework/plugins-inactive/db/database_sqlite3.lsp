@@ -1,6 +1,6 @@
 ;; @module Sqlite3
 ;; @description SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.
-;; @version 1.1.3
+;; @version 1.2
 ;; @author Greg Slepak 
 ;; @location http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt
 ;; <h3>Features not found in newLISP's sqlite3.lsp:</h3>
@@ -9,6 +9,7 @@
 ;; <li>Multiple active SQL statements</li>
 ;; <li>Supports reuse of SQL statements through parameter rebinding</li>
 ;; <li>Supports BLOB data-type as per 'DF.DB' and 'DF.BLOB' specification</li>
+;; <li>Supports 'true' by converting it to value 1 (as integer)</li>
 ;; <li>Conforms to generic 'DF.DB' interface</li>
 ;; <li>Grabs integers directly through 64-bit function</li>
 ;; <li>Can go through results row-by-row</li>
@@ -19,7 +20,7 @@
 ;; <h3>Requirements</h3>
 ;; See module @link http://www.taoeffect.com/newlisp/database.lsp.html DF.DB for requirements.
 ;; <h3>Version history</h3>
-;; <b>1.1.3</b> &bull; temporary fix for handling of floats, now import sqlite3 functions globally
+;; <b>1.2.0</b> &bull; temporary fix for handling of floats, sqlite3 functions globally for speed, binding 'true' is handled as 1
 ;; <b>1.1.2</b> &bull; fixed a bug in 'get-string-cast' and implemented 'DF.SQL:col-name'
 ;; <b>1.1.1</b> &bull; improved readability in error logging, fixed binding of integers on 32-bit newlisp builds<br/>
 ;; <b>1.1.0</b> &bull; support for 'DF.BLOB'<br/>
@@ -395,6 +396,7 @@
 		((nil? value) (failable (sqlite3_bind_null stmt idx)))
 		; DF.BLOB is the vehicle for using 'sqlite3_bind_blob' instead of 'sqlite3_bind_text'
 		((context? value) (failable (sqlite3_bind_blob stmt idx value:blob (length value:blob) -1)))
+		((true? value) (bind-param-at-index stmt 1 idx))
 		(true (throw-error "can't bind; unhandled type for value: " value))
 	)
 )
