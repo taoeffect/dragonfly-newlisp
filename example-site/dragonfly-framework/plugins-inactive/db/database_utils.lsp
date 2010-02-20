@@ -5,9 +5,10 @@
 
 (context MAIN)
 
-(define (null->nil x)
-	(if-not (null? x) x)
+(define (cast-if test to from)
+	(if (test from) to from)
 )
+(global 'cast-if)
 
 ; define-smacro defined in utils.lsp (part of Dragonfly's core functions)
 (define-smacro (for-query-with-db db query)
