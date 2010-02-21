@@ -70,19 +70,18 @@
 	)
 )
 
+(define (dbobj-set-finder obj finder)
+	(if (integer? finder)
+		(setf obj:finder (string DBOBJ_ROWID_COL finder))
+		(setf obj:finder finder)
+	)
+)
+
 (define (dbobj-refetch obj)
 	(set 'obj:dirty      nil
 	     'obj:revert-set (dbobj-assoc-row obj:db obj:table (map first obj:revert-set) obj:finder 1)
 	     'obj:change-set obj:revert-set
 	)
-)
-
-(define (dbobj-refind obj finder)
-	(if (integer? finder)
-		(setf obj:finder (string DBOBJ_ROWID_COL finder))
-		(setf obj:finder finder)
-	)
-	(dbobj-refetch obj)
 )
 
 ; returns list of saved differences on successful update, 0 if no update was needed, or nil if update failed
