@@ -81,7 +81,7 @@
 
 (define (dbobj-refetch obj)
 	(set 'obj:dirty      nil
-	     'obj:revert-set (dbobj-assoc-row obj:db obj:table (map first obj:revert-set) obj:finder 1)
+	     'obj:revert-set (first (dbobj-assoc-rows obj:db obj:table (map first obj:revert-set) obj:finder 1))
 	     'obj:change-set obj:revert-set
 	)
 )
