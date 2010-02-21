@@ -38,9 +38,8 @@
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
 (define (find-dbobj db table cols finder , data)
 	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
-	(when (setf data (assoc-row-with-db db (format DBOBJ_SELECT_SQL (join cols ",") table finder)))
-		(instantiate DB.OBJ db table data finder)
-	)
+	(when (setf data (dbobj-assoc-row db table cols finder))
+		(instantiate DB.OBJ db table data finder))
 )
 
 
@@ -67,7 +66,7 @@
 
 (define (dbobj-refetch obj)
 	(set 'obj:dirty      nil
-	     'obj:revert-set (assoc-row-with-db obj:db (format DBOBJ_SELECT_SQL (join (map first obj:revert-set) ",") obj:table obj:finder))
+	     'obj:revert-set (dbobj-assoc-row obj:db obj:table (map first obj:revert-set) obj:finder)
 	     'obj:change-set obj:revert-set
 	)
 )
@@ -81,20 +80,18 @@
 )
 
 ; returns list of saved differences on successful update, 0 if no update was needed, or nil if update failed
-(define (dbobj-save obj , diff db)
-	(setf db obj:db)
+(define (dbobj-save obj , diff)
 	(if (null? (setf diff (difference obj:change-set obj:revert-set)))
 		0
-		(when (db:execute-update (format DBOBJ_UPDATE_SQL obj:table (join (map first diff) "=?,") obj:finder) (map last diff))
+		(when (dbobj-do-update obj:db obj:table diff obj:finder)
 			(set 'obj:revert-set obj:change-set 'obj:dirty nil)
 			diff
 		)
 	)
 )
 
-(define (dbobj-delete obj , db)
-	(setf db obj:db)
-	(when (db:execute-update (format DBOBJ_DELETE_SQL obj:table obj:finder))
+(define (dbobj-delete obj)
+	(when (dbobj-do-delete obj:db obj:table obj:finder)
 		(set 'obj:revert-set '() 'obj:change-set '())
 		true
 	)
@@ -103,6 +100,37 @@
 (global
 	'create-dbobj 'find-dbobj 'find-or-create-dbobj
 	'dbobj-keys 'dbobj-values 'dbobj-refetch 'dbobj-refind 'dbobj-save 'dbobj-save 'dbobj-delete
+)
+
+;---------------------------------------------------------------
+; !Finder-Binder, for SQL-injection proof binding in the finder
+;---------------------------------------------------------------
+
+(define (dbobj-finder-binder finder)
+	(join (map (fn(x)(string (x 0) "=?")) finder) ",")
+)
+
+(define (dbobj-assoc-row db table cols finder)
+	(setf cols (join cols ","))
+	(if (list? finder)
+		(assoc-row-with-db db (format DBOBJ_SELECT_SQL cols table (dbobj-finder-binder finder)) (map last finder))
+		(assoc-row-with-db db (format DBOBJ_SELECT_SQL cols table finder))
+	)
+)
+
+(define (dbobj-do-update db table kv finder , cols)
+	(setf cols (join (map first kv) "=?,"))
+	(if (list? finder)
+		(db:execute-update (format DBOBJ_UPDATE_SQL table cols (dbobj-finder-binder finder)) (extend (map last kv) (map last finder)))
+		(db:execute-update (format DBOBJ_UPDATE_SQL table cols finder) (map last kv))
+	)
+)
+
+(define (dbobj-do-delete db table finder)
+	(if (list? finder)
+		(db:execute-update (format DBOBJ_DELETE_SQL table (dbobj-finder-binder finder)) (map last finder))
+		(db:execute-update (format DBOBJ_DELETE_SQL table finder))
+	)
 )
 
 ;---------------------------------------------------------------
