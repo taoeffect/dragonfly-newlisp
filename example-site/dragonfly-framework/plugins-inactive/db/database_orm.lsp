@@ -154,8 +154,8 @@
 				(define (attr-sym value from-revert-set)
 					(if value
 						(begin
-							(setf (<- attr-str change-set) value)
-							(setf dirty true))
+							(set (<- attr-str change-set) value 'dirty true)
+							(when from-revert-set (setf (<- attr-str revert-set) value))) ; only do this if you're *SURE*
 						(if from-revert-set
 							(<- attr-str revert-set)
 							(<- attr-str change-set))))))))
