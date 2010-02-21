@@ -7,7 +7,7 @@
 
 (new-class 'DB.OBJ)
 
-(set (global 'DBOBJ_SELECT_SQL)   "SELECT %s FROM %s WHERE %s LIMIT 1"
+(set (global 'DBOBJ_SELECT_SQL)   "SELECT %s FROM %s WHERE %s LIMIT %d"
      (global 'DBOBJ_SELECT_SQL2)  "SELECT * FROM %s" ; quasi-hack to obtain the col names b/c INSERT doesn't tell us. we don't actually retrieve the rows.
      (global 'DBOBJ_UPDATE_SQL)   "UPDATE %s SET %s=? WHERE %s" ; LIMIT isn't supported for UPDATE unless sqlite3 was compiled with the option
      (global 'DBOBJ_INSERT_SQL)   "INSERT INTO %s (%s) VALUES (%s)"
@@ -38,10 +38,14 @@
 )
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
-(define (find-dbobj db table cols finder , data)
+(define (find-dbobj db table cols finder (limit 1) , data)
 	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
-	(when (setf data (dbobj-assoc-row db table cols finder))
-		(instantiate DB.OBJ db table data finder))
+	(when (setf data (dbobj-assoc-rows db table cols finder limit))
+		(if (> (length data) 1)
+			(map (fn (x) (instantiate DB.OBJ db table x finder)) data)
+			(instantiate DB.OBJ db table (first data) finder)
+		)
+	)
 )
 
 
@@ -68,7 +72,7 @@
 
 (define (dbobj-refetch obj)
 	(set 'obj:dirty      nil
-	     'obj:revert-set (dbobj-assoc-row obj:db obj:table (map first obj:revert-set) obj:finder)
+	     'obj:revert-set (dbobj-assoc-row obj:db obj:table (map first obj:revert-set) obj:finder 1)
 	     'obj:change-set obj:revert-set
 	)
 )
@@ -112,11 +116,11 @@
 	(join (map (fn(x)(string (first x) "=?")) finder) DBOBJ_WHERE_COMB)
 )
 
-(define (dbobj-assoc-row db table cols finder)
+(define (dbobj-assoc-rows db table cols finder limit)
 	(setf cols (join cols ","))
 	(if (list? finder)
-		(assoc-row-with-db db (format DBOBJ_SELECT_SQL cols table (dbobj-finder-binder finder)) (map last finder))
-		(assoc-row-with-db db (format DBOBJ_SELECT_SQL cols table finder))
+		(assoc-rows-with-db db (format DBOBJ_SELECT_SQL cols table (dbobj-finder-binder finder) limit) (map last finder))
+		(assoc-rows-with-db db (format DBOBJ_SELECT_SQL cols table finder limit))
 	)
 )
 
