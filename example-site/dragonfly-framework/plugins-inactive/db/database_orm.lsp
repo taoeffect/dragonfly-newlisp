@@ -42,7 +42,10 @@
 	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
 	(when (setf data (dbobj-assoc-rows db table cols finder limit))
 		(if (> limit 1)
-			(map (fn (x) (instantiate DB.OBJ db table x finder)) data)
+			(begin
+				(DF:log-info "got data: " data)
+				(map (fn (x) (instantiate DB.OBJ db table x finder)) data)
+			)
 			(instantiate DB.OBJ db table (first data) finder)
 		)
 	)
