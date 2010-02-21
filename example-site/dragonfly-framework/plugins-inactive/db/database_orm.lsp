@@ -75,7 +75,7 @@
 		(setf obj:finder (string DBOBJ_ROWID_COL finder))
 		(or (list? finder) (string? finder))
 		(setf obj:finder finder)
-		(throw (string "bad type for finder: " finder))
+		(throw-error (string "bad type for finder: " finder))
 	)
 )
 
