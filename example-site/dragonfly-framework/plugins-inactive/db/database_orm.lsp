@@ -41,7 +41,7 @@
 (define (find-dbobj db table cols finder (limit 1) , data)
 	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
 	(when (setf data (dbobj-assoc-rows db table cols finder limit))
-		(if (> (length data) 1)
+		(if (> limit 1)
 			(map (fn (x) (instantiate DB.OBJ db table x finder)) data)
 			(instantiate DB.OBJ db table (first data) finder)
 		)
