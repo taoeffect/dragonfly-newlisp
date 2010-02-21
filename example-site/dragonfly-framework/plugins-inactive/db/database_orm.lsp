@@ -13,7 +13,9 @@
      (global 'DBOBJ_INSERT_SQL)   "INSERT INTO %s (%s) VALUES (%s)"
      (global 'DBOBJ_INSERT_SQL2)  "INSERT INTO %s VALUES (%s)"
 	 (global 'DBOBJ_DELETE_SQL)   "DELETE FROM %s WHERE %s"
-     (global 'DBOBJ_ROWID_COL)    "ROWID=")
+     (global 'DBOBJ_ROWID_COL)    "ROWID="
+	 (global 'DBOBJ_WHERE_COMB)   " AND "
+)
 
 ;---------------------------------------------------------------
 ; !Getting DF.OBJs
@@ -107,7 +109,7 @@
 ;---------------------------------------------------------------
 
 (define (dbobj-finder-binder finder)
-	(join (map (fn(x)(string (x 0) "=?")) finder) ",")
+	(join (map (fn(x)(string (first x) "=?")) finder) DBOBJ_WHERE_COMB)
 )
 
 (define (dbobj-assoc-row db table cols finder)
