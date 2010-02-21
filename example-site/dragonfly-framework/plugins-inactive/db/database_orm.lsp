@@ -7,14 +7,17 @@
 
 (new-class 'DB.OBJ)
 
-(set (global 'DBOBJ_SELECT_SQL)   "SELECT %s FROM %s WHERE %s LIMIT %d"
-     (global 'DBOBJ_SELECT_SQL2)  "SELECT * FROM %s" ; quasi-hack to obtain the col names b/c INSERT doesn't tell us. we don't actually retrieve the rows.
-     (global 'DBOBJ_UPDATE_SQL)   "UPDATE %s SET %s=? WHERE %s" ; LIMIT isn't supported for UPDATE unless sqlite3 was compiled with the option
-     (global 'DBOBJ_INSERT_SQL)   "INSERT INTO %s (%s) VALUES (%s)"
-     (global 'DBOBJ_INSERT_SQL2)  "INSERT INTO %s VALUES (%s)"
-	 (global 'DBOBJ_DELETE_SQL)   "DELETE FROM %s WHERE %s"
-     (global 'DBOBJ_ROWID_COL)    "ROWID="
-	 (global 'DBOBJ_WHERE_COMB)   " AND "
+(set (global 'DBOBJ_SELECT_SQL)   (or DBOBJ_SELECT_SQL   "SELECT %s FROM %s WHERE %s LIMIT %d")
+     (global 'DBOBJ_SELECT_SQL2)  (or DBOBJ_SELECT_SQL2  "SELECT * FROM %s") ; b/c INSERT doesn't tell us. we don't actually retrieve the rows.
+     (global 'DBOBJ_UPDATE_SQL)   (or DBOBJ_UPDATE_SQL   "UPDATE %s SET %s=? WHERE %s")
+     (global 'DBOBJ_INSERT_SQL)   (or DBOBJ_INSERT_SQL   "INSERT INTO %s (%s) VALUES (%s)")
+     (global 'DBOBJ_INSERT_SQL2)  (or DBOBJ_INSERT_SQL2  "INSERT INTO %s VALUES (%s)")
+	 (global 'DBOBJ_DELETE_SQL)   (or DBOBJ_DELETE_SQL   "DELETE FROM %s WHERE %s")
+	 (global 'DBOBJ_ROWID)        (or DBOBJ_ROWID        "ROWID")
+	 (global 'DBOBJ_ROWID_ATTR)   (or DBOBJ_ROWID_ATTR   "id")
+     (global 'DBOBJ_ROWID_COL)    (or DBOBJ_ROWID_COL    (string DBOBJ_ROWID " as " DBOBJ_ROWID_ATTR))
+	 (global 'DBOBJ_ROWID_FINDER) (or DBOBJ_ROWID_FINDER (string DBOBJ_ROWID "="))
+	 (global 'DBOBJ_WHERE_COMB)   (or DBOBJ_WHERE_COMB   " AND ")
 )
 
 ;---------------------------------------------------------------
@@ -22,15 +25,27 @@
 ;---------------------------------------------------------------
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
-(define (create-dbobj db table data , qs sql cols result)
+(define (create-dbobj db table data , qs sql cols result rowid idx)
 	(setf qs (join (dup "?" (length data) true) ","))
 	(if (list? (first data))
 		(when (db:execute-update (format DBOBJ_INSERT_SQL table (join (map first data) ",") qs) (map last data))
-			(instantiate DB.OBJ db table data (string DBOBJ_ROWID_COL (db:rowid))))
+			(setf rowid (db:rowid))
+			(if (find (list DBOBJ_ROWID_ATTR '?) data match)
+				(setf (<- DBOBJ_ROWID_ATTR data) rowid)
+				(push (list DBOBJ_ROWID_ATTR rowid) data)
+			)
+			(instantiate DB.OBJ db table data (string DBOBJ_ROWID_FINDER rowid))
+		)
 		(when (setf sql (db:prepare-sql (format DBOBJ_SELECT_SQL2 table)))
 			(setf cols (map sql:col-name (sequence 0 (-- (sql:col-count)))))
 			(when (db:execute-update (format DBOBJ_INSERT_SQL2 table qs) data)
-				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_COL (db:rowid)))))
+				(setf rowid (db:rowid))
+				(if (setf idx (find DBOBJ_ROWID_ATTR cols))
+					(setf (data idx) rowid)
+					(begin (push DBOBJ_ROWID_ATTR cols) (push rowid data))
+				)
+				(setf result (instantiate DB.OBJ db table (transpose (list cols data)) (string DBOBJ_ROWID_FINDER rowid)))
+			)
 			(deallocate sql)
 			result
 		)
@@ -39,11 +54,13 @@
 
 ; The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!
 (define (find-dbobj db table cols finder (limit 1) , data)
-	(when (integer? finder) (setf finder (string DBOBJ_ROWID_COL finder)))
+	(when (integer? finder) (setf finder (string DBOBJ_ROWID_FINDER finder)))
+	(push DBOBJ_ROWID_COL cols)
 	(when (setf data (dbobj-assoc-rows db table cols finder limit))
+		(setf data (unique data)) ; get rid of possibly duplicate columns caused by the push above
 		(if (> limit 1)
-			(map (fn (x) (instantiate DB.OBJ db table x finder)) data)
-			(instantiate DB.OBJ db table (first data) finder)
+			(map (fn (x) (instantiate DB.OBJ db table x (string DBOBJ_ROWID_FINDER (<- DBOBJ_ROWID_ATTR x)))) data)
+			(instantiate DB.OBJ db table (first data) (string DBOBJ_ROWID_FINDER (<- DBOBJ_ROWID_ATTR (first data))))
 		)
 	)
 )
@@ -72,7 +89,7 @@
 
 (define (dbobj-set-finder obj finder)
 	(if (integer? finder)
-		(setf obj:finder (string DBOBJ_ROWID_COL finder))
+		(setf obj:finder (string DBOBJ_ROWID_FINDER finder))
 		(or (list? finder) (string? finder))
 		(setf obj:finder finder)
 		(throw-error (string "bad type for finder: " finder))
