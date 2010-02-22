@@ -67,7 +67,7 @@
 	(local (value expires path domain http-only)
 		(map (fn(k v) (if v (set k v))) '(value expires path domain http-only) $args)
 		(if (nil? key) cookies
-			(empty? $args) (lookup key cookies)
+			(empty? $args) (assoc key cookies)
 			(nil? value) (cookie key "" (date-value))
 			(let (cookie (list key value expires path domain http-only))
 				(if (assoc key cookies)

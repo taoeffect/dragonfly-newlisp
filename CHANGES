@@ -10,6 +10,7 @@ Version 0.7
   * db/database_sqlite3 updated to version 1.2 (see its docs for what's new)
   * fixed Jeff's JSON.lsp plugin (switched to " instead of ' for strings)
   * fixed bug in definition of define-smacro
+  * Response:cookie now returns correct value (full cookie as list) when given only key
 
 Version 0.6
 
