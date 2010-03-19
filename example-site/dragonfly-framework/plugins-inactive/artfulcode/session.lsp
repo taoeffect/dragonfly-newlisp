@@ -126,7 +126,7 @@
     ((true? key) (context (session-context) key))
     (true (let ((alist '()))
             (dotree (s (session-context))
-              (push (list (name s) (context (session-context) (name s))) alist -1))
+              (push (list (term s) (context (session-context) (term s))) alist -1))
             alist))))
 
 ;===============================================================================

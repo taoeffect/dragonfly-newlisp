@@ -11,8 +11,8 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>database_sqlite3.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;Sqlite3</h2><p>SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.</p>
-<b>Version: </b>1.1.1<br/>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database_sqlite3</h2><p>SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.</p>
+<b>Version: </b>1.2<br/>
 <b>Author: </b>Greg Slepak <br/>
 <b>Location: </b><a href="http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt">http://www.taoeffect.com/newlisp/database_sqlite3.lsp.txt</a><br/>
  <h3>Features not found in newLISP's sqlite3.lsp:</h3>
@@ -21,6 +21,7 @@
  <li>Multiple active SQL statements</li>
  <li>Supports reuse of SQL statements through parameter rebinding</li>
  <li>Supports BLOB data-type as per <tt>DF.DB</tt> and <tt>DF.BLOB</tt> specification</li>
+ <li>Supports <tt>true</tt> by converting it to value 1 (as integer)</li>
  <li>Conforms to generic <tt>DF.DB</tt> interface</li>
  <li>Grabs integers directly through 64-bit function</li>
  <li>Can go through results row-by-row</li>
@@ -31,9 +32,14 @@
  <h3>Requirements</h3>
  See module <a href="http://www.taoeffect.com/newlisp/database.lsp.html">DF.DB</a> for requirements.
  <h3>Version history</h3>
+ <b>1.2.0</b> &bull; temporary fix for handling of floats, sqlite3 functions globally for speed, binding <tt>true</tt> is handled as 1
+ <b>1.1.2</b> &bull; fixed a bug in <tt>get-string-cast</tt> and implemented <tt>DF.SQL:col-name</tt>
  <b>1.1.1</b> &bull; improved readability in error logging, fixed binding of integers on 32-bit newlisp builds<br/>
  <b>1.1.0</b> &bull; support for <tt>DF.BLOB</tt><br/>
  <b>1.0.0</b> &bull; initial release
+
+
+
 
 
 
@@ -107,8 +113,8 @@
 
 
 
-
-
+ TODO: figure out how to do this properly, test on a bunch of different architectures
+       for bind-float it may actually be the opposite (string for 32, double for 64)
 
 
 

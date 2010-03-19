@@ -1,4 +1,4 @@
-;; @module DF.DB, DF.SQL, DF.BLOB
+;; @module database
 ;; @description Generic database access interface for <a href="http://www.rundragonfly.com">Dragonfly</a> using Objective newLISP
 ;; @version 1.2
 ;; @author Greg Slepak

@@ -1,7 +1,36 @@
 ;; @module database_orm
-;; @description DB.OBJ - Simple ORM Singleton class for DF.DB
+;; @description DB.OBJ - Simple ORM class for DF.DB
 ;; @version 1.0
 ;; @author Greg Slepak
+;; <p></p>
+;; <p>To accomplish this, the interface introduces three Objective newLISP classes:
+;; 'DF.DB', 'DF.SQL', and 'DF.BLOB'.</p>
+;; <h3>DF.SQL</h3>
+;; A 'DF.SQL' object is a wrapper around an SQL statement, is retrieved through one of
+;; two functions: 'DF.DB:execute-query' and the lower-level 'DF.DB:preprare-sql'.
+;; <p>It is used to retrieve rows from the result set of a query one-by-one.</p>
+;; <h3>Example</h3>
+;; <pre>
+;; (push-autorelease-pool) ; we're going to be using DF.BLOB's.
+;; (setf db (instantiate Sqlite3 ":memory:"))
+;; (if-not db (throw-error "couldn't open db"))
+;; (db:execute-update "CREATE TABLE fish (id INTEGER PRIMARY KEY, name TEXT, weight REAL, blah BLOB)")
+;; (db:execute-update "INSERT INTO fish (name,weight) VALUES (?,?)" '("flipper" 234.123))
+;; (db:execute-update "INSERT INTO fish (name,weight) VALUES (?1,?2)" '(("?1" "catfish") ("?2" 100.3)))
+;; (db:execute-update "INSERT INTO fish (blah) VALUES (?)" (list (DF.BLOB (dup "\000" 10))))
+;; (db:execute-update "INSERT INTO fish (blah) VALUES (:cat)" (list (list ":cat" (DF.BLOB (dup "\000" 10)))))
+;; (setf sql (db:execute-query "SELECT * FROM fish"))
+;; (do-while (list? row)
+;;     (push-autorelease-pool) ; "in case" we end up fetching a lot of large blobs
+;;     (setf row (sql:next-row))
+;;     (println "row: " row)
+;;     (pop-autorelease-pool)
+;; )
+;; (deallocate sql)
+;; (deallocate db)
+;; (pop-autorelease-pool) ; deallocate the blobs we created</pre>
+;; <h3>Version history</h3>
+;; <b>1.0</b> &bull; initial release
 
 (DF:activate-plugin "db/database_utils")
 

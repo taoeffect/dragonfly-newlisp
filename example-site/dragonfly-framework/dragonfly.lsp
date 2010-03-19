@@ -374,17 +374,20 @@
 (define (run)
 	(SET_DF_SELF path)
 	(load path)
-	(set 'ctx-str (string "Resource." (join (map title-case (parse resource_name "_")))))
-	(set 'ctx-sym (sym ctx-str))
-	
-	; If no action is specified, use the default function
-	(if (null? resource_action) (set 'resource_action ctx-str))
-	(set 'action (eval (sym resource_action ctx-sym)))
-	
-	(if-not (lambda? action) (DF:die ctx-str ":" resource_action " not defined!"))
-	
-	; call the action on the resource with the optional parameters
-	(action (int resource_id) (if-not (null? response_format) response_format))
+	(letn (
+			ctx-str (string "Resource." (join (map title-case (parse resource_name "_"))))
+		    ctx-sym (sym ctx-str)
+		)
+		; If no action is specified, use the default function
+		(when (null? resource_action) (setf resource_action ctx-str))
+		(setf action (eval (sym resource_action ctx-sym)))
+		; if the requested action doesn't exist we call the catch-all method
+		(unless (lambda? action)
+			(setf action (lambda () (eval (append (list (sym 'catch-all ctx-sym) resource_action) $args))))
+		)
+		; call the action on the resource with the optional parameters
+		(action (int resource_id) (if-not (null? response_format) response_format))
+	)
 )
 
 (context 'Dragonfly)

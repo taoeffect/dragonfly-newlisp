@@ -11,8 +11,8 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>dragonfly.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;dragonfly.lsp</h2><p>The heart of Dragonfly - A newLISP web framework for rapid web development.</p>
-<b>Version: </b>0.50<br/>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;dragonfly.lsp</h2><p>The heart of Dragonfly - A newLISP web framework for rapid web development.</p>
+<b>Version: </b>0.70<br/>
 <b>Author: </b>Team Dragonfly 2009<br/>
 <b>Location: </b><a href="http://code.google.com/p/dragonfly-newlisp/">http://code.google.com/p/dragonfly-newlisp/</a><br/>
  <br>This file is the main entry-point of the Dragonfly framework and
@@ -95,6 +95,8 @@
 
 
 
+
+
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_DF_PAGE"></a><h3><font color=#CC0000>DF_PAGE</font></h3>
 <b>syntax: DF_PAGE</b><br/>
@@ -145,6 +147,7 @@
 <b>syntax: (<font color=#CC0000>DF:activate-plugin</font> <em>str-plugin-name</em> [<em>str-plugin-name-2</em> ...])</b><br/>
 <b>parameter: </b><em>str-plugin-name</em> - The name of the plugin to load, without the ".lsp" extension.<br/>
  <br>Loads (once only) a the named plugin from the <tt>plugins-inactive</tt> folder.
+ <br>If <em>str-plugin-name</em> refers to a directory, then loads all of the ".lsp" files in that directory.
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="DF_web-root"></a><h3><font color=#CC0000>DF:web-root</font></h3>

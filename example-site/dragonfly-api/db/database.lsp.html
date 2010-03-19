@@ -11,8 +11,8 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>database.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;DF.DB, DF.SQL, DF.BLOB</h2><p>Generic database access interface for <a href="http://www.rundragonfly.com">Dragonfly</a> using Objective newLISP</p>
-<b>Version: </b>1.1<br/>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database</h2><p>Generic database access interface for <a href="http://www.rundragonfly.com">Dragonfly</a> using Objective newLISP</p>
+<b>Version: </b>1.2<br/>
 <b>Author: </b>Greg Slepak<br/>
 <b>Location: </b><a href="http://www.taoeffect.com/newlisp/database.lsp.txt">http://www.taoeffect.com/newlisp/database.lsp.txt</a><br/>
  <p>The purpose of this module is to standardize the interface to
@@ -30,10 +30,10 @@
  <h3>DF.BLOB</h3>
  <tt>DF.BLOB</tt> is used to insert and retrieve (possibly large) binary data into databases.
  It is needed for two reasons:
- <ol>
+ <em>ol</em>
  <li>newLISP uses strings to buffer and store binary data, and that's already used to store text.</li>
  <li>BLOBs can be very large, so by storing them in a context we avoid excessive copying.</li>
- </ol>
+ <em>/ol</em>
  <p>Unlike the other two classes, <tt>DF.BLOB</tt> provides a basic working implementation for <tt>DF.SQL</tt> subclasses
  to use. You may of course subclass it if your database requires additional functionality. It requires
  special usage considerations, see its documentation below.</p>
@@ -67,6 +67,7 @@
  <a href="http://www.rundragonfly.com">Dragonfly</a> is only required for its logging functions. You can easily implement your own
  versions of <tt>DF:log-err</tt>, <tt>DF:log-debug</tt>, and the other functions found in Dragonfly&apos;s <tt>log.lsp</tt>.
  <h3>Version history</h3>
+ <b>1.2</b> &bull; added <tt>DF.SQL:col-name</tt> and <tt>DF.SQL:col-count</tt> to specification
  <b>1.1</b> &bull; <tt>DF.BLOB</tt> added<br/>
  <b>1.0</b> &bull; initial release
 
@@ -222,6 +223,8 @@
  <p>Resets the statement so that it can be re-used without preparing another
  statement (which is more efficient). After reseting a statement you typically
  use <tt>DF.SQL:bind-params</tt> to bind new values and then <tt>DF.SQL:next-row</tt>.</p>
+
+
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="DF.SQL_close"></a><h3><font color=#CC0000>DF.SQL:close</font></h3>

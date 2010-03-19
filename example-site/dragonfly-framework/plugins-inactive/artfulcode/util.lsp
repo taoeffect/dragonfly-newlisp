@@ -58,7 +58,7 @@
 (define (type-of:type-of x)
   (let ((type (type-of:types (& 0xf ((dump x) 1)))))
 	  (if (and (= "list" type) (context? (first x)))
-	      (name (first x))
+	      (term (first x))
 		    type)))
 
 ;; @syntax (gensym [<ctx>])
@@ -77,7 +77,7 @@
 (define _gensym:_gensym)
 
 (define (gensym:gensym (ctx MAIN) , ctx-name new-sym)
-  (setf ctx-name (name ctx))
+  (setf ctx-name (term ctx))
   (if (_gensym ctx-name)
     (begin
       (setf new-sym (string "gensym-" (_gensym ctx-name (+ 1 (_gensym ctx-name)))))
@@ -115,7 +115,7 @@
 ;; format as with the 'assoc' function, but the result is the same as the 'lookup'
 ;; function, except the multiple values are returned correctly.</p>
 ;; @example
-;; (set 'data '((name "Joe") (friends "John" "Steve")))
+;; (set 'data '((term "Joe") (friends "John" "Steve")))
 ;; (get-assoc (data 'name))
 ;; => "Joe"
 ;; (get-assoc (data 'friends))

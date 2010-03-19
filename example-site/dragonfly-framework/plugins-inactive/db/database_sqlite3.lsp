@@ -1,4 +1,4 @@
-;; @module Sqlite3
+;; @module database_sqlite3
 ;; @description SQLite3 subclass of DF.DB. Only lists Sqlite3 specific functions.
 ;; @version 1.2
 ;; @author Greg Slepak 

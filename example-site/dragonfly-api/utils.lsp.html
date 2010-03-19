@@ -11,7 +11,7 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>utils.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><br/><br/><h2>Module:&nbsp;utils.lsp</h2><b>Author: </b>Greg Slepak <greg at taoeffect.com><br/>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;utils.lsp</h2><b>Author: </b>Greg Slepak <greg at taoeffect.com><br/>
  <p>This file not only provides the functions documented below, but
  it also plays a role in globally overriding certain functions in the MAIN context.</p>
  <p>The overridden functions include: <tt>load</tt>, <tt>print</tt>, and <tt>println</tt>.</p>
@@ -134,6 +134,12 @@
  in their <tt>Route:run</tt> methods, prior to loading the files. This is the recommended way of
  calling this function.</p>
 <br/><br/><center>- &sect; -</center><br/>
+<a name="_define-smacro"></a><h3><font color=#CC0000>define-smacro</font></h3>
+<b>syntax: (<font color=#CC0000>define-smacro</font>)</b><br/>
+ <p>Defines a "safe macro", free of variable capture issues. Note though
+ that it does this by placing the macro in its own context, so be careful
+ when choosing its name!</p>
+<br/><br/><center>- &sect; -</center><br/>
 <a name="_NEWLISP64"></a><h3><font color=#CC0000>NEWLISP64</font></h3>
 <b>syntax: NEWLISP64</b><br/>
  <p>A constant that is <tt>true</tt> if we're running the 64-bit version of newLISP.</p>
@@ -145,6 +151,10 @@
 <a name="_throw-not-implemented"></a><h3><font color=#CC0000>throw-not-implemented</font></h3>
 <b>syntax: (<font color=#CC0000>throw-not-implemented</font>)</b><br/>
  <p>Used to indicate that an ObjNL method *must* be overwritten.</p>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_<-"></a><h3><font color=#CC0000><-</font></h3>
+<b>syntax: (<font color=#CC0000><-</font> <em>key</em> <em>assoc-list</em>)</b><br/>
+ <p>An alias for <tt>lookup</tt></p>
 
 
 <br/><br/><center>- &part; -</center><br/>

@@ -2,6 +2,7 @@ Version 0.7
 
   * all code uses new ++,--,extend,write,read functions (still compatible with older newlisps)
   * added 'extract' and '<-' functions to core utils
+  * Route.Resource has been updated with a 'catch-all' function.
   * added documentation for MAX_POST_LENGTH in request.lsp
   * $BINARY can now handle large data (compensated for a newLISP bug in 'read-buffer').
   * DF:activate-plugin can now be used to load all lisp files in a directory

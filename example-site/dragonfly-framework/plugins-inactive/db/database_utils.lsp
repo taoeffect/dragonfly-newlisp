@@ -5,6 +5,8 @@
 
 (context MAIN)
 
+;; @syntax (cast-if <fn-test> <to> <from>)
+;; Equivalent to: '(if (fn-test from) to from)'
 (define (cast-if test to from)
 	(if (test from) to from)
 )

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "HTML 4.01 Transitional">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>database_orm.lsp</title>
+
+<link rel="stylesheet" type="text/css" href="newlispdoc.css" />
+</head>
+
+<body style="margin: 20px;" text="#111111" bgcolor="#FFFFFF" 
+			link="#376590" vlink="#551A8B" alink="#ffAA28">
+<blockquote>
+<center><h1>database_orm.lsp</h1></center>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database_orm</h2><p>DB.OBJ - Simple ORM class for DF.DB</p>
+<b>Version: </b>1.0<br/>
+<b>Author: </b>Greg Slepak<br/>
+ <p></p>
+ <p>To accomplish this, the interface introduces three Objective newLISP classes:
+ <tt>DF.DB</tt>, <tt>DF.SQL</tt>, and <tt>DF.BLOB</tt>.</p>
+ <h3>DF.SQL</h3>
+ A <tt>DF.SQL</tt> object is a wrapper around an SQL statement, is retrieved through one of
+ two functions: <tt>DF.DB:execute-query</tt> and the lower-level <tt>DF.DB:preprare-sql</tt>.
+ <p>It is used to retrieve rows from the result set of a query one-by-one.</p>
+ <h3>Example</h3>
+ <pre>
+ (push-autorelease-pool) ; we<tt>re going to be using DF.BLOB</tt>s.
+ (setf db (instantiate Sqlite3 ":memory:"))
+ (if-not db (throw-error "couldn't open db"))
+ (db:execute-update "CREATE TABLE fish (id INTEGER PRIMARY KEY, name TEXT, weight REAL, blah BLOB)")
+ (db:execute-update "INSERT INTO fish (name,weight) VALUES (?,?)" '("flipper" 234.123))
+ (db:execute-update "INSERT INTO fish (name,weight) VALUES (?1,?2)" '(("?1" "catfish") ("?2" 100.3)))
+ (db:execute-update "INSERT INTO fish (blah) VALUES (?)" (list (DF.BLOB (dup "\000" 10))))
+ (db:execute-update "INSERT INTO fish (blah) VALUES (:cat)" (list (list ":cat" (DF.BLOB (dup "\000" 10)))))
+ (setf sql (db:execute-query "SELECT * FROM fish"))
+ (do-while (list? row)
+     (push-autorelease-pool) ; "in case" we end up fetching a lot of large blobs
+     (setf row (sql:next-row))
+     (println "row: " row)
+     (pop-autorelease-pool)
+ )
+ (deallocate sql)
+ (deallocate db)
+ (pop-autorelease-pool) ; deallocate the blobs we created</pre>
+ <h3>Version history</h3>
+ <b>1.0</b> &bull; initial release
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><center>- &part; -</center><br/>
+<center><font face='Arial' size='-2' color='#444444'>
+generated with <a href="http://newlisp.org">newLISP</a>&nbsp;
+and <a href="http://newlisp.org/newLISPdoc.html">newLISPdoc</a>
+</font></center>
+</blockquote>
+</body>
+</html>

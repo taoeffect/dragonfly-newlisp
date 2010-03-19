@@ -3,23 +3,23 @@
 # place ObjNL.lsp at the bottom
 newlispdoc ../dragonfly-framework/dragonfly.lsp `find -E ../dragonfly-framework/lib -regex "[./a-z_-]+lsp" | xargs` ../dragonfly-framework/lib/ObjNL.lsp
 
-if [ ! -d ./DF.DB ] ; then
-	mkdir -v DF.DB
+if [ ! -d ./db ] ; then
+	mkdir -v db
 fi
 
-# we link to DF.DB etc from the guide on included plugins
+# we link to db etc from the guide on included plugins
 
-cd DF.DB
+cd db
 
 newlispdoc ../../dragonfly-framework/plugins-inactive/db/*.lsp
 
 cd ..
 
-if [ ! -d ./SMTP ] ; then
-	mkdir -v SMTP
+if [ ! -d ./smtp ] ; then
+	mkdir -v smtp
 fi
 
-cd SMTP
+cd smtp
 
 newlispdoc ../../dragonfly-framework/plugins-inactive/smtp.lsp
 

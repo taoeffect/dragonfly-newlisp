@@ -13,11 +13,18 @@
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(new Class 'Resource) ; nothing so far, but inherit for future compatibility
 (new Class 'Route)
 
 (context Route)
 (define (matches?) nil)
 (define (run) nil)
+
+(context 'Resource)
+(define (Resource:Resource)
+	(Dragonfly:die (context) " has no default action!")
+)
+(define (catch-all action id rformat) ; 'format' is a protected symbol
+	(Dragonfly:die (context) ":" action " not defined!")
+)
 
 (context MAIN)
