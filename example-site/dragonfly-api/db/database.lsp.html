@@ -30,10 +30,10 @@
  <h3>DF.BLOB</h3>
  <tt>DF.BLOB</tt> is used to insert and retrieve (possibly large) binary data into databases.
  It is needed for two reasons:
- <em>ol</em>
+ <ol>
  <li>newLISP uses strings to buffer and store binary data, and that's already used to store text.</li>
  <li>BLOBs can be very large, so by storing them in a context we avoid excessive copying.</li>
- <em>/ol</em>
+ </ol>
  <p>Unlike the other two classes, <tt>DF.BLOB</tt> provides a basic working implementation for <tt>DF.SQL</tt> subclasses
  to use. You may of course subclass it if your database requires additional functionality. It requires
  special usage considerations, see its documentation below.</p>

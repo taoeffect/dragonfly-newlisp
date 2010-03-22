@@ -11,20 +11,77 @@
 			link="#376590" vlink="#551A8B" alink="#ffAA28">
 <blockquote>
 <center><h1>database_utils.lsp</h1></center>
-<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database_utils</h2><p>Utilities for using DF.DB</p>
+<p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database_utils</h2><p>Utilities for grabbing data out of a DF.DB</p>
 <b>Version: </b>1.0<br/>
 <b>Author: </b>Greg Slepak<br/>
+ <p>This file provides a convenience layer above the <tt>DF.DB</tt> and <tt>DF.SQL</tt> basic spec for fetching data.</p>
+ <p>All of the functions in this file are declared as global functions!</p>
 
 
 <br/><br/><center>- &sect; -</center><br/>
 <a name="_cast-if"></a><h3><font color=#CC0000>cast-if</font></h3>
 <b>syntax: (<font color=#CC0000>cast-if</font> <em>fn-test</em> <em>to</em> <em>from</em>)</b><br/>
- Equivalent to: <tt>(if (fn-test from) to from)</tt>
+ <p>Equivalent to: <tt>(if (fn-test from) to from)</tt></p>
+ <p>This is a useful function when you want to ensure that certain "empty" values get
+ mapped to something else, for example if you want to make sure that you adds NULLs instead
+ of empty strings to a column you'd use it like this:</p>
+ <pre> (cast-if null? nil value)</pre>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_for-query-with-db"></a><h3><font color=#CC0000>for-query-with-db</font></h3>
+<b>syntax: (<font color=#CC0000>for-query-with-db</font> <em>ctx-db</em> <em>str-query</em> [<em>body...</em>])</b><br/>
+ <p>This macro is useful for writing templates, say for example to display a table of data, or simply
+ to iterate over a set of results. It takes an SQL query string and then a body.
+ All of the column names from the SQL result are available for use in the
+ body as uppercase labels, which are then substituted with their values.</p>
+ <p><b>example:</b></p>
+ <pre> &lt;table&gt;
+ 	&lt;tr class="header"&gt;&lt;td&gt;ID&lt;/td&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;Age&lt;/td&gt;&lt;/tr&gt;
+ 	&lt;% (for-query-with-db db "SELECT rowid,name,age FROM people" %&gt;
+ 		&lt;tr&gt;
+ 			&lt;td&gt;&lt;%=ROWID%&gt;&lt;/td&gt;
+ 			&lt;td&gt;&lt;%=NAME%&gt;&lt;/td&gt;
+ 			&lt;td&gt;&lt;%=AGE%&gt;&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 	&lt;% ) %&gt;
+ &lt;/table&gt;</pre>
+ <p>This function requires <b>newLISP version >= 10.1.11</b>.</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_fn-query-with-db"></a><h3><font color=#CC0000>fn-query-with-db</font></h3>
+<b>syntax: (<font color=#CC0000>fn-query-with-db</font> <em>ctx-db</em> <em>str-query</em> <em>func</em> [<em>list-params</em>])</b><br/>
+ <p>This function is similar to <tt>for-query-with-db</tt> except that instead of taking
+ a body directly, you pass in a function <tt>func</tt> that takes a single argument&mdash;the
+ results as an association list&mdash;which contains the body that will be executed
+ for each of the rows. Additionally, this function allows you to use queries safely
+ with a <tt>WHERE</tt> clause by supplying parameters through <tt>list-params</tt>.</p>
+ <p><b>example:</b></p>
+ <pre> &lt;table&gt;
+ 	&lt;tr class="header"&gt;&lt;td&gt;ID&lt;/td&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;Age&lt;/td&gt;&lt;/tr&gt;
+ 	&lt;% (fn-query-with-db db "SELECT rowid,name,age FROM people WHERE age < ?" (fn (row) %&gt;
+ 		&lt;tr&gt;
+ 			&lt;td&gt;&lt;%=(&lt;- "rowid" row)%&gt;&lt;/td&gt;
+ 			&lt;td&gt;&lt;%=(&lt;- "name" row)%&gt;&lt;/td&gt;
+ 			&lt;td&gt;&lt;%=(&lt;- "age" row)%&gt;&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 	&lt;% ) '(25)) %&gt;
+ &lt;/table&gt;</pre>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_assoc-row-with-db"></a><h3><font color=#CC0000>assoc-row-with-db</font></h3>
+<b>syntax: (<font color=#CC0000>assoc-row-with-db</font> <em>ctx-db</em> <em>str-query</em> [<em>list-params</em>])</b><br/>
+<p><b>return: </b>An association list representing a single row where the keys are the column names and the values are the values for that column</p>
+<b>example:</b><blockquote><pre> (assoc-row-with-db db "SELECT name,age FROM people WHERE age &lt; ?" '(25))
+ ;=&gt; (("name" "Sally") ("age" 12))</pre></blockquote>
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_assoc-rows-with-db"></a><h3><font color=#CC0000>assoc-rows-with-db</font></h3>
+<b>syntax: (<font color=#CC0000>assoc-rows-with-db</font> <em>ctx-db</em> <em>str-query</em> [<em>list-params</em>])</b><br/>
+ <p>Like <tt>assoc-row-with-db</tt> except returns multiple association lists for all the returned rows.</p>
 
-
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_query-cell-with-db"></a><h3><font color=#CC0000>query-cell-with-db</font></h3>
+<b>syntax: (<font color=#CC0000>query-cell-with-db</font> <em>ctx-db</em> <em>str-query</em> [<em>list-params</em>])</b><br/>
+<p><b>return: </b>The exact value at a specific row/column or <tt>nil</tt> if not found.</p>
 
 <br/><br/><center>- &part; -</center><br/>
 <center><font face='Arial' size='-2' color='#444444'>

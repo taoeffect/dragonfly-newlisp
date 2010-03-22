@@ -14,33 +14,39 @@
 <p><a href="index.html">Module index</a></p><br/><h2>Module:&nbsp;database_orm</h2><p>DB.OBJ - Simple ORM class for DF.DB</p>
 <b>Version: </b>1.0<br/>
 <b>Author: </b>Greg Slepak<br/>
- <p></p>
- <p>To accomplish this, the interface introduces three Objective newLISP classes:
- <tt>DF.DB</tt>, <tt>DF.SQL</tt>, and <tt>DF.BLOB</tt>.</p>
- <h3>DF.SQL</h3>
- A <tt>DF.SQL</tt> object is a wrapper around an SQL statement, is retrieved through one of
- two functions: <tt>DF.DB:execute-query</tt> and the lower-level <tt>DF.DB:preprare-sql</tt>.
- <p>It is used to retrieve rows from the result set of a query one-by-one.</p>
- <h3>Example</h3>
- <pre>
- (push-autorelease-pool) ; we<tt>re going to be using DF.BLOB</tt>s.
- (setf db (instantiate Sqlite3 ":memory:"))
- (if-not db (throw-error "couldn't open db"))
- (db:execute-update "CREATE TABLE fish (id INTEGER PRIMARY KEY, name TEXT, weight REAL, blah BLOB)")
- (db:execute-update "INSERT INTO fish (name,weight) VALUES (?,?)" '("flipper" 234.123))
- (db:execute-update "INSERT INTO fish (name,weight) VALUES (?1,?2)" '(("?1" "catfish") ("?2" 100.3)))
- (db:execute-update "INSERT INTO fish (blah) VALUES (?)" (list (DF.BLOB (dup "\000" 10))))
- (db:execute-update "INSERT INTO fish (blah) VALUES (:cat)" (list (list ":cat" (DF.BLOB (dup "\000" 10)))))
- (setf sql (db:execute-query "SELECT * FROM fish"))
- (do-while (list? row)
-     (push-autorelease-pool) ; "in case" we end up fetching a lot of large blobs
-     (setf row (sql:next-row))
-     (println "row: " row)
-     (pop-autorelease-pool)
- )
- (deallocate sql)
- (deallocate db)
- (pop-autorelease-pool) ; deallocate the blobs we created</pre>
+ <p><tt>DB.OBJ</tt> provides very basic Object-relational mapping (ORM) for <tt>DF.DB</tt>. Specifically,
+ each <tt>DB.OBJ</tt> object has accessors to manipulate or retrieve the values for some or all of the
+ columns of a specific row.</p>
+ <p>All of the functions documented here are declared global!</p>
+ <h3>Obtaining a <tt>DF.OBJ</tt> object</h3>
+ There are currently three functions for obtaining an object: <tt>create-dbobj</tt>, <tt>find-dbobj</tt> and <tt>find-or-create-dbobj</tt>.
+ <p>To obtain an object, one of the arguments that must be specified is called the <em>finder</em>.</p>
+ <p>The <em>finder</em> can either be multiple things:</p>
+ <ol><li>An <b>integer</b> - in which case it is assumed to refer to the exact ROWID of the row you want.</li>
+ <li>A <b>string</b> - in which case it is greated as the argument to the WHERE clause of an SQL statement. Be careful of SQL injection attacks when choosing this method, it may be preferable to instead use...</li>
+ <li>An <b>association list</b> - For example, to ask for the row(s) where the <tt>name</tt> is "Greg" and <tt>age</tt> is 12, we&apos;d pass: <tt>&apos;(("name" "Greg") ("age" 12))</tt></li>
+ </ol>
+ <p>In order to specify what attributes the object will have, a list is passed in containing (as strings) the desired columns.
+ Because this list simply contains portions of the SQL, <tt>&apos;("*")</tt> may be specified to indicate all columns.</p>
+ <h3>Manipulating values</h3>
+ <p>Once you've obtained an object you fetch its values by simply calling the appropriate method for that value.
+ The name of this method will be based upon the column it corresponds to (it can be altered using SQL aliases). The columns are alternatively called the object&apos;s "attributes" or "keys."</p>
+ <pre> (println "Person who is named: " (*obj*:name))
+ ;=> "John Doe"</pre>
+ <p>To modify a value simply pass in a value as the second argument:</p>
+ <pre> (*obj*:name "Greg Slepak")
+ (println "Person is now named: " (*obj*:name))
+ ;=> "Greg Slepak"</pre>
+ <p>It&apos;s important to note though that the values <b>aren&apos;t saved to the database until you call <tt>dbobj-save</tt> on the object!</b></p>
+ <pre> (dbobj-save *obj*)</pre>
+ <p>Querying a value from an object returns the latest value, even if it's not saved. To ask for the value prior to modification
+ pass <tt>true</tt> in as the third argument:</p>
+ <pre> (*obj*:name "John Doe") ; change it back
+ (println "Original value: " (*obj*:name nil true))
+ ;=> "Greg Slepak"</pre>
+ <h3>Objective newLISP</h3>
+ <p>The objects returned by these functions are ObjNL objects and thus must be properly memory managed using the conventions
+ in ObjNL to avoid memory leaks. See the <tt>release</tt>, <tt>retain</tt> and <tt>autorelease</tt> functions in the ObjNL documentation for more detail.</p>
  <h3>Version history</h3>
  <b>1.0</b> &bull; initial release
 
@@ -48,16 +54,83 @@
 
 
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_create-dbobj"></a><h3><font color=#CC0000>create-dbobj</font></h3>
+<b>syntax: (<font color=#CC0000>create-dbobj</font> <em>ctx-db</em> <em>str-table</em> <em>list-data</em>)</b><br/>
+<b>parameter: </b><em>ctx-db</em> - A <tt>DF.DB</tt> instance<br/>
+<b>parameter: </b><em>str-table</em> - The table in which this "object" will be created in<br/>
+<b>parameter: </b><em>list-data</em> - Either an association list of column/values or a list of values for all the columns<br/>
+ <p>IMPORTANT: The returned object is NOT autoreleased! YOU are responsible for releasing it when you're done with it!</p>
+ <p><b>example:</b></p>
+ <pre> (setf db (instantiate Sqlite3 ":memory:"))
+ (db:execute-update "CREATE TABLE people (name TEXT, age INTEGER)")
+ (setf *obj* (create-dbobj db "people" '("Sue" 57)))
+ (println "Create a person named: " (*obj*:name))
+ &nbsp;
+ ; now we release it and create another object, this time using the alternate form, without an age:
+ (release *obj*)
+ (setf *obj* (create-dbobj db "people" '(("name" "Billy Jones"))))</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_find-dbobj"></a><h3><font color=#CC0000>find-dbobj</font></h3>
+<b>syntax: (<font color=#CC0000>find-dbobj</font> <em>ctx-db</em> <em>str-table</em> <em>list-cols</em> <em>finder</em> [<em>limit</em>])</b><br/>
+<b>parameter: </b><em>ctx-db</em> - A <tt>DF.DB</tt> instance<br/>
+<b>parameter: </b><em>str-table</em> - The table in which this "object" will be created in<br/>
+<b>parameter: </b><em>list-cols</em> - A list of column names. You can use SQL aliases (e.g. "col AS alias") and special identifiers (like "*")<br/>
+<b>parameter: </b><em>finder</em> - As described at the start of this document. See example below too.<br/>
+<b>parameter: </b><em>int-limit</em> - Default is 1. If greater than 1 then a list of objects is returned.<br/>
+ <p><b>example:</b></p>
+ <pre> (push-autorelease-pool) ; even examples should show proper memory management
+ (setf db (instantiate Sqlite3 "path/to/people.db"))
+ ; get the object at row 10
+ (setf *obj* (autorelease (find-dbobj db "people" '("*") 10)))
+ ; get up to 50 teenagers
+ (setf teens (find-dbobj db "people" '("*") "age > 12 AND age < 20" 50))
+ (map autorelease teens)
+ ; find a person of a random age between 1 and 20
+ (setf X (int (random 1 20)))
+ (setf *obj* (autorelease (find-dbobj db "people" '("*") (list (list "age" X)))))
+ (pop-autorelease-pool)</pre>
+
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_find-or-create-dbobj"></a><h3><font color=#CC0000>find-or-create-dbobj</font></h3>
+<b>syntax: (<font color=#CC0000>find-or-create-dbobj</font> <em>ctx-db</em> <em>str-table</em> <em>list-data</em> <em>finder</em>)</b><br/>
+ <p>This function simply calls <tt>create-dbobj</tt> if <tt>find-dbobj</tt> is unable to locate the object(s).
+ The values in <em>list-data</em> are ignored if an object is found, and the found object's values are used instead.</p>
+ <p>Note: unlike the more flexible <tt>create-dbobj</tt>, the <em>list-data</em> param must be an association list of columns/values.</p>
 
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-keys"></a><h3><font color=#CC0000>dbobj-keys</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-keys</font> <em>obj</em>)</b><br/>
+ <p>Returns the keys as strings in a list. Different words, same thing.</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-values"></a><h3><font color=#CC0000>dbobj-values</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-values</font> <em>obj</em> [<em>bool-from-revert-set</em>])</b><br/>
+<b>parameter: </b><em>bool-from-revert-set</em> - If true, returns the uncommitted value.<br/>
+ <p>Returns a list of the values for all the keys.</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-set-finder"></a><h3><font color=#CC0000>dbobj-set-finder</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-set-finder</font> <em>obj</em> <em>finder</em>)</b><br/>
+ <p>Updates how this object finds itself in the table (for updates).</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-refetch"></a><h3><font color=#CC0000>dbobj-refetch</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-refetch</font> <em>obj</em>)</b><br/>
+ <p>Refetches the object's values from the table. Discards any changes. Returns an association list of the fetched keys/values.</p>
 
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-save"></a><h3><font color=#CC0000>dbobj-save</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-save</font> <em>obj</em>)</b><br/>
+ <p>Saves any changes to the database.</p>
+<p><b>return: </b>a list of saved differences on successful update, 0 if no update was needed, or nil if update failed</p>
 
-
-
-
+<br/><br/><center>- &sect; -</center><br/>
+<a name="_dbobj-delete"></a><h3><font color=#CC0000>dbobj-delete</font></h3>
+<b>syntax: (<font color=#CC0000>dbobj-delete</font> <em>obj</em>)</b><br/>
+ <p>Removes the row representing this <em>obj</em> from its table. Returns <tt>true</tt> on success.</p>
 
 
 

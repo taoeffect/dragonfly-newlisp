@@ -73,8 +73,13 @@
  If <tt>resource</tt> implements <tt>action</tt>, then that function is called.
  Like <tt>resource</tt>, <tt>action</tt> may only contain letters, numbers, and the underscore.
  If no <tt>action</tt> is specified, then the resource's default function is called instead.
+ If it is specified but no method of that name is found, <tt>catch-all</tt> will be called, which
+ by default calls <tt>Dragonfly:die</tt>. You can override <tt>catch-all</tt> and do dispatch within
+ it, as it takes the action name (as a string) as the first argument, followed by the
+ <tt>id</tt> and the <tt>response_format</tt>.
  <p>The optional paramters <tt>id</tt> and <tt>response_format</tt> are passed in to the function
- as parameters (in that order).</p>
+ as parameters (in that order, unless it is the <tt>catch-all</tt> function, in which case
+ 3 parameters are passed in as described above).</p>
  <p><tt>id</tt> may only contain numbers, and <tt>response_format</tt> may only contain letters.</p>
  <h3>Plugins</h3>
  There are two types of plugins, those in the <tt>plugins-active</tt> folder, and those

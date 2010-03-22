@@ -1,5 +1,5 @@
 ;; @module smtp.lsp 
-;; @description Send mail using SMTP protocol
+;; @description Send mail using SMTP protocol. As of newLISP 10.2 this module comes with newLISP's built-in modules as smtpx.lsp.
 ;; @version 3.0 - Partial rewrite for Dragonfly. Addition attachments, custom port and proper utf8 encoding for subject/message/attachments
 ;; @version 2.3 - fix in mail-send-body, thanks to Alessandro
 ;; @version 2.2 - doc changes

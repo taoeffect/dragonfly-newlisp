@@ -19,11 +19,11 @@
 	<div id="content">
 				
 		<div class="title nomargin">
-			<p><% (title "| Dragonfly web framework") %> | <%=Resource.Api:api-path%><p>
+			<p><% (title "| Dragonfly web framework") %><p>
 		</div>
 		
-		<!-- This inserts a div with id #api-browser -->
 		<%
+		; This inserts a div with id #api-browser
 		(if Resource.Api:api-path
 			(api-browser Resource.Api:api-path)
 			(api-browser "dragonfly-api")

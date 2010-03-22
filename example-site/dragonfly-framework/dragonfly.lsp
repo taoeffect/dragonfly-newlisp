@@ -61,8 +61,13 @@
 ;; If 'resource' implements 'action', then that function is called.
 ;; Like 'resource', 'action' may only contain letters, numbers, and the underscore.
 ;; If no 'action' is specified, then the resource's default function is called instead.
+;; If it is specified but no method of that name is found, 'catch-all' will be called, which
+;; by default calls 'Dragonfly:die'. You can override 'catch-all' and do dispatch within
+;; it, as it takes the action name (as a string) as the first argument, followed by the
+;; 'id' and the 'response_format'.
 ;; <p>The optional paramters 'id' and 'response_format' are passed in to the function
-;; as parameters (in that order).</p>
+;; as parameters (in that order, unless it is the 'catch-all' function, in which case
+;; 3 parameters are passed in as described above).</p>
 ;; <p>'id' may only contain numbers, and 'response_format' may only contain letters.</p>
 ;; <h3>Plugins</h3>
 ;; There are two types of plugins, those in the 'plugins-active' folder, and those

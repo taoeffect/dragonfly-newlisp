@@ -50,6 +50,12 @@
 				They are now <%=(*obj*:age)%> years old.
 			</p>
 			<p>
+				<%
+					(*obj*:age 15)
+					(print "they're: " (*obj*:age nil true) " or " (*obj*:age))
+				%>
+			</p>
+			<p>
 				Further, I can create a new person. See:
 				<% (release *obj*) (setf *obj* (create-dbobj db "people" '("Sue" 57))) %>
 			</p>

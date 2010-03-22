@@ -145,7 +145,14 @@
 			<span class="code"> my_resource => load file: RESOURCES_PATH/my_resource.lsp</span>
 		</p>
 		<p>
-			<span class="code"><b>action</b></span> (optional) - specifies the function to be called on the resource. Like resource, <span class="code">action</span> may only contain letters, numbers, and the underscore. If no action is specified, then the resource's <a href="http://www.newlisp.org/downloads/newlisp_manual.html#default_function" target="_blank">default function</a> is called instead. Whichever function gets called, the <span class="code">id</span> and <span class="code">format</span> are passed in as parameters (in that order).
+			<span class="code"><b>action</b></span> (optional) - specifies the function to be called on the resource. Like resource, <span class="code">action</span> may only contain letters, numbers, and the underscore. If no action is specified, then the resource's <a href="http://www.newlisp.org/downloads/newlisp_manual.html#default_function" target="_blank">default function</a> is called instead.
+		</p>
+		<p>If an action is specified but it's not defined in the resource, then the resource's <span class="code">catch-all</span> function
+			is called, which by default displays an error 500 page.
+			<br/>
+			Whichever function gets called, the <span class="code">id</span> and <span class="code">format</span> are passed in as parameters, in that order,
+			except in the case of the <span class="code">catch-all</span> function, in which case the first parameter is the name of the requested
+			action, then followed by the <span class="code">id</span> and <span class="code">format</span>.
 		</p>
 		<p>
 			<span class="code"><b>id</b></span> (optional) - may only contain numbers and can be used to specify a specific object out of a collection.
