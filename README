@@ -11,5 +11,5 @@ Open Your browser and visit http://localhost:8080/ - have FUN!
 For installation information see INSTALL or after running
 the above command visit:
 
-	http://localhost:8080/dragonfly_welcome
-
+	http://localhost:8080/dragonfly_welcome (local)
+	http://www.rundragonfly.com/dragonfly_welcome (remote)
