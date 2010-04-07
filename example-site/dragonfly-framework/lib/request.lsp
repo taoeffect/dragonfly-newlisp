@@ -75,7 +75,7 @@
 
 (define (hex-encode-str str , cnvrt)
 	(setf cnvrt	(dup "%%%X" (length str)))
-	(eval (append '(format cnvrt) (unpack (dup "b" (length str)) str)))
+	(format cnvrt (unpack (dup "b" (length str)) str))
 )
 
 ;; @syntax (utf8-urlencode <str> [<bool-everything>])
