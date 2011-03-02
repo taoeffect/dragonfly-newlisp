@@ -1,2 +1,3 @@
 example-site/**/plugins-active/_config.lsp
 *.log
+.hg
