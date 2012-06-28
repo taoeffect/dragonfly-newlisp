@@ -170,7 +170,7 @@
 ; !$GET
 ;===============================================================================
 
-(when QUERY_STRING
+(unless (null? QUERY_STRING)
 	(dolist (pair (parse-query QUERY_STRING))
 		(add-keyvalue-to-ctx (first pair) (last pair) $GET)
 	)
