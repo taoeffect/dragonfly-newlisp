@@ -14,7 +14,7 @@
 ;;
 ;; @module Dragonfly
 ;; @author Marc Hildmann <marc.hildmann at gmail.com>, Greg Slepak <greg at taoeffect.com>
-;; @version 0.70
+;; @version taoeffect
 ;; 
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; @description A newLISP web framework for rapid web development
