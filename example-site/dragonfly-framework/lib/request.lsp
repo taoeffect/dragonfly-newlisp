@@ -70,7 +70,7 @@
 ; !UTF8 Compatible URL encoding/decoding
 ;===============================================================================
 
-(constant 'REGEX_HTTP_SPECIAL_STR (regex-comp {([^.0-9a-z-]+)} 1))
+(constant 'REGEX_HTTP_SPECIAL_STR (regex-comp {([^.0-9a-z-_]+)} 1))
 (constant 'REGEX_HEX_ENCODED_CHAR (regex-comp {%([0-9A-F][0-9A-F])} 1))
 
 (define (hex-encode-str str , cnvrt)
