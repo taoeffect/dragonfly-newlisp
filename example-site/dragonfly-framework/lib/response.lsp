@@ -147,6 +147,25 @@
 ; !Private Functions
 ;===============================================================================
 
+; TODO: whoever was the original author of this did not finish 'format-cookie'.
+;       it should look like this, and the comment string for <bool-http-only> above
+;       should be updated as it has things backwards. http-only should be true by DEFAULT!
+; TODO: also, add the 'secure' param.
+; TODO: implement session cookies:
+;       > A user's session cookie[14] (also known as an in-memory cookie or transient cookie)
+;       > for a website exists in temporary memory only while the user is reading and navigating
+;       > the website. When an expiry date or validity interval is not set at cookie creation time,
+;       > a session cookie is created. Web browsers normally delete session cookies when the
+;       > user closes the browser.[15][16]
+;
+;        
+; header('Set-Cookie: ' . rawurlencode($Name) . '=' . rawurlencode($Value)
+;                       . (empty($Expires) ? '' : '; expires=' . gmdate('D, d-M-Y H:i:s', $Expires) . ' GMT')
+;                       . (empty($Path) ? '' : '; path=' . $Path)
+;                       . (empty($Domain) ? '' : '; domain=' . $Domain)
+;                       . (!$Secure ? '' : '; secure')
+;                       . (!$HTTPOnly ? '' : '; HttpOnly'), false);
+
 ; we do *NOT* want to use url-encode on the value
 ; that's something the user can do if they want to.
 ; these parameters must match the order in the 'cookie' function.

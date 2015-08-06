@@ -201,8 +201,14 @@
 ; that's something the user can do if they want to
 (when HTTP_COOKIE
 	(dolist (cookie (parse HTTP_COOKIE "; *" 0))
-		(map set '(key value) (parse cookie "="))
-		($COOKIES key value)
+   		(let (cookie (parse cookie "="))
+    		(when (> (length cookie) 1)
+        		;; TODO: handle cookies that have multiple equals in them like:
+          		;;       __utmz=111.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
+				(map set '(key value) cookie)
+				($COOKIES key value)
+   			)
+       	)
 	)
 )
 
