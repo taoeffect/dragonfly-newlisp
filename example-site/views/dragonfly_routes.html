@@ -34,7 +34,7 @@
 			Then one of Dragonfly's routes (<span class="code">Route.Static</span>) sends the contents of the <b>welcome.html</b> file to your web browser (after evaluating any newLISP code inside of it).
 		</p>
 		<p>
-			Dragonfly's routes are represented as <a href="http://www.newlisp.org/index.cgi?page=newLISP-FOOP">FOOP objects</a> and use
+			Dragonfly's routes are represented as <a href="http://www.newlisp.org/downloads/newlisp_manual.html#foop">FOOP objects</a> and use
 			the convention of prepending "Route." to their name to avoid namespace conflicts.
 		</p>
 		<p>
@@ -320,7 +320,7 @@
 			Q: What about nested resources?
 		</h3>
 		<p>
-			<span class="code">Route.Resource</span> is designed to support the creation of clean and efficient APIs (like <a href="http://apiwiki.twitter.com/Twitter-API-Documentation">twitter's</a>). Therefore it does not support nesting because:
+			<span class="code">Route.Resource</span> is designed to support the creation of clean and efficient APIs (like <a href="https://dev.twitter.com/overview/api">twitter's</a>). Therefore it does not support nesting because:
 		</p>
 		<h4>1. Nested resources are often unnecessary</h4>
 		<p>
