@@ -20,7 +20,7 @@
 ;; @description A newLISP web framework for rapid web development
 ;; <h4>About Dragonfly web framework</h4>
 ;; <p>Dragonfly is a small web framework which is currently under heavy development.
-;; Its's features are a short learning curve, lightweight and fun in programming - 
+;; Its features are a short learning curve, lightweight and fun in programming - 
 ;; just like newLISP itself.</p>
 
 ;===============================================================================
@@ -80,7 +80,7 @@
 (define (google-results-domain domain)
 	(set 'json (get-url (string "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="domain)))
 	(begin
-		(regex "\"estimatedResultCount\":\"(.*)\"," json)
+		(regex "\"estimatedResultCount\":\"([0-9]*)\"," json)
 		(set 'erc $1)	
 	)
 )
