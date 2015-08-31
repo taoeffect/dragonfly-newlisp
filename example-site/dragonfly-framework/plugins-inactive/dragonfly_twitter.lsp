@@ -48,7 +48,7 @@
 	)
 	(dolist (idx entry-index)
 		(set 'entry (sxml idx))
-		(set 'dateseconds (parse-date (lookup 'published entry) "%Y-%m-%dT%H:%M:%SZ")) ; convert string date to seconds
+		(set 'dateseconds (date-parse (lookup 'published entry) "%Y-%m-%dT%H:%M:%SZ")) ; convert string date to seconds
 		
 		(println
 			"<div class='entry'>"

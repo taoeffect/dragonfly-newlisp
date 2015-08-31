@@ -99,6 +99,9 @@
 	(constant (global 'write) write-buffer)
 ) 
 
+(when (< (sys-info -2) 10300)
+	(constant (global 'date-parse) parse-date))
+
 ;===============================================================================
 ; !Basic Setup, Global Vars, and Sanity Checks
 ;===============================================================================
