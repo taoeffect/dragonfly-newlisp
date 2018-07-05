@@ -1,3 +1,26 @@
+Version 0.74
+
+  * Alpine linux support for sqlite
+  * Improved core error handling to avoid infinite recursion
+  * request.lsp now handles non-urlencoded = signs as part of value
+  * all code uses new date-parse function (still compatible with older newlisps)
+  * updated broken links in user guide
+  * fixed bug in dragonfly_seo
+
+Version 0.73
+
+  * fixed cookie parsing bug
+
+Version 0.72
+
+  * fixed bug with url8-encode
+
+Version 0.71
+
+  * fixed bug when QUERY_STRING was empty
+  * speed improvement for URLencoding
+  * dragonfly-db is now a submodule
+
 Version 0.7
 
   * all code uses new ++,--,extend,write,read functions (still compatible with older newlisps)

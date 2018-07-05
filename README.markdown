@@ -2,7 +2,7 @@
 
 Congratulations on choosing Dragonfly!
 
-Please visit http://www.rundragonfly.com/ for more information.
+Please visit http://dragonfly.uberberg.com/ for more information.
 
 #Installation
 
@@ -23,4 +23,4 @@ For installation information see INSTALL or after running
 the above command visit:
 
 http://localhost:8080/dragonfly_welcome (local)
-http://www.rundragonfly.com/dragonfly_welcome (remote)
+http://dragonfly.uberberg.com/dragonfly_welcome (remote)
