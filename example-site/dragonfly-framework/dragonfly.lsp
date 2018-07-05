@@ -1,6 +1,6 @@
 ;; @module dragonfly.lsp
 ;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
-;; @version 0.73
+;; @version 0.74
 ;; @author Team Dragonfly 2009
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; <br>This file is the main entry-point of the Dragonfly framework and
@@ -89,15 +89,15 @@
 ;===============================================================================
 
 (when (< (sys-info -2) 10110)
-	(constant (global '++) inc)
-	(constant (global '--) dec)
-	(constant (global 'extend) write-buffer)
+  (constant (global '++) inc)
+  (constant (global '--) dec)
+  (constant (global 'extend) write-buffer)
 )
 (when (< (sys-info -2) 10111)
-	(constant (global 'term) name)
-	(constant (global 'read) read-buffer)
-	(constant (global 'write) write-buffer)
-) 
+  (constant (global 'term) name)
+  (constant (global 'read) read-buffer)
+  (constant (global 'write) write-buffer)
+)
 
 ;===============================================================================
 ; !Basic Setup, Global Vars, and Sanity Checks
@@ -109,14 +109,14 @@
 ; DF is a convenient shorthand to the Dragonfly context
 (constant (global 'DF) Dragonfly)
 (constant (global 'DRAGONFLY_MAJOR) 0)
-(constant (global 'DRAGONFLY_MINOR) 73)
+(constant (global 'DRAGONFLY_MINOR) 74)
 (constant (global 'DRAGONFLY_VERSION) (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
 ; make sure these two are defined
 (if-not DOCUMENT_ROOT (throw-error "Environment variable DOCUMENT_ROOT missing!"))
 (unless QUERY_STRING
-	(constant (global 'QUERY_STRING) "")
-	(env "QUERY_STRING" QUERY_STRING)
+  (constant (global 'QUERY_STRING) "")
+  (env "QUERY_STRING" QUERY_STRING)
 )
 
 ;; @syntax DF_PAGE
@@ -126,8 +126,8 @@
 ;; ; load http://www.mysite.com
 ;; DF_PAGE ;=> "/"</pre>
 (if (empty? QUERY_STRING)
-	(constant (global 'DF_PAGE) "/")
-	(constant (global 'DF_PAGE) (string "/" ((parse QUERY_STRING {[?&]} 0) 0)))
+  (constant (global 'DF_PAGE) "/")
+  (constant (global 'DF_PAGE) (string "/" ((parse QUERY_STRING {[?&]} 0) 0)))
 )
 
 ;; @syntax DF_SELF
@@ -191,14 +191,14 @@
 ;; <br>Loads (once only) a the named plugin from the 'plugins-inactive' folder.
 ;; <br>If <str-plugin-name> refers to a directory, then loads all of the ".lsp" files in that directory.
 (define (activate-plugin)
-	(doargs (plugin-name)
-		(let (plugin-name (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name))
-			(if (directory? plugin-name)
-				(load-files-in-dir plugin-name "\.lsp$")
-				(load-once (string plugin-name ".lsp"))
-			)
-		)
-	)
+  (doargs (plugin-name)
+    (let (plugin-name (string DRAGONFLY_ROOT "/plugins-inactive/" plugin-name))
+      (if (directory? plugin-name)
+        (load-files-in-dir plugin-name "\.lsp$")
+        (load-once (string plugin-name ".lsp"))
+      )
+    )
+  )
 )
 
 ;; @syntax (DF:web-root [<str-path> [<bool-question-mark>]])
@@ -213,72 +213,74 @@
 ;; (web-root "/foo" true) => "/example-site/?foo"
 ;; (web-root) => /example-site/
 (define (web-root (path "") question-mark)
-	; WEB_ROOT should have a "/" on the end
-	(if (starts-with path "/") (pop path))
-	(string WEB_ROOT (if question-mark "?" "") path)
+  ; WEB_ROOT should have a "/" on the end
+  (if (starts-with path "/") (pop path))
+  (string WEB_ROOT (if question-mark "?" "") path)
 )
 
 ;; @syntax (DF:view-path <str-view-name>)
 ;; @param <str-view-name> Name of view in 'VIEWS_PATH', without any extension.
 ;; <br>Returns the absolute path to the view as a string, appending 'VIEW_EXTENSION' if necessary.
 (define (view-path view-name)
-	(string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
+  (string VIEWS_PATH "/" view-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 ;; @syntax (DF:partial-path <str-partial-name>)
 ;; <br>Just like 'view-path', except for partials in 'PARTIALS_PATH'.
 (define (partial-path partial-name)
-	(string PARTIALS_PATH "/" partial-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
+  (string PARTIALS_PATH "/" partial-name (if VIEW_EXTENSION VIEW_EXTENSION ""))
 )
 
 ;; @syntax (DF:resource-path <str-resource-name>)
 ;; <br>Similar to 'view-path', except for resources in 'RESOURCES_PATH'.
 ;; Don't include the .lsp extension.
 (define (resource-path resource-name)
-	(string RESOURCES_PATH "/" resource-name ".lsp")
+  (string RESOURCES_PATH "/" resource-name ".lsp")
 )
 
 ;; @syntax (DF:include)
 ;; <br>Like 'display-file' but does not pass the file through 'eval-template'.
 (define (include)
-	(print (read-file (apply string $args)))
+  (print (read-file (apply string $args)))
 )
 
 ;; @syntax (DF:display-file)
 ;; <br>String-concats its arguments and displays the file
 ;; at that path after passing it through 'eval-template'.
 (define (display-file)
-	(eval-template (read-file (apply string $args)))
+  (let (path (apply string $args))
+    (and (file? path true)
+         (eval-template (read-file path))))
 )
 
 ;; @syntax (DF:display-partial <str-partial-name>)
 ;; Displays the partial named <str-partial-name> using 'display-file' and 'partial-path'.
 (define (display-partial partialname)
-  	(display-file (partial-path partialname))
+    (display-file (partial-path partialname))
 )
 
 ;; @syntax (DF:display-view <str-view-name>)
 ;; Displays the view named <str-view-name> using 'display-file' and 'view-path'.
 (define (display-view viewname)
-	(display-file (view-path viewname))
+  (display-file (view-path viewname))
 )
 
 ;; @syntax (DF:display-error <int-error-code>)
 ;; <br>Sends the <int-error-code> and, if it exists, displays the view named
 ;; <int-error-code> using 'display-view'. Otherwise, displays the built-in error
 ;; template 'Dragonfly:ERROR_TEMPLATE'.
-;; 
+;;
 ;; If an error is thrown with 'throw-error', this is automatically called
 ;; with an <int-error-code> of 500 (Internal Server Error).
 (define (display-error error-code (clear-stdout true))
-	(Response:status error-code)
-	(Response:content-type Response:html-type)
-	(set 'STDOUT "")
-	
-	(unless (display-view (string error-code))
-		(log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
-		(eval-template ERROR_TEMPLATE)
-	)
+  (Response:status error-code)
+  (Response:content-type Response:html-type)
+  (set 'STDOUT "")
+
+  (unless (display-view (string error-code))
+    (log-info "display-error using ERROR_TEMPLATE for error-code " error-code)
+    (eval-template ERROR_TEMPLATE)
+  )
 )
 
 ;; @syntax (DF:eval-template <str> [<ctx>])
@@ -287,49 +289,47 @@
 ;; <br>newLISP code in the template between the 'OPEN_TAG' and 'CLOSE_TAG' (see 'config.lsp') is
 ;; evaluated, and the result, along with the text outside of the "code islands" will be sent if no errors occur.
 (define (eval-template str (ctx Dragonfly) , start end block (buf ""))
-	(while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
-		(extend buf (string "(print [text]" (slice str 0 start) "[/text])"))
-		(setf block (slice str (+ start 2) (- end start 2)))
-		(if (starts-with block "=")
-			(extend buf (string "(print " (rest block) ")"))
-			(extend buf block)
-		)
-		(setf str (slice str (+ end 2)))
-	)
-	(when str
-		(extend buf (string "(print [text]" str "[/text])"))
-		(eval-string buf ctx)
-	)
+  (while (and (setf start (find OPEN_TAG str)) (setf end (find CLOSE_TAG str)))
+    (extend buf (string "(print [text]" (slice str 0 start) "[/text]) "))
+    (setf block (slice str (+ start 2) (- end start 2)))
+    (if (starts-with block "=")
+      (extend buf (string "(print " (rest block) ") "))
+      (extend buf block)
+    )
+    (setf str (slice str (+ end 2)))
+  )
+  (when str
+    (extend buf (string "(print [text]" str "[/text])"))
+    (eval-string buf ctx)
+  )
 )
 
 ;; @syntax (DF:die)
 ;; <br>String-concats its arguments, logs them as an error via 'log-err', and calls
 ;; 'throw-error' with the same string.
-;; 
+;;
 ;; @see Dragonfly:display-error
 (define (die)
-	(let (msg (apply string $args))
-		(log-err msg)
-		(throw-error msg)
-	)
+  (let (msg (apply string $args))
+    (log-err msg)
+    (throw-error msg)
+  )
 )
 
 ; our main entry-point. this calls exit.
 (define (listener)
-	; we load these here so that they can modify any of the variables in this file
-	(load-files-in-dir (string DRAGONFLY_ROOT "/plugins-active") "\.lsp$")
-	
-	; go through all the routes, if one matches, run it and we're done!
-	(dolist (route dragonfly-routes)
-		(when (:matches? route)
-			(:run route)
-			(send-and-exit)
-		)
-	)
-	
-	(log-info "no route matched for QUERY_STRING: " QUERY_STRING)
-	(display-error 404)
-	(send-and-exit)
+  ; we load these here so that they can modify any of the variables in this file
+  (load-files-in-dir (string DRAGONFLY_ROOT "/plugins-active") "\.lsp$")
+  ; go through all the routes, if one matches, run it and we're done!
+  (dolist (route dragonfly-routes)
+    (when (:matches? route)
+      (:run route)
+      (send-and-exit)
+    )
+  )
+  (log-info "no route matched for QUERY_STRING: " QUERY_STRING)
+  (display-error 404)
+  (send-and-exit)
 )
 
 ;===============================================================================
@@ -340,59 +340,59 @@
 ; allow switching contexts in a function call. If it does one day, route defintions
 ; will be specified through a 'define-route' macro.
 (context MAIN)
-(new Route 'Route.Static) 
+(new Route 'Route.Static)
 (new Route 'Route.Resource)
 
 (context 'Route.Static)
 
 (define (matches?)
-	(set 'chunks (parse QUERY_STRING {[?&]} 0))
-	(if (empty? chunks)
-		(push DF:DEFAULT_VIEW chunks))
-	(set 'path (set 'DF:_ (first chunks)))
-	
-	(if (set 'ext (exists (curry ends-with path) DF:STATIC_TRIGGER_EXTENSIONS))
-		; if the path ends with one of the trigger extensions, match if it exists
-		(file? path)
-		; otherwise, check if one of the transformations exists
-		(exists (fn (x) (file? (setf path (eval x)))) DF:STATIC_TRANSFORMATIONS)
-	)
+  (set 'chunks (parse QUERY_STRING {[?&]} 0))
+  (if (empty? chunks)
+    (push DF:DEFAULT_VIEW chunks))
+  (set 'path (set 'DF:_ (first chunks)))
+
+  (if (set 'ext (exists (curry ends-with path) DF:STATIC_TRIGGER_EXTENSIONS))
+    ; if the path ends with one of the trigger extensions, match if it exists
+    (file? path)
+    ; otherwise, check if one of the transformations exists
+    (exists (fn (x) (file? (setf path (eval x)))) DF:STATIC_TRANSFORMATIONS)
+  )
 )
 (define (run)
-	(replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
-	(SET_DF_SELF path)
-	(unless ext (setf ext (regex-captcha {.*\.(\w+)$} path)))
-	(when ext (Response:content-type (Response:extension->type ext)))
-	(unless (DF:display-file path)
-		(DF:die "Failed to get: " path)
-	)
+  (replace {\.\.[/|\\]} path "" 0) ; we don't want them getting at things they shouldn't
+  (SET_DF_SELF path)
+  (unless ext (setf ext (regex-captcha {.*\.(\w+)$} path)))
+  (when ext (Response:content-type (Response:extension->type ext)))
+  (unless (DF:display-file path)
+    (DF:die "Failed to get: " path)
+  )
 )
 
 (context 'Route.Resource)
 
 (define (matches?)
-	(when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
-		(set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
-		(file? (set 'path (DF:resource-path resource_name)))
-	)
+  (when (regex {^([a-z]\w+)(/([a-z]\w+))?(/(\d+))?(\.([a-z]+))?} QUERY_STRING 1)
+    (set 'resource_name $1 'resource_action $3 'resource_id $5 'response_format $7)
+    (file? (set 'path (DF:resource-path resource_name)))
+  )
 )
 (define (run)
-	(SET_DF_SELF path)
-	(load path)
-	(letn (
-			ctx-str (string "Resource." (join (map title-case (parse resource_name "_"))))
-		    ctx-sym (sym ctx-str)
-		)
-		; If no action is specified, use the default function
-		(when (null? resource_action) (setf resource_action ctx-str))
-		(setf action (eval (sym resource_action ctx-sym)))
-		; if the requested action doesn't exist we call the catch-all method
-		(unless (lambda? action)
-			(setf action (lambda () (eval (append (list (sym 'catch-all ctx-sym) resource_action) $args))))
-		)
-		; call the action on the resource with the optional parameters
-		(action (int resource_id) (if-not (null? response_format) response_format))
-	)
+  (SET_DF_SELF path)
+  (load path)
+  (letn (
+      ctx-str (string "Resource." (join (map title-case (parse resource_name "_"))))
+        ctx-sym (sym ctx-str)
+    )
+    ; If no action is specified, use the default function
+    (when (null? resource_action) (setf resource_action ctx-str))
+    (setf action (eval (sym resource_action ctx-sym)))
+    ; if the requested action doesn't exist we call the catch-all method
+    (unless (lambda? action)
+      (setf action (lambda () (eval (append (list (sym 'catch-all ctx-sym) resource_action) $args))))
+    )
+    ; call the action on the resource with the optional parameters
+    (action (int resource_id) (if-not (null? response_format) response_format))
+  )
 )
 
 (context 'Dragonfly)
@@ -404,18 +404,22 @@
 ; !Private Functions (i.e. you shouldn't ever call these)
 ;===============================================================================
 
-(define (send-and-exit)
-	(Response:send-headers)
-	(sys-print STDOUT)
-	(exit)
+(define (send-and-exit (code 0))
+  (Response:send-headers)
+  (sys-print STDOUT)
+  (exit code)
 )
 
 ; setup our error handler
+(setf Dragonfly:error-event.called nil)
 (error-event (fn ()
-	;(log-err "Got error (" (last (last-error)) ") with STDOUT contents:\n{" STDOUT "}")
-	(log-err (last (last-error)))
-	(display-error 500)
-	(send-and-exit)
+  (when Dragonfly:error-event.called
+    (send-and-exit 1099))
+  (setf Dragonfly:error-event.called true)
+  ;(log-err "Got error (" (last (last-error)) ") with STDOUT contents:\n{" STDOUT "}")
+  (log-err (last (last-error)))
+  (display-error 500)
+  (send-and-exit)
 ))
 
 ;===============================================================================
@@ -429,7 +433,7 @@
 <title><%= (join (map string (Response:status)) " ") %></title>
 </head><body>
 <h1><%= (last (Response:status)) %></h1>
-<p>The requested URL <%= (web-root QUERY_STRING) %> resulted in error <%= (join (map string (Response:status)) " ") %>.</p> 
+<p>The requested URL <%= (web-root QUERY_STRING) %> resulted in error <%= (join (map string (Response:status)) " ") %>.</p>
 <p>Additionally, a 404 Not Found
 error was encountered while trying to use an ErrorDocument to handle the request.</p>
 </body></html>

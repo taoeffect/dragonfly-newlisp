@@ -61,7 +61,7 @@
 ;; (for example in 'config.lsp') to customize it.</p>
 (global 'MAX_POST_LENGTH)
 (unless (> MAX_POST_LENGTH 8192)
-	(constant (global 'MAX_POST_LENGTH) 1048576)
+  (constant (global 'MAX_POST_LENGTH) 1048576)
 )
 
 (context 'Request)
@@ -74,8 +74,8 @@
 (constant 'REGEX_HEX_ENCODED_CHAR (regex-comp {%([0-9A-F][0-9A-F])} 1))
 
 (define (hex-encode-str str , cnvrt)
-	(setf cnvrt	(dup "%%%X" (length str)))
-	(format cnvrt (unpack (dup "b" (length str)) str))
+  (setf cnvrt (dup "%%%X" (length str)))
+  (format cnvrt (unpack (dup "b" (length str)) str))
 )
 
 ;; @syntax (utf8-urlencode <str> [<bool-everything>])
@@ -86,35 +86,37 @@
 ;; <b>example:</b>
 ;; <pre> (utf8-urlencode "What time is it?")  => "What%20time%20is%20it%3F"</pre>
 (define (utf8-urlencode str everything)
-	(if everything
-		(hex-encode-str str)
-		(replace REGEX_HTTP_SPECIAL_STR str (hex-encode-str $1) 0x10000)
-	)
+  (if everything
+    (hex-encode-str str)
+    (replace REGEX_HTTP_SPECIAL_STR str (hex-encode-str $1) 0x10000)
+  )
 )
 
 ;; @syntax (utf8-urldecode <str>)
 ;; <p>Decodes a utf8-urlencoded string. Converts '+'&apos;s to spaces.</p>
 (define (utf8-urldecode str)
-	(replace "+" str " ")
-	(replace REGEX_HEX_ENCODED_CHAR str (pack "b" (int $1 nil 16)) 0x10000)
+  (replace "+" str " ")
+  (replace REGEX_HEX_ENCODED_CHAR str (pack "b" (int $1 nil 16)) 0x10000)
 )
 
 ;===============================================================================
 ; !Private Functions
 ;===============================================================================
 
-(constant 'REGEX_QUERY (regex-comp {&([^&=]+)=?([^&=]*?)(?=&|$)} 1))
+; (constant 'REGEX_QUERY (regex-comp {&([^&=]+)=?([^&=]*?)(?=&|$)} 1))
+; this version supports including non-urlencoded = signs as part of value
+(constant 'REGEX_QUERY (regex-comp {&([^&=]+)(?:=([^&]*?))?(?=&|$)} 1))
 
 (define (parse-query query)
-	(when (starts-with query "?") (pop query))
-	(push "&" query)
-	(find-all REGEX_QUERY query (list (utf8-urldecode $1) (utf8-urldecode $2)) 0x10000)
+  (when (starts-with query "?") (pop query))
+  (push "&" query)
+  (find-all REGEX_QUERY query (list (utf8-urldecode $1) (utf8-urldecode (or $2 ""))) 0x10000)
 )
 
 (define (regex-captcha regex-str str (options 0) (captcha 1))
-	(if (regex regex-str str options)
-		($ captcha)
-	)
+  (if (regex regex-str str options)
+    ($ captcha)
+  )
 )
 
 ; we can't simply do: (read (device) $BINARY MAX_POST_LENGTH)
@@ -123,47 +125,47 @@
 ; this may be fixed in a future version of newLISP, but for now we're doing
 ; it the C-way.
 (define (handle-binary-data , (chunk "") (chunk-size 8192) (max-bytes MAX_POST_LENGTH) bytes)
-	(while (and (setf bytes (read (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
-		(extend $BINARY chunk)
-		(-- max-bytes bytes)
-		(when (< max-bytes chunk-size) (setf chunk-size max-bytes))
-	)
+  (while (and (setf bytes (read (device) chunk chunk-size)) chunk (not (zero? max-bytes)))
+    (extend $BINARY chunk)
+    (-- max-bytes bytes)
+    (when (< max-bytes chunk-size) (setf chunk-size max-bytes))
+  )
 )
 
 (define (parse-multipart-chunk chunk , idx disp var val data)
-	(when (set 'idx (find "Content-Disposition" chunk))
-		(set 'chunk (idx (length chunk) chunk))
-		(set 'disp (0 (find "\r\n" chunk) chunk))
-		
-		(when (and disp (set 'var (regex-captcha {name="(.+?)"} disp)))
-			(set 'data ((+ 4 (find "\r\n\r\n" chunk)) (length chunk) chunk))
-			(when (set 'idx (find "\r\n--" data))
-				(set 'data (0 idx data))
-				(if (set 'val (regex-captcha (string var {="(.+?)"}) disp))
-					($FILES var (list (list 'name val) (list 'data data) (list 'length (length data))))
-					($POST var data)
-				)
-			)
-		)
-	)
+  (when (set 'idx (find "Content-Disposition" chunk))
+    (set 'chunk (idx (length chunk) chunk))
+    (set 'disp (0 (find "\r\n" chunk) chunk))
+    
+    (when (and disp (set 'var (regex-captcha {name="(.+?)"} disp)))
+      (set 'data ((+ 4 (find "\r\n\r\n" chunk)) (length chunk) chunk))
+      (when (set 'idx (find "\r\n--" data))
+        (set 'data (0 idx data))
+        (if (set 'val (regex-captcha (string var {="(.+?)"}) disp))
+          ($FILES var (list (list 'name val) (list 'data data) (list 'length (length data))))
+          ($POST var data)
+        )
+      )
+    )
+  )
 )
 
 (define (handle-multipart-data , buff boundary)
-	(set 'boundary (regex-captcha {boundary=(.+)} CONTENT_TYPE))	
-	(while (read (device) buff MAX_POST_LENGTH boundary)
-		(parse-multipart-chunk buff)
-	)
+  (set 'boundary (regex-captcha {boundary=(.+)} CONTENT_TYPE))
+  (while (read (device) buff MAX_POST_LENGTH boundary)
+    (parse-multipart-chunk buff)
+  )
 )
 
 (define (add-keyvalue-to-ctx key value ctx)
-	; support PHP-like multi-params
-	(if (ends-with key "[]")
-		(if (list? (ctx key))
-			(push value (ctx key) -1)
-			(ctx key (list value))
-		)
-		(ctx key value)
-	)
+  ; support PHP-like multi-params
+  (if (ends-with key "[]")
+    (if (list? (ctx key))
+      (push value (ctx key) -1)
+      (ctx key (list value))
+    )
+    (ctx key value)
+  )
 )
 
 ;===============================================================================
@@ -171,9 +173,9 @@
 ;===============================================================================
 
 (unless (null? QUERY_STRING)
-	(dolist (pair (parse-query QUERY_STRING))
-		(add-keyvalue-to-ctx (first pair) (last pair) $GET)
-	)
+  (dolist (pair (parse-query QUERY_STRING))
+    (add-keyvalue-to-ctx (first pair) (last pair) $GET)
+  )
 )
 
 ;===============================================================================
@@ -182,15 +184,15 @@
 
 ; windows doesn't have 'peek'
 ;(unless (zero? (peek (device)))
-	(if (and (setf temp HTTP_CONTENT_TRANSFER_ENCODING) (= temp "binary"))
-		(handle-binary-data)
-		(and (setf temp CONTENT_TYPE) (starts-with temp "multipart/form-data"))
-		(handle-multipart-data)
-		(and (read (device) temp MAX_POST_LENGTH) temp)
-		(dolist (pair (parse-query temp))
-			(add-keyvalue-to-ctx (first pair) (last pair) $POST)
-		)
-	)
+  (if (and (setf temp HTTP_CONTENT_TRANSFER_ENCODING) (= temp "binary"))
+    (handle-binary-data)
+    (and (setf temp CONTENT_TYPE) (starts-with temp "multipart/form-data"))
+    (handle-multipart-data)
+    (and (read (device) temp MAX_POST_LENGTH) temp)
+    (dolist (pair (parse-query temp))
+      (add-keyvalue-to-ctx (first pair) (last pair) $POST)
+    )
+  )
 ;)
 
 ;===============================================================================
@@ -200,16 +202,16 @@
 ; we do *NOT* want to use utf8-urldecode on the value
 ; that's something the user can do if they want to
 (when HTTP_COOKIE
-	(dolist (cookie (parse HTTP_COOKIE "; *" 0))
-   		(let (cookie (parse cookie "="))
-    		(when (> (length cookie) 1)
-        		;; TODO: handle cookies that have multiple equals in them like:
-          		;;       __utmz=111.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
-				(map set '(key value) cookie)
-				($COOKIES key value)
-   			)
-       	)
-	)
+  (dolist (cookie (parse HTTP_COOKIE "; *" 0))
+    (let (cookie (parse cookie "="))
+      (when (> (length cookie) 1)
+        ;; TODO: handle cookies that have multiple equals in them like:
+        ;;       __utmz=111.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
+        (map set '(key value) cookie)
+        ($COOKIES key value)
+      )
+    )
+  )
 )
 
 (context 'MAIN)
