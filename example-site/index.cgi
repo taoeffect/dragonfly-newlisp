@@ -26,7 +26,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; load Dragonfly web framework
 
+; create this file to override any values in the default config.lsp file
+(constant 'CONFIG_OVERRIDE "dragonfly-framework/config-override.lsp")
+
 (load "dragonfly-framework/config.lsp")
+(when (file? CONFIG_OVERRIDE) (load CONFIG_OVERRIDE))
 (load "dragonfly-framework/dragonfly.lsp")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

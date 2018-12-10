@@ -1,6 +1,6 @@
 ;; @module dragonfly.lsp
 ;; @description The heart of Dragonfly - A newLISP web framework for rapid web development.
-;; @version 0.74
+;; @version 0.75
 ;; @author Team Dragonfly 2009
 ;; @location http://code.google.com/p/dragonfly-newlisp/
 ;; <br>This file is the main entry-point of the Dragonfly framework and
@@ -112,7 +112,7 @@
 ; DF is a convenient shorthand to the Dragonfly context
 (constant (global 'DF) Dragonfly)
 (constant (global 'DRAGONFLY_MAJOR) 0)
-(constant (global 'DRAGONFLY_MINOR) 74)
+(constant (global 'DRAGONFLY_MINOR) 75)
 (constant (global 'DRAGONFLY_VERSION) (format "Version %d.%d" DRAGONFLY_MAJOR DRAGONFLY_MINOR))
 
 ; make sure these two are defined

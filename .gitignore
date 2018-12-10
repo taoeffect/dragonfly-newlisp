@@ -1,3 +1,5 @@
-example-site/**/plugins-active/_config.lsp
+example-site/dragonfly-framework/plugins-active/*
+!example-site/dragonfly-framework/plugins-active/route_cgi.lsp
+!example-site/dragonfly-framework/plugins-active/dragonfly_basic.lsp
+example-site/dragonfly-framework/config-override.lsp
 *.log
-.hg
