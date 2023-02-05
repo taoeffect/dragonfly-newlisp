@@ -46,7 +46,7 @@
 ;; All other log functions call this one. You can override this function
 ;; at runtime to provide your own logging behavior.
 (define (log-func level msg)
-	(append-file LOG_FILE_PATH (string (date (date-value) 0 "%b %d %H:%M:%S ") level msg "\n"))
+	(append-file LOG_FILE_PATH (string (date (date-value) 0 "%Y-%m-%d %H:%M:%S ") level msg "\n"))
 )
 
 ;; @syntax (Dragonfly:log-debug)
