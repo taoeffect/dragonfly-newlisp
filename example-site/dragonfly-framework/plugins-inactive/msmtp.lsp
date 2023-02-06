@@ -46,7 +46,7 @@
   (setf filename (string "/tmp/email-" (uuid)))
   (setf err-info (string filename ".err"))
   (when (write-file filename send-buffer)
-    (setf r (! (format {cat %s | msmtp --auth=plain --tls=on --tls-starttls=off --host %s --port %d --user %s --read-envelope-from -t --passwordeval "echo %s" 2>%s} filename SMTP-server port user-name password err-info)))
+    (setf r (! (format {cat %s | msmtp --auth=plain --tls=on --tls-starttls=off --host %s --port %d --user %s --read-envelope-from -t --passwordeval "echo \"%s\"" 2>%s} filename SMTP-server port user-name password err-info)))
     (unless (= 0 r)
       (setf fail-reason (read-file err-info)))
     (delete-file filename)
@@ -151,18 +151,17 @@ Content-Transfer-Encoding: %s
 (define (send-attachments , encoding filename)
   (dolist (attachment attachments)
     (set 'encoding (attachment 4) 'filename (attachment 1))
-    (build-message (format attachment-wrapper)
-      (attachment 2)
-      (encode64-line filename)
-      (attachment 3)
-      (encode64-line filename)
-      encoding
-      (if (= encoding "base64")
-        (encode64-widthsafe (attachment 0))
-        (attachment 0))
-      
-      ; indicate this is the last boundary if no more
-      (if (= (+ 1 $idx) (length attachments)) "--" ""))))
+    (build-message (format attachment-wrapper
+                      (attachment 2)
+                      (encode64-line filename)
+                      (attachment 3)
+                      (encode64-line filename)
+                      encoding
+                      (if (= encoding "base64")
+                        (encode64-widthsafe (attachment 0))
+                        (attachment 0))
+                      ; indicate this is the last boundary if no more
+                      (if (= (+ 1 $idx) (length attachments)) "--" "")))))
 
 (context MAIN) 
 
