@@ -39,7 +39,7 @@
 (define (build-message str) (extend send-buffer (string str "\r\n")))
 
 ; NOTE: this is the only possible way to handle process input, output, and error messages in newlisp
-;       for whatever reason, the 'process' function cannot be used because neither 'peed' nor 'wait-pid'
+;       for whatever reason, the 'process' function cannot be used because neither 'peek' nor 'wait-pid'
 ;       work to wait for the process to finish and collect the output. So this method using tmp files is
 ;       used instead, and actually ends up being shorter/simpler than the process method.
 (define (run-msmtp , filename err-info r)
